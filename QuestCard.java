@@ -1,9 +1,9 @@
-public class Quest extends Card{
+public class QuestCard extends Card{
 
     protected byte stages;
     protected String specialFoe;
 
-    public Quest(String _name, byte _stages, String _specialFoe){
+    public QuestCard(String _name, byte _stages, String _specialFoe){
         name = _name;
         stages = _stages;
         specialFoe = _specialFoe;
