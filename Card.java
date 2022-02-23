@@ -22,10 +22,22 @@ public class Card {
         y_cord = y;
     }
 
+    protected void setName(String _name){
+        name = _name;
+    }
+
     protected float[] getCoordinates(){
         float[] arr = new float[2];
         arr[0] = x_cord;
         arr[1] = y_cord;
         return arr;
+    }
+
+    protected String getName(){
+        return name;
+    }
+
+    protected String getImg(){
+        return img;
     }
 }

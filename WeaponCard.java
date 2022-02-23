@@ -11,10 +11,6 @@ public class WeaponCard extends Card{
         bp = _bp;
     }
 
-    protected void setName(String _name){
-        name = _name;
-    }
-
     protected byte getBP(){
         return bp;
     }
