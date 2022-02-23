@@ -1,6 +1,6 @@
 public class FoeCard extends Card{
 
-    protected byte bp, alt_bp;
+    protected byte bp, altBP;
     protected boolean special;
 
     public FoeCard(String _name, byte _bp, boolean _special){
@@ -12,7 +12,7 @@ public class FoeCard extends Card{
     public FoeCard(String _name, byte _bp, byte _alt_bp, boolean _special){
         name = _name;
         bp = _bp;
-        alt_bp = _alt_bp;
+        altBP = _alt_bp;
         special = _special;
     }
 
@@ -21,7 +21,7 @@ public class FoeCard extends Card{
     }
 
     protected void setAlt_bp(byte _alt_bp){
-        alt_bp = _alt_bp;
+        altBP = _alt_bp;
     }
 
     protected void setSpecial(boolean bool){
@@ -33,7 +33,7 @@ public class FoeCard extends Card{
     }
 
     protected byte getAlt_bp(){
-        return alt_bp;
+        return altBP;
     }
 
     protected boolean getSpecial(){
