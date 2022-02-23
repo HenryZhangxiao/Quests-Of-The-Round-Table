@@ -6,6 +6,7 @@ public class FoeCard extends Card{
     public FoeCard(String _name, byte _bp, boolean _special){
         name = _name;
         bp = _bp;
+        altBP = _bp; //Assign same value to both BP holders
         special = _special;
     }
 

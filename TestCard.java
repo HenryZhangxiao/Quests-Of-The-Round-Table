@@ -12,4 +12,11 @@ public class TestCard extends Card{
         minimumBid = _minBid;
     }
 
+    protected void setMinimumBid(byte _min){
+        minimumBid = _min;
+    }
+
+    protected byte getMinimumBid() {
+        return minimumBid;
+    }
 }
