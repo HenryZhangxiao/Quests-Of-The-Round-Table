@@ -1,0 +1,128 @@
+package org.example;
+
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+public class NetworkManager extends Thread {
+
+    //Singleton Instance
+    private static NetworkManager networkManger;
+
+
+    //A list of messages that have been received from the server.
+    private BlockingQueue<NetworkMessage> _messagesReceived;
+
+    //Port Number
+    public final int PORT = 2005;
+
+    //Is hosting the server/running the game
+    private boolean isHost = false;
+
+    //Local Player
+    private NetworkClient localPlayer;
+
+    private boolean stopThread = false;
+
+    private NetworkManager(){
+        _messagesReceived = new LinkedBlockingQueue<NetworkMessage>();
+    }
+
+    //Singleton
+    public static NetworkManager get(){
+        if(networkManger == null)
+            networkManger = new NetworkManager();
+        return networkManger;
+    }
+
+    //Joining a game by IP. Also called after creating a game.
+    public boolean joinGame(String IP, String playerName){
+        try {
+            Socket s = new Socket(IP,PORT);
+            localPlayer = new NetworkClient(s,-1,true);
+            localPlayer.start();
+
+            this.start();
+            return true;
+        }
+        catch (Exception e){
+            return false;
+        }
+    }
+
+    public boolean createGame(String playerName){
+        isHost = true;
+        NetworkServer.get().start();
+
+        return joinGame("localhost", playerName);
+    }
+
+    public void run(){
+        while (!stopThread) {
+            NetworkMessage msg;
+            while ((msg = _messagesReceived.poll()) != null){
+                ArrayList<Object> _objs = msg._objects;
+                handleMessage(msg, _objs);
+            }
+        }
+    }
+
+    public void handleMessage(NetworkMessage msg,ArrayList<Object> _objs){
+        switch (msg.messageType){
+            case UNKNOWN:
+                System.out.println("Unknown Message Received. Objs: " + _objs.toString());
+            case HEARTBEAT:
+                //Todo
+                break;
+            case CONNECT:
+                localPlayer.setPlayerId((int)_objs.get(0));
+                System.out.println("CLIENT: Set localID to " + _objs.get(0).toString());
+                break;
+            case DISCONNECT:
+                //Todo
+                break;
+            case TEST_MESSAGE:
+                System.out.println("Got a message from: " + String.valueOf(msg.playerID));
+                break;
+            default:
+                System.out.println("Default Message Received.");
+                break;
+        }
+    }
+
+    public void addReceivedMsg(NetworkMessage msg){
+        try {
+            _messagesReceived.put(msg);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //region Helpers/Getters/Setters
+    public void sendNetMessage(NetworkMessage msg){
+        localPlayer.sendNetMsg(msg);
+    }
+    public NetworkClient getLocalPlayer(){ return localPlayer; }
+    public int getLocalPlayerID() {return localPlayer.getPlayerId(); }
+    public static boolean isInsantiated(){
+        return networkManger != null;
+    }
+
+    //endregion
+
+    public void close(){
+        stopThread = true;
+        this.interrupt(); //Not sure if you need this?
+
+        localPlayer.close();
+
+        if(isHost){
+            NetworkServer.get().close();
+        }
+    }
+
+
+}
