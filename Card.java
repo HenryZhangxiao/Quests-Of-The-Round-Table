@@ -2,7 +2,17 @@ public class Card {
 
     protected String name; //Name of card
     protected float x_cord, y_cord; //x and y coordinates for the GUI
-    protected String img; //Source of image (??)
+    protected Image img;
+    protected Deck deck;
+
+    protected void discard(){
+        deck.discards.add(this);
+        // alter x and y coords so no longer on GUI?
+    }
+
+    protected Card getCardByID(Integer id){
+
+    }
 
     protected void set_x_cord(float x){
         x_cord = x;
