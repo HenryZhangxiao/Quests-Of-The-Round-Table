@@ -1,6 +1,6 @@
-//DOES NOT CURRENTLY ACCOUNT FOR THE MERLIN ALLY CARD
+//DOES NOT CURRENTLY ACCOUNT FOR THE MERLIN ALLY CARD, conditional bp or conditional free bids
 
-public class AllyCard extends Card{
+public abstract class AllyCard extends Card{
 
     protected byte bp, freeBids;
 

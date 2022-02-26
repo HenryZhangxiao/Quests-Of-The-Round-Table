@@ -5,7 +5,7 @@ public class Player {
     public ArrayList<Card> board;  //amours, weapons, etc in front of them
 
     protected int drawCard(){
-        //send request to server
+        //TODO: send request to server
     }
 
     protected discardCardFromHand(Integer index){
@@ -13,7 +13,7 @@ public class Player {
         hand.remove(card);
         card.discard();
 
-        //make sure other players see discarded cards
+        //TODO: make sure other players see discarded cards
     }
 
     protected discardCardsFromHand(Integer[] indices){

@@ -7,10 +7,14 @@ public abstract class Deck {
     Arraylist<Card> discards;
 
     protected void shuffle(){
+        Collections.shuffle(cards);
+    }
+
+    protected void reshuffle(){
         if(cards.isEmpty()) {
             cards = discards;
             discards.clear();
-            Collections.shuffle(cards);
+            shuffle();
         }
     }
 
@@ -22,7 +26,7 @@ public abstract class Deck {
         return name;
     }
 
-    protected void setName(String _name){
-        name = _name;
-    }
+    protected abstract void initializeCards();
+
+
 }

@@ -1,21 +1,8 @@
-public class FoeCard extends Card{
+public abstract class FoeCard extends Card{
 
     protected byte bp, altBP;
     protected boolean special;
 
-    public FoeCard(String _name, byte _bp, boolean _special){
-        name = _name;
-        bp = _bp;
-        altBP = _bp; //Assign same value to both BP holders
-        special = _special;
-    }
-
-    public FoeCard(String _name, byte _bp, byte _alt_bp, boolean _special){
-        name = _name;
-        bp = _bp;
-        altBP = _alt_bp;
-        special = _special;
-    }
 
     protected void setBP(byte _bp){
         bp = _bp;
