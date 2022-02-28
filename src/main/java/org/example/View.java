@@ -17,11 +17,8 @@ import java.util.Random;
 public class View extends Pane {
 
     //private Game model;
-    private Image advCards;
-    private Image storyCards;
     private ImageView storyDiscard;
     private ImageView advDiscard;
-    private Group hand;
     private ArrayList<ImageView> cards;
     private Button storyDeck;
     private Button advDeck;
@@ -47,13 +44,13 @@ public class View extends Pane {
         advDiscard.setPreserveRatio(true);
         getChildren().add(advDiscard);
 
-        advCards = new Image(new File("src/resources/advComposite.jpg").toURI().toString());
+        Image advCards = new Image(new File("src/resources/advComposite.jpg").toURI().toString());
         advDiscard.setImage(advCards);
         advDiscard.setViewport(getAdvCard(0));
 
-
-        //storyCards = new Image(new File("src/resources/storyComposite.jpg").toURI().toString());
+        //Image storyCards = new Image(new File("src/resources/storyComposite.jpg").toURI().toString());
         //storyDiscard.setImage(storyCards);
+        //storyDiscard.setViewport(getStoryCard(0));
 
         storyDeck = new Button("Draw story card");
         storyDeck.relocate(storyDiscard.getX()-120, storyDiscard.getY());
@@ -63,10 +60,6 @@ public class View extends Pane {
         storyDeck.setOnAction(e -> {
             //model.drawStoryCard(); or smtg like that
             //update();
-
-            //Displays a test card in the discard pile for now
-            Image newImg = new Image(new File("src/resources/Horse.jpg").toURI().toString());
-            storyDiscard.setImage(newImg);
         });
 
         advDeck = new Button("Draw adventure card");
@@ -76,13 +69,10 @@ public class View extends Pane {
 
         advDeck.setOnAction(e -> {
             //model.drawAdvCard(); or smtg like that
-            //update();
-
-            //Displays a test card in the discard pile for now
-            advDiscard.setViewport(getAdvCard(new Random().nextInt(17)+1));
+            update();
         });
 
-        hand = new Group();
+        Group hand = new Group();
 
         Rectangle handArea = new Rectangle(getWidth()-900, getHeight()-320, 890, 310);
         handArea.setFill(Color.DARKGRAY);
@@ -105,9 +95,8 @@ public class View extends Pane {
 
             //add event handling for discarding
 
-            //temp images
-            Image img = new Image(new File("src/resources/Dagger.jpg").toURI().toString());
-            card.setImage(img);
+            card.setImage(advCards);
+            card.setViewport(getAdvCard(0));
         }
 
         getChildren().add(hand);
@@ -117,6 +106,14 @@ public class View extends Pane {
     public void update() {
         //ArrayList<Integer> localHand = new ArrayList<>();
         // for all cards in localPlayer's hand, add card.id to localHand
+
+
+        // test code for changing cards
+        for (int i = 0; i < 12; ++i) {
+            cards.get(i).setViewport(getAdvCard(new Random().nextInt(17)+1));
+        }
+
+        advDiscard.setViewport(getAdvCard(new Random().nextInt(17)+1));
 
     }
 
