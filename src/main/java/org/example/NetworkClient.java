@@ -53,7 +53,7 @@ public class NetworkClient extends Thread{
                 if(isLocalPlayer)
                     System.out.println("CLIENT: Couldn't Read Network Message.");
                 else
-                    System.out.println("SERVER: Couldn't Read Network Message.");
+                    System.out.println("SERVER: Couldn't Read Network Message from ID: " + String.valueOf(playerId));
                 System.out.println(e.toString());
             }
         }

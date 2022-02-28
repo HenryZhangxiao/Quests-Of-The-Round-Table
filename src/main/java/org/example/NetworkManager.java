@@ -117,7 +117,7 @@ public class NetworkManager extends Thread {
         stopThread = true;
         this.interrupt(); //Not sure if you need this?
 
-        localPlayer.close();
+        localPlayer.disconnect();
 
         if(isHost){
             NetworkServer.get().close();

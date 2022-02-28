@@ -3,6 +3,7 @@ package org.example;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -30,16 +31,18 @@ public class App extends Application {
         var scene = new Scene(new StackPane(label), 640, 480);
         stage.setScene(scene);
 
+
+
         //Join/Create Game popup.
-        //doJoinPopup();
-        //scene.setOnMouseClicked(new EventHandler<MouseEvent>() {
-        //    @Override
-        //    public void handle(MouseEvent mouseEvent) {
-        //        //For quick testing
-        //        NetworkMessage msg = new LocalClientMessage(NetworkMsgType.TEST_MESSAGE,null);
-        //        NetworkManager.get().sendNetMessage(msg);
-        //    }
-        //});
+        doJoinPopup();
+        scene.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                //For quick testing
+                NetworkMessage msg = new LocalClientMessage(NetworkMsgType.TEST_MESSAGE,null);
+                NetworkManager.get().sendNetMessage(msg);
+            }
+        });
 
         stage.show();
     }

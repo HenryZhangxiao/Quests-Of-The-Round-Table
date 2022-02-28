@@ -47,7 +47,7 @@ public class NetworkServer extends Thread{
                 getByID(msg.playerID).setPlayerName(_objs.get(0).toString());
                 break;
             case DISCONNECT:
-                //Todo
+                disconnectPlayer(msg.playerID);
                 break;
             case TEST_MESSAGE:
                 echoMessage(msg);
@@ -99,6 +99,12 @@ public class NetworkServer extends Thread{
     }
 
     //endregion
+
+    public void disconnectPlayer(int plyID){
+        NetworkClient c = getByID(plyID);
+        c.close();
+        _players.remove(c);
+    }
 
     //Called when closing game
     public void close(){
