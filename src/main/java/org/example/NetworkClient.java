@@ -61,9 +61,10 @@ public class NetworkClient extends Thread{
 
     //Called when the server/client disconnects, notifying all other clients and the server
     public void disconnect() {
-        NetworkMessage msg = new LocalClientMessage(NetworkMsgType.DISCONNECT,null);
-        sendNetMsg(msg);
-        close();
+        if(connected) {
+            NetworkMessage msg = new LocalClientMessage(NetworkMsgType.DISCONNECT, null);
+            sendNetMsg(msg);
+        }
     }
     
     public void sendNetMsg(NetworkMessage msg){

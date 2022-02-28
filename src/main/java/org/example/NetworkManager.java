@@ -1,8 +1,5 @@
 package org.example;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
@@ -124,7 +121,7 @@ public class NetworkManager extends Thread {
     }
     public NetworkClient getLocalPlayer(){ return localPlayer; }
     public int getLocalPlayerID() {return localPlayer.getPlayerId(); }
-    public static boolean isInsantiated(){
+    public static boolean isInstantiated(){
         return networkManger != null;
     }
 
@@ -142,11 +139,16 @@ public class NetworkManager extends Thread {
         stopThread = true;
         this.interrupt(); //Not sure if you need this?
 
-        localPlayer.disconnect();
+
 
         if(isHost){
             NetworkServer.get().close();
         }
+        else{
+            localPlayer.disconnect();
+        }
+
+        localPlayer.close();
     }
 
 
