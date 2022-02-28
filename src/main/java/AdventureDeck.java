@@ -32,6 +32,7 @@ public class AdventureDeck implements AdventureDeckFactory{
 
     @Override
     public void initializeCards() {
+        /*
         String[] weaponNames = {
                 "Excalibur","Excalibur",
                 "Lance","Lance","Lance","Lance","Lance","Lance",
@@ -53,6 +54,7 @@ public class AdventureDeck implements AdventureDeckFactory{
         for(int i = 0; i < weaponNames.length; i++ ){
             weapons.add(new WeaponCard(weaponNames[i], weaponBP[i]));
         }
+        */
 
 
     }

@@ -4,7 +4,7 @@ import java.util.Collections;
 public abstract class Deck {
     String name;
     ArrayList<Card> cards;
-    Arraylist<Card> discards;
+    ArrayList<Card> discards;
 
     protected void shuffle(){
         Collections.shuffle(cards);

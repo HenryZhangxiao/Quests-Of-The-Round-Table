@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Player {
 
     Integer playerNum;
@@ -6,9 +8,10 @@ public class Player {
 
     protected int drawCard(){
         //TODO: send request to server
+        return 0; //For now to stop any errors
     }
 
-    protected discardCardFromHand(Integer index){
+    protected void discardCardFromHand(Integer index){
         Card card = hand.get(index);
         hand.remove(card);
         card.discard();
@@ -16,7 +19,7 @@ public class Player {
         //TODO: make sure other players see discarded cards
     }
 
-    protected discardCardsFromHand(Integer[] indices){
+    protected void discardCardsFromHand(Integer[] indices){
         for(int i = 0; i < indices.length; ++i){
             discardCardFromHand(indices[i]);
         }

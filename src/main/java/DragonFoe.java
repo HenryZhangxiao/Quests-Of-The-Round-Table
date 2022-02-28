@@ -1,6 +1,6 @@
 public class DragonFoe extends FoeCard{
 
-    public Dragon(){
+    public DragonFoe(){
         name = "Dragon";
         bp = 50;
         altBP = 70;

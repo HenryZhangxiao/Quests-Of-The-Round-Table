@@ -1,4 +1,4 @@
-public class ExcaliburWeapon extends Weapon{
+public class ExcaliburWeapon extends WeaponCard{
 
     public ExcaliburWeapon(){
         name = "Excalibur";

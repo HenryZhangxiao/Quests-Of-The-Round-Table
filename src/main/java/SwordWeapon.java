@@ -1,8 +1,8 @@
-public class SwordWeapon extends Weapon{
+public class SwordWeapon extends WeaponCard{
 
     public SwordWeapon(){
         name = "Sword";
-        bp = _bp;
+        bp = 10;
         deck = "Adventure";
 
         //TODO: also have to set Image, not sure how

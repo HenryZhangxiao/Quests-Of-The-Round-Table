@@ -1,4 +1,4 @@
-public class BattleAxWeapon extends Weapon{
+public class BattleAxWeapon extends WeaponCard{
 
     public BattleAxWeapon(){
         name = "Battle-ax";

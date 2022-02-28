@@ -1,6 +1,6 @@
-public class HorseWeapon extends Weapon{
+public class HorseWeapon extends WeaponCard{
 
-    public Weapon(){
+    public HorseWeapon(){
         name = "Horse";
         bp = 10;
         deck = "Adventure";

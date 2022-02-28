@@ -2,7 +2,7 @@ public abstract class Card {
 
     protected String name; //Name of card
     protected float x_cord, y_cord; //x and y coordinates for the GUI
-    protected Image img;
+    //protected Image img; Need to complete
     protected String deck;
     protected Integer id;   //used for getCardByID()
 
@@ -14,57 +14,58 @@ public abstract class Card {
     }
 
     protected Card getCardByID(Integer id){
-        switch(id)
+        switch(id){
         case 1:
             return new ExcaliburWeapon();
-            break;
+            //break;
         case 2:
             return new LanceWeapon();
-            break;
+            //break;
         case 3:
             return new BattleAxWeapon();
-            break;
+            //break;
         case 4:
             return new SwordWeapon();
-            break;
+            //break;
         case 5:
             return new HorseWeapon();
-            break;
+            //break;
         case 6:
             return new DaggerWeapon();
-            break;
+            //break;
         case 7:
             return new DragonFoe();
-            break;
+            //break;
         case 8:
             return new GiantFoe();
-            break;
+            //break;
         case 9:
             return new MordredFoe();
-            break;
+            //break;
         case 10:
             return new GreenKnightFoe();
-            break;
+            //break;
         case 11:
             return new BlackKnightFoe();
-            break;
+            //break;
         case 12:
             return new EvilKnightFoe();
-            break;
+            //break;
         case 13:
             return new SaxonKnightFoe();
-            break;
+            //break;
         case 14:
             return new RobberKnightFoe();
-            break;
+            //break;
         case 15:
             return new SaxonsFoe();
-            break;
+            //break;
         case 16:
             return new BoarFoe();
-            break;
+            //break;
         default:
             return new ThievesFoe();
+        }
     }
 
     protected void set_x_cord(float x){
@@ -100,7 +101,9 @@ public abstract class Card {
         return name;
     }
 
+    /*
     protected Image getImg(){
         return img;
     }
+    */
 }

@@ -1,9 +1,11 @@
+import java.util.ArrayList;
+
 public class AdventureDeckNew extends Deck{
 
     //I couldn't figure out how to override the old Adventure Deck when committing
 
 
-    private void initializeCards(){
+    protected void initializeCards(){
         //foes
         cards.add(new DragonFoe());
         for(int i = 0; i < 2; ++i){
