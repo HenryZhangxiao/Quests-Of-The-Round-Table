@@ -25,15 +25,16 @@ public class App extends Application implements ClientEventListener {
 
     private Label playerListLabel;
 
+    View view;
+
     @Override
     public void start(Stage stage) {
+        view = new View();
+        var scene = new Scene(view, view.getWidth(), view.getHeight());
         NetworkManager.get().addListener(this);
-
-        var javaVersion = SystemInfo.javaVersion();
-        var javafxVersion = SystemInfo.javafxVersion();
         var label = new Label("This is the start of Quests game.");
         playerListLabel = new Label("Player List: ");
-        var scene = new Scene(new StackPane(label,playerListLabel), 640, 480);
+
         stage.setScene(scene);
 
 
