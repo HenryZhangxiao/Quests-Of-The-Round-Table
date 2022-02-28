@@ -12,13 +12,15 @@ import javafx.stage.Stage;
  */
 public class App extends Application {
 
+    View view;
+
     @Override
     public void start(Stage stage) {
-        var javaVersion = SystemInfo.javaVersion();
-        var javafxVersion = SystemInfo.javafxVersion();
-
-        var label = new Label("This is the start of Quests game.");
-        var scene = new Scene(new StackPane(label), 640, 480);
+        //var javaVersion = SystemInfo.javaVersion();
+        //var javafxVersion = SystemInfo.javafxVersion();
+        //var label = new Label("This is the start of Quests game.");
+        view = new View();
+        var scene = new Scene(view, view.getWidth(), view.getHeight());
         stage.setScene(scene);
         stage.show();
     }
