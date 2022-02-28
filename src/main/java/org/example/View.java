@@ -1,5 +1,6 @@
 package org.example;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -11,10 +12,13 @@ import javafx.scene.shape.Rectangle;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class View extends Pane {
 
     //private Game model;
+    private Image advCards;
+    private Image storyCards;
     private ImageView storyDiscard;
     private ImageView advDiscard;
     private Group hand;
@@ -43,13 +47,23 @@ public class View extends Pane {
         advDiscard.setPreserveRatio(true);
         getChildren().add(advDiscard);
 
+        advCards = new Image(new File("src/resources/advComposite.jpg").toURI().toString());
+        advDiscard.setImage(advCards);
+        advDiscard.setViewport(getAdvCard(0));
+
+
+        //storyCards = new Image(new File("src/resources/storyComposite.jpg").toURI().toString());
+        //storyDiscard.setImage(storyCards);
+
         storyDeck = new Button("Draw story card");
         storyDeck.relocate(storyDiscard.getX()-120, storyDiscard.getY());
         storyDeck.setPrefSize(100,140);
         getChildren().add(storyDeck);
 
         storyDeck.setOnAction(e -> {
-            //Draw story card within game model, update hand to reflect
+            //model.drawStoryCard(); or smtg like that
+            //update();
+
             //Displays a test card in the discard pile for now
             Image newImg = new Image(new File("src/resources/Horse.jpg").toURI().toString());
             storyDiscard.setImage(newImg);
@@ -61,10 +75,11 @@ public class View extends Pane {
         getChildren().add(advDeck);
 
         advDeck.setOnAction(e -> {
-            //Draw adventure card within game model, update hand to reflect
+            //model.drawAdvCard(); or smtg like that
+            //update();
+
             //Displays a test card in the discard pile for now
-            Image newImg = new Image(new File("src/resources/Sword.jpg").toURI().toString());
-            advDiscard.setImage(newImg);
+            advDiscard.setViewport(getAdvCard(new Random().nextInt(17)+1));
         });
 
         hand = new Group();
@@ -98,5 +113,17 @@ public class View extends Pane {
         getChildren().add(hand);
 
     }
+
+    public void update() {
+        //ArrayList<Integer> localHand = new ArrayList<>();
+        // for all cards in localPlayer's hand, add card.id to localHand
+
+    }
+
+    private Rectangle2D getAdvCard(int id) {
+        return new Rectangle2D(((id-1)%8)*200,Math.floorDiv(id-1,8)*280,200,280);
+    }
+
+    //private Rectangle2D getStoryCard(int id) { }
 
 }
