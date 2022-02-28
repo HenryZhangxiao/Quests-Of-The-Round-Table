@@ -10,13 +10,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class View extends Pane {
 
     //private Game model;
     private ImageView storyDiscard;
     private ImageView advDiscard;
-    //private Group hand;
+    private Group hand;
+    private ArrayList<ImageView> cards;
     private Button storyDeck;
     private Button advDeck;
 
@@ -64,6 +66,36 @@ public class View extends Pane {
             Image newImg = new Image(new File("src/resources/Sword.jpg").toURI().toString());
             advDiscard.setImage(newImg);
         });
+
+        hand = new Group();
+
+        Rectangle handArea = new Rectangle(getWidth()-900, getHeight()-320, 890, 310);
+        handArea.setFill(Color.DARKGRAY);
+        handArea.setStroke(Color.SADDLEBROWN);
+        handArea.setArcWidth(30);
+        handArea.setArcHeight(20);
+        hand.getChildren().add(handArea);
+
+        cards = new ArrayList<>();
+
+        for (int i = 0; i < 16; ++i) {
+            ImageView card = new ImageView();
+            card.setFitWidth(100);
+            card.setFitHeight(140);
+            card.setPreserveRatio(true);
+            card.setX(handArea.getX() + 10 + (i%8)*110);
+            card.setY(handArea.getY() + 10 + Math.floorDiv(i,8)*150);
+            cards.add(card);
+            hand.getChildren().add(card);
+
+            //add event handling for discarding
+
+            //temp images
+            Image img = new Image(new File("src/resources/Dagger.jpg").toURI().toString());
+            card.setImage(img);
+        }
+
+        getChildren().add(hand);
 
     }
 
