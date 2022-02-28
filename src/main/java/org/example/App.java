@@ -21,15 +21,21 @@ import java.util.Random;
 /**
  * JavaFX App
  */
-public class App extends Application {
+public class App extends Application implements ClientEventListener {
+
+    private Label playerListLabel;
 
     @Override
     public void start(Stage stage) {
+        NetworkManager.get().addListener(this);
+
         var javaVersion = SystemInfo.javaVersion();
         var javafxVersion = SystemInfo.javafxVersion();
         var label = new Label("This is the start of Quests game.");
-        var scene = new Scene(new StackPane(label), 640, 480);
+        playerListLabel = new Label("Player List: ");
+        var scene = new Scene(new StackPane(label,playerListLabel), 640, 480);
         stage.setScene(scene);
+
 
 
 
@@ -96,5 +102,14 @@ public class App extends Application {
         Scene scene1= new Scene(layout, 300, 250);
         joinPopup.setScene(scene1);
         joinPopup.showAndWait();
+    }
+
+    @Override
+    public void onPlayerListUpdate(String[] playerList) {
+        String str = "Player List: \n";
+        for (String s: playerList) {
+            str += s + "\n";
+        }
+        playerListLabel.setText(str);
     }
 }

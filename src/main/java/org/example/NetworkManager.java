@@ -2,6 +2,7 @@ package org.example;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
@@ -12,6 +13,8 @@ public class NetworkManager extends Thread {
     //Singleton Instance
     private static NetworkManager networkManger;
 
+    //Listeners
+    private ArrayList<ClientEventListener> _listeners;
 
     //A list of messages that have been received from the server.
     private BlockingQueue<NetworkMessage> _messagesReceived;
@@ -25,10 +28,15 @@ public class NetworkManager extends Thread {
     //Local Player
     private NetworkClient localPlayer;
 
+    //Temporary
+    private ArrayList<String> playerList;
+
     private boolean stopThread = false;
 
     private NetworkManager(){
         _messagesReceived = new LinkedBlockingQueue<NetworkMessage>();
+        _listeners = new ArrayList<ClientEventListener>();
+        playerList = new ArrayList<String>();
     }
 
     //Singleton
@@ -44,6 +52,11 @@ public class NetworkManager extends Thread {
             Socket s = new Socket(IP,PORT);
             localPlayer = new NetworkClient(s,-1,true);
             localPlayer.start();
+
+            playerList.add(playerName);
+            for (ClientEventListener l: _listeners) {
+                l.onPlayerListUpdate((String[]) playerList.toArray());
+            }
 
             this.start();
             return true;
@@ -87,6 +100,10 @@ public class NetworkManager extends Thread {
             case TEST_MESSAGE:
                 System.out.println("Got a message from: " + String.valueOf(msg.playerID));
                 break;
+            case UPDATE_PLAYERSTATUS:
+
+
+                break;
             default:
                 System.out.println("Default Message Received.");
                 break;
@@ -109,6 +126,14 @@ public class NetworkManager extends Thread {
     public int getLocalPlayerID() {return localPlayer.getPlayerId(); }
     public static boolean isInsantiated(){
         return networkManger != null;
+    }
+
+    //Listeners
+    public void addListener(ClientEventListener l){
+        _listeners.add(l);
+    }
+    public void removeListener(ClientEventListener l){
+        _listeners.remove(l);
     }
 
     //endregion
