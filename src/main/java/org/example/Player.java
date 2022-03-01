@@ -7,13 +7,13 @@ public class Player{
     private int playerNum;
     private String playerName;
     public ArrayList<Card> hand;
-    public ArrayList<Card> board;  //amours, weapons, etc in front of them
+    //public ArrayList<Card> board;  //amours, weapons, etc in front of them
 
     public Player(int ID, String name){
         playerName = name;
         playerNum = ID;
         hand = new ArrayList<>();
-        board = new ArrayList<>();
+        //board = new ArrayList<>();
     }
 
     public void addCard(Card c){

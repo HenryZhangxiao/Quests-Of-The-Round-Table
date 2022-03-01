@@ -18,6 +18,7 @@ public class NetworkServer extends Thread{
     private NewPlayerManager listener;
 
     private boolean waitingForPlayers = true;
+    private int connectedPlayers = 0;
 
     private ArrayList<NetworkClient> _players;
     private BlockingQueue<NetworkMessage> _messagesReceived;
@@ -57,6 +58,7 @@ public class NetworkServer extends Thread{
                     l.onPlayerConnect(c.getPlayerId(), c.getPlayerName());
                 }
 
+                connectedPlayers++;
                 break;
             case DISCONNECT:
                 disconnectPlayer(c.getPlayerId());
@@ -65,7 +67,13 @@ public class NetworkServer extends Thread{
                     l.onPlayerDisconnect(c.getPlayerId(), c.getPlayerName());
                 }
 
+                connectedPlayers--;
                 break;
+            case START_GAME:
+                for(ServerEventListener l: _listeners){
+                    l.onGameStart();
+                }
+
             case TEST_MESSAGE:
 
                 break;
@@ -134,6 +142,10 @@ public class NetworkServer extends Thread{
         for(NetworkClient c: _players){
             c.sendNetMsg(msg);
         }
+    }
+
+    public int getConnectedPlayers(){
+        return connectedPlayers;
     }
 
     //Listeners

@@ -12,9 +12,18 @@ public class LocalGameManager implements ClientEventListener{
     private Player localPlayer;
 
     private int turnID = -1;
+    private ArrayList<Card> _cardsOnBoard;
+
+    private Card latestDiscardedCard;
+
+
+    private boolean gameStarted = false;
+    private int connectedPlayerCount = 0;
+
 
     private LocalGameManager(){
         _players = new ArrayList<Player>();
+        _cardsOnBoard = new ArrayList<>();
         NetworkManager.get().addListener(this);
     }
 
@@ -51,6 +60,14 @@ public class LocalGameManager implements ClientEventListener{
         return localPlayer.getPlayerNum() == turnID;
     }
 
+    public void finishTurn(){
+        if(!isMyTurn())
+            return;
+
+        LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.TURN_CHANGE,null);
+        NetworkManager.get().sendNetMessage(msg);
+    }
+
     public String[] getAllPlayerNames(){
         String[] x = new String[_players.size()];
         for (int i = 0; i < _players.size(); i++){
@@ -59,15 +76,29 @@ public class LocalGameManager implements ClientEventListener{
         return x;
     }
 
+    public ArrayList<Player> getPlayers(){
+        return _players;
+    }
+
+    public boolean isGameStarted(){return gameStarted;}
+
+    public int getConnectedPlayerCount(){return connectedPlayerCount;}
+
+    //Could be null
+    public Card getLatestDiscardedCard(){return latestDiscardedCard;}
+
     //endregion
 
     @Override
     public void onPlayerConnect(int plyID, String playerName, int[] cardIDs) {
         Player p = new Player(plyID,playerName);
 
+        //todo addcardsByIDs not complete
         p.addCardsByIDs(cardIDs);
 
         _players.add(p);
+
+        connectedPlayerCount++;
     }
 
     @Override
@@ -82,7 +113,14 @@ public class LocalGameManager implements ClientEventListener{
         if(x != -1)
             _players.remove(x);
 
+        connectedPlayerCount--;
+
         System.out.println("CLIENT: Player " + playerName + " disconnected. ID: " + String.valueOf(plyID));
+    }
+
+    @Override
+    public void onStartGame() {
+        gameStarted = true;
     }
 
     @Override
@@ -98,5 +136,7 @@ public class LocalGameManager implements ClientEventListener{
     @Override
     public void onCardDiscard(int plyID, int cardID) {
         getPlayerByID(plyID).discardCardFromHand(cardID);
+
+        //todo lookup card by ID and set it to latestDiscardedCard
     }
 }

@@ -18,6 +18,7 @@ public class Game extends Thread implements ServerEventListener {
     private Deck deck;
 
     private ArrayList<Player> _players;
+    private ArrayList<Card> _cardsOnBoard; //For later
     private int turnPlayerID = 0;
 
     private boolean gameStarted = false;
@@ -28,6 +29,7 @@ public class Game extends Thread implements ServerEventListener {
     private Game(){
         _players = new ArrayList<Player>();
         deck = new AdventureDeckNew();
+        _cardsOnBoard = new ArrayList<>();
         deck.initializeCards();
         NetworkServer.get().addListener(this);
     }
@@ -94,6 +96,14 @@ public class Game extends Thread implements ServerEventListener {
             _players.remove(x);
 
         System.out.println("SERVER: Player " + playerName + " disconnected. ID: " + String.valueOf(plyID));
+    }
+
+    @Override
+    public void onGameStart() {
+        gameStarted = true;
+
+        ServerMessage msg = new ServerMessage(NetworkMsgType.START_GAME,null);
+        NetworkServer.get().sendNetMessage(msg);
     }
 
     @Override

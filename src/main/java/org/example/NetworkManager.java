@@ -95,6 +95,13 @@ public class NetworkManager extends Thread {
             case DISCONNECT:
                 //Todo
                 break;
+            case START_GAME:
+
+                for (ClientEventListener l: _listeners) {
+                    l.onStartGame();
+                }
+
+                break;
             case UPDATE_PLAYERLIST:
 
                 for (ClientEventListener l: _listeners) {
@@ -104,12 +111,24 @@ public class NetworkManager extends Thread {
                 break;
             case CARD_DRAW:
 
+                for (ClientEventListener l: _listeners) {
+                    l.onDrawCard((int)_objs.get(0),(int)_objs.get(1));
+                }
+
                 break;
             case CARD_DISCARD:
+
+                for (ClientEventListener l: _listeners) {
+                    l.onCardDiscard((int)_objs.get(0),(int)_objs.get(1));
+                }
 
                 break;
 
             case TURN_CHANGE:
+
+                for (ClientEventListener l: _listeners) {
+                    l.onTurnChange((int)_objs.get(0));
+                }
 
                 break;
 
@@ -128,6 +147,13 @@ public class NetworkManager extends Thread {
             _messagesReceived.put(msg);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void startGame(){
+        if(isHost){
+            LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.START_GAME,null);
+            sendNetMessage(msg);
         }
     }
 
