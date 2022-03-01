@@ -40,7 +40,7 @@ public class App extends Application {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 //For quick testing
-                NetworkMessage msg = new LocalClientMessage(NetworkMsgType.TEST_MESSAGE,null);
+                LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.TEST_MESSAGE,null);
                 NetworkManager.get().sendNetMessage(msg);
             }
         });

@@ -2,7 +2,7 @@ package org.example;
 
 import java.util.ArrayList;
 
-public class Player {
+public class Player{
 
     private int playerNum;
     private String playerName;
@@ -12,25 +12,43 @@ public class Player {
     public Player(int ID, String name){
         playerName = name;
         playerNum = ID;
+        hand = new ArrayList<>();
+        board = new ArrayList<>();
     }
 
-    protected int drawCard(){
-        //TODO: send request to server
-        return 0; //For now to stop any errors
+    public void addCard(Card c){
+        hand.add(c);
     }
 
-    protected void discardCardFromHand(Integer index){
-        Card card = hand.get(index);
-        hand.remove(card);
-        card.discard();
+    public int[] getHandCardIDs(){
+        int[] a = new int[hand.size()];
+        for(int i = 0; i < hand.size(); i++){
+            a[i] = hand.get(i).id;
+        }
+        return a;
+    }
 
-        //TODO: make sure other players see discarded cards
+    public void addCardsByIDs(int[] cardIDs){
+        //todo
+    }
+
+    public void addCardByID(int cardID){
+        //todo need a way to lookup a card by ID and get back a card object before adding it to the hand.
+    }
+
+    protected void discardCardFromHand(int cardID){
+        //Card card = hand.get(index);
+        //hand.remove(card);
+        //card.discard();
+
+        //todo this needs to be by cardID, not by index in the hand.
     }
 
     protected void discardCardsFromHand(Integer[] indices){
-        for(int i = 0; i < indices.length; ++i){
-            discardCardFromHand(indices[i]);
-        }
+        //for(int i = 0; i < indices.length; ++i){
+        //    discardCardFromHand(indices[i]);
+        //}
+        //todo same as above
     }
 
     public void setPlayerNum(int playerNum) {

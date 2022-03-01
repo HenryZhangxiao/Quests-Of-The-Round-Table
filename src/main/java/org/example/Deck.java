@@ -8,6 +8,11 @@ public abstract class Deck {
     ArrayList<Card> cards;
     ArrayList<Card> discards;
 
+    public Deck(){
+        cards = new ArrayList<>();
+        discards = new ArrayList<>();
+    }
+
     protected void shuffle(){
         Collections.shuffle(cards);
     }

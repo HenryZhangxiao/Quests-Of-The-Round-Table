@@ -26,16 +26,12 @@ public class NetworkManager extends Thread {
     private NetworkClient localPlayer;
 
 
-
-    //Temporary
-    private ArrayList<String> playerList;
-
     private volatile boolean stopThread = false;
 
     private NetworkManager(){
         _messagesReceived = new LinkedBlockingQueue<NetworkMessage>();
         _listeners = new ArrayList<ClientEventListener>();
-        playerList = new ArrayList<String>();
+
     }
 
     //Singleton
@@ -51,8 +47,7 @@ public class NetworkManager extends Thread {
             Socket s = new Socket(IP,PORT);
             localPlayer = new NetworkClient(s,-1,true);
             localPlayer.start();
-
-            playerList.add(playerName);
+            localPlayer.setPlayerName(playerName);
 
             this.start();
             return true;
@@ -65,6 +60,7 @@ public class NetworkManager extends Thread {
     public boolean createGame(String playerName){
         isHost = true;
         NetworkServer.get().start();
+        Game.get().start();
 
         return joinGame("localhost", playerName);
     }
@@ -79,6 +75,7 @@ public class NetworkManager extends Thread {
         }
     }
 
+    //These are received from the server.
     public void handleMessage(NetworkMessage msg,ArrayList<Object> _objs){
         switch (msg.messageType){
             case UNKNOWN:
@@ -87,12 +84,35 @@ public class NetworkManager extends Thread {
                 //Todo
                 break;
             case CONNECT:
+                //Gets PlayerID from server
                 localPlayer.setPlayerId((int)_objs.get(0));
+                //Sends back a name to use
+                LocalClientMessage m = new LocalClientMessage(NetworkMsgType.CONNECT,NetworkMessage.pack(localPlayer.getPlayerName()));
+                localPlayer.sendNetMsg(m);
+
                 System.out.println("CLIENT: Set localID to " + _objs.get(0).toString());
                 break;
             case DISCONNECT:
                 //Todo
                 break;
+            case UPDATE_PLAYERLIST:
+
+                for (ClientEventListener l: _listeners) {
+                    l.onPlayerConnect((int)_objs.get(0),(String) _objs.get(1), (int[])_objs.get(2));
+                }
+
+                break;
+            case CARD_DRAW:
+
+                break;
+            case CARD_DISCARD:
+
+                break;
+
+            case TURN_CHANGE:
+
+                break;
+
             case TEST_MESSAGE:
                 System.out.println("Got a message from: " + String.valueOf(msg.playerID));
                 break;
@@ -112,7 +132,7 @@ public class NetworkManager extends Thread {
     }
 
     //region Helpers/Getters/Setters
-    public void sendNetMessage(NetworkMessage msg){
+    public void sendNetMessage(LocalClientMessage msg){
         localPlayer.sendNetMsg(msg);
     }
     public NetworkClient getLocalPlayer(){ return localPlayer; }

@@ -15,7 +15,7 @@ public class NetworkServer extends Thread{
 
     private int playerIDs = 0;
 
-    private NewPlayerListener listener;
+    private NewPlayerManager listener;
 
     private boolean waitingForPlayers = true;
 
@@ -28,8 +28,10 @@ public class NetworkServer extends Thread{
         _players = new ArrayList<NetworkClient>();
         _messagesReceived = new LinkedBlockingQueue<NetworkMessage>();
         _listeners = new ArrayList<ServerEventListener>();
-        listener = new NewPlayerListener();
+        listener = new NewPlayerManager();
         listener.start();
+
+
     }
 
     //Singleton
@@ -40,6 +42,8 @@ public class NetworkServer extends Thread{
     }
 
     public void handleMessage(NetworkMessage msg,ArrayList<Object> _objs){
+        NetworkClient c = getByID(msg.playerID);
+
         switch (msg.messageType){
             case UNKNOWN:
                 System.out.println("Unknown Message Received. Objs: " + _objs.toString());
@@ -47,18 +51,41 @@ public class NetworkServer extends Thread{
                 //Todo
                 break;
             case CONNECT:
-                getByID(msg.playerID).setPlayerName(_objs.get(0).toString());
+                c.setPlayerName(_objs.get(0).toString());
+
+                for(ServerEventListener l: _listeners){
+                    l.onPlayerConnect(c.getPlayerId(), c.getPlayerName());
+                }
+
                 break;
             case DISCONNECT:
-                disconnectPlayer(msg.playerID);
+                disconnectPlayer(c.getPlayerId());
+
+                for(ServerEventListener l: _listeners){
+                    l.onPlayerDisconnect(c.getPlayerId(), c.getPlayerName());
+                }
+
                 break;
             case TEST_MESSAGE:
 
                 break;
-
-
+            case CARD_DRAW:
+                for(ServerEventListener l: _listeners){
+                    l.onDrawCard(c.getPlayerId());
+                }
+                break;
+            case CARD_DISCARD:
+                for(ServerEventListener l: _listeners){
+                    l.onCardDiscard(c.getPlayerId(),(int)msg._objects.get(0));
+                }
+                break;
+            case TURN_CHANGE:
+                for(ServerEventListener l: _listeners){
+                    l.onTurnChange(c.getPlayerId());
+                }
+                break;
             default:
-                System.out.println("Default Message Received.");
+                System.out.println("SERVER: Unhandled Message Received.");
                 break;
         }
     }
@@ -139,15 +166,16 @@ public class NetworkServer extends Thread{
         }
 
         listener.close();
+        Game.get().close();
     }
 
     //Class for listening for new players.
-    private class NewPlayerListener extends Thread{
+    private class NewPlayerManager extends Thread{
 
         private ServerSocket serverSocket;
         private volatile boolean stopThread = false;
 
-        public NewPlayerListener(){
+        public NewPlayerManager(){
             try {
                 serverSocket = new ServerSocket(NetworkManager.get().PORT);
             } catch (IOException e) {
