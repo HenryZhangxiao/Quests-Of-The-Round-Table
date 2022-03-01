@@ -11,6 +11,8 @@ public class NetworkServer extends Thread{
 
     private static NetworkServer networkServer;
 
+    private ArrayList<ServerEventListener> _listeners;
+
     private int playerIDs = 0;
 
     private NewPlayerListener listener;
@@ -20,11 +22,12 @@ public class NetworkServer extends Thread{
     private ArrayList<NetworkClient> _players;
     private BlockingQueue<NetworkMessage> _messagesReceived;
 
-    private boolean stopThread = false;
+    private volatile boolean stopThread = false;
 
     private NetworkServer(){
         _players = new ArrayList<NetworkClient>();
         _messagesReceived = new LinkedBlockingQueue<NetworkMessage>();
+        _listeners = new ArrayList<ServerEventListener>();
         listener = new NewPlayerListener();
         listener.start();
     }
@@ -50,8 +53,10 @@ public class NetworkServer extends Thread{
                 disconnectPlayer(msg.playerID);
                 break;
             case TEST_MESSAGE:
-                echoMessage(msg);
+
                 break;
+
+
             default:
                 System.out.println("Default Message Received.");
                 break;
@@ -80,13 +85,13 @@ public class NetworkServer extends Thread{
     }
 
     //Sends all messages in lists to all connected clients, including local player. Will not send to person who sent message.
-    public void echoMessage(NetworkMessage msg) {
-        for (int i = 0; i < _players.size(); i++) {
-            if (msg.playerID != _players.get(i).getPlayerId()) {
-                _players.get(i).sendNetMsg(msg);
-            }
-        }
-    }
+    //public void echoMessage(NetworkMessage msg) {
+    //    for (int i = 0; i < _players.size(); i++) {
+    //        if (msg.playerID != _players.get(i).getPlayerId()) {
+    //            _players.get(i).sendNetMsg(msg);
+    //        }
+    //    }
+    //}
 
     //region Helpers
     public NetworkClient getByID(int plyID){
@@ -96,6 +101,20 @@ public class NetworkServer extends Thread{
         }
         System.out.println("SERVER: Couldn't find player with ID: " + String.valueOf(plyID));
         return null;
+    }
+
+    public void sendNetMessage(ServerMessage msg){
+        for(NetworkClient c: _players){
+            c.sendNetMsg(msg);
+        }
+    }
+
+    //Listeners
+    public void addListener(ServerEventListener l){
+        _listeners.add(l);
+    }
+    public void removeListener(ServerEventListener l){
+        _listeners.remove(l);
     }
 
     //endregion
@@ -126,7 +145,7 @@ public class NetworkServer extends Thread{
     private class NewPlayerListener extends Thread{
 
         private ServerSocket serverSocket;
-        private boolean stopThread = false;
+        private volatile boolean stopThread = false;
 
         public NewPlayerListener(){
             try {

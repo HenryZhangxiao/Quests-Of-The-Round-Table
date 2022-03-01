@@ -23,7 +23,7 @@ public class NetworkClient extends Thread{
     private boolean isLocalPlayer = false;
 
     //Used to stop internal Thread
-    private boolean stopThread = false;
+    private volatile boolean stopThread = false;
 
     public NetworkClient(Socket socket, int plyID, boolean isLocalPly){
         isLocalPlayer = isLocalPly;
@@ -42,19 +42,20 @@ public class NetworkClient extends Thread{
 
     public void run(){
         while (!stopThread){
-            try{
-                NetworkMessage msg = (NetworkMessage) inStream.readObject();
-                if(isLocalPlayer)
-                    NetworkManager.get().addReceivedMsg(msg);
-                else
-                    NetworkServer.get().addReceivedMsg(msg);
-            }
-            catch (Exception e){
-                if(isLocalPlayer)
-                    System.out.println("CLIENT: Couldn't Read Network Message.");
-                else
-                    System.out.println("SERVER: Couldn't Read Network Message from ID: " + String.valueOf(playerId));
-                System.out.println(e.toString());
+            if(!sock.isClosed()) {
+                try {
+                    NetworkMessage msg = (NetworkMessage) inStream.readObject();
+                    if (isLocalPlayer)
+                        NetworkManager.get().addReceivedMsg(msg);
+                    else
+                        NetworkServer.get().addReceivedMsg(msg);
+                } catch (Exception e) {
+                    if (isLocalPlayer)
+                        System.out.println("CLIENT: Couldn't Read Network Message.");
+                    else
+                        System.out.println("SERVER: Couldn't Read Network Message from ID: " + String.valueOf(playerId));
+                    System.out.println(e.toString());
+                }
             }
         }
     }

@@ -6,7 +6,10 @@ public enum NetworkMsgType {
     CONNECT, //Initial Connection. Server Sends ID to be assigned. Client replies with Name to use.
     DISCONNECT, //Sent on a disconnect
     TEST_MESSAGE, //For Testing
-    UPDATE_PLAYERSTATUS //Sent from Server to all clients when a player joins/leaves.
+
+    TURN_CHANGE, //[ID of whos turn it now is.]
+    CARD_DRAW, //[ID of card drawn]
+    CARD_DISCARD //[ID of card discarded]
 
 
     //GAME_NEW_ROUND, Example message types

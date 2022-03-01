@@ -1,6 +1,7 @@
 package org.example;
 
-public interface ClientEventListener {
+public interface ServerEventListener {
+
     public void onPlayerConnect(int plyID, String playerName);
     public void onPlayerDisconnect(int plyID, String playerName);
 

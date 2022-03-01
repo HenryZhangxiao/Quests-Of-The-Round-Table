@@ -19,9 +19,7 @@ import java.util.Random;
 /**
  * JavaFX App
  */
-public class App extends Application implements ClientEventListener {
-
-    private Label playerListLabel;
+public class App extends Application {
 
     View view;
 
@@ -29,9 +27,7 @@ public class App extends Application implements ClientEventListener {
     public void start(Stage stage) {
         view = new View();
         var scene = new Scene(view, view.getWidth(), view.getHeight());
-        NetworkManager.get().addListener(this);
         var label = new Label("This is the start of Quests game.");
-        playerListLabel = new Label("Player List: ");
 
         stage.setScene(scene);
 
@@ -103,12 +99,4 @@ public class App extends Application implements ClientEventListener {
         joinPopup.showAndWait();
     }
 
-    @Override
-    public void onPlayerListUpdate(String[] playerList) {
-        String str = "Player List: \n";
-        for (String s: playerList) {
-            str += s + "\n";
-        }
-        playerListLabel.setText(str);
-    }
 }

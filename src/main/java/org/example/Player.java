@@ -4,9 +4,15 @@ import java.util.ArrayList;
 
 public class Player {
 
-    Integer playerNum;
+    private int playerNum;
+    private String playerName;
     public ArrayList<Card> hand;
     public ArrayList<Card> board;  //amours, weapons, etc in front of them
+
+    public Player(int ID, String name){
+        playerName = name;
+        playerNum = ID;
+    }
 
     protected int drawCard(){
         //TODO: send request to server
@@ -27,5 +33,17 @@ public class Player {
         }
     }
 
+    public void setPlayerNum(int playerNum) {
+        this.playerNum = playerNum;
+    }
 
+    public int getPlayerNum(){
+        return playerNum;
+    }
+
+    public void setPlayerName(String name){
+        this.playerName = name;
+    }
+
+    public String getPlayerName(){return playerName;}
 }

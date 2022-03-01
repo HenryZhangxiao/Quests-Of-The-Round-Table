@@ -25,10 +25,12 @@ public class NetworkManager extends Thread {
     //Local Player
     private NetworkClient localPlayer;
 
+
+
     //Temporary
     private ArrayList<String> playerList;
 
-    private boolean stopThread = false;
+    private volatile boolean stopThread = false;
 
     private NetworkManager(){
         _messagesReceived = new LinkedBlockingQueue<NetworkMessage>();
@@ -51,9 +53,6 @@ public class NetworkManager extends Thread {
             localPlayer.start();
 
             playerList.add(playerName);
-            for (ClientEventListener l: _listeners) {
-                l.onPlayerListUpdate((String[]) playerList.toArray());
-            }
 
             this.start();
             return true;
@@ -97,10 +96,7 @@ public class NetworkManager extends Thread {
             case TEST_MESSAGE:
                 System.out.println("Got a message from: " + String.valueOf(msg.playerID));
                 break;
-            case UPDATE_PLAYERSTATUS:
 
-
-                break;
             default:
                 System.out.println("Default Message Received.");
                 break;
