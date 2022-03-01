@@ -28,7 +28,7 @@ public class Game extends Thread implements ServerEventListener {
 
     private Game(){
         _players = new ArrayList<Player>();
-        deck = new AdventureDeckNew();
+        deck = new AdventureDeck();
         _cardsOnBoard = new ArrayList<>();
         deck.initializeCards();
         NetworkServer.get().addListener(this);
