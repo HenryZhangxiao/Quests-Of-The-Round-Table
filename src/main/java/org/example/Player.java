@@ -18,7 +18,7 @@ public class Player{
         hand.add(c);
     }
 
-    protected Card getCardByID(int id){ //TODO will have to change to follow order of single Image with all cards
+    protected Card getCardByID(int id){
         switch(id){
             case 1:
                 return new ExcaliburWeapon();
