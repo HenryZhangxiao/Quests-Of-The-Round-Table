@@ -57,7 +57,10 @@ public class LocalGameManager implements ClientEventListener{
     }
 
     public boolean isMyTurn(){
-        return localPlayer.getPlayerNum() == turnID;
+        if (localPlayer != null)
+            return localPlayer.getPlayerNum() == turnID;
+        else
+            return false;
     }
 
     public void finishTurn(){
@@ -99,6 +102,9 @@ public class LocalGameManager implements ClientEventListener{
         _players.add(p);
 
         connectedPlayerCount++;
+
+        if (plyID == NetworkManager.get().getLocalPlayerID())
+            localPlayer = p;
     }
 
     @Override
