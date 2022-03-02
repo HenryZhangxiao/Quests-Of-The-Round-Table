@@ -3,7 +3,6 @@ package org.example;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -22,6 +21,7 @@ public class View extends Pane {
     private ArrayList<ImageView> cards;
     private Button storyDeck;
     private Button advDeck;
+    private Button endTurn;
 
     public View () {
 
@@ -100,6 +100,15 @@ public class View extends Pane {
         }
 
         getChildren().add(hand);
+
+        endTurn = new Button("End Turn");
+        endTurn.relocate(handArea.getX()+790, handArea.getY()-30);
+        endTurn.setPrefSize(100,20);
+        endTurn.setVisible(false);
+        endTurn.setOnAction(e -> {
+            LocalGameManager.get().finishTurn();
+        });
+        getChildren().add(endTurn);
 
     }
 
