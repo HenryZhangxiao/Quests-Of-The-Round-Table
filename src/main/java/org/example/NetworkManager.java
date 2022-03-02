@@ -44,6 +44,7 @@ public class NetworkManager extends Thread {
     //Joining a game by IP. Also called after creating a game.
     public boolean joinGame(String IP, String playerName){
         try {
+            LocalGameManager.get();
             Socket s = new Socket(IP,PORT);
             localPlayer = new NetworkClient(s,-1,true);
             localPlayer.start();
