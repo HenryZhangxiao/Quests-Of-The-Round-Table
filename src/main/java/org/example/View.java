@@ -15,7 +15,9 @@ import java.util.Random;
 
 public class View extends Pane {
 
-    //private Game model;
+    //Singleton
+    public static View view;
+
     private ImageView storyDiscard;
     private ImageView advDiscard;
     private ArrayList<ImageView> cards;
@@ -23,7 +25,13 @@ public class View extends Pane {
     private Button advDeck;
     private Button endTurn;
 
-    public View () {
+    public static View get() {
+        if (view == null)
+            view = new View();
+        return view;
+    }
+
+    private View () {
 
         setWidth(1280);
         setHeight(720);

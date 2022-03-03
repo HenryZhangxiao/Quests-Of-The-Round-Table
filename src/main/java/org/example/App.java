@@ -21,12 +21,9 @@ import java.util.Random;
  */
 public class App extends Application {
 
-    View view;
-
     @Override
     public void start(Stage stage) {
-        view = new View();
-        var scene = new Scene(view, view.getWidth(), view.getHeight());
+        var scene = new Scene(View.get(), View.get().getWidth(), View.get().getHeight());
         var label = new Label("This is the start of Quests game.");
 
         stage.setScene(scene);
