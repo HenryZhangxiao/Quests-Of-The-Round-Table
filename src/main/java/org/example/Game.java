@@ -148,6 +148,8 @@ public class Game extends Thread implements ServerEventListener {
             return;
         }
 
+        deck.discards.add(Card.getCardByID(cardID));
+
         ServerMessage msg = new ServerMessage(NetworkMsgType.CARD_DISCARD,NetworkMessage.pack(plyID, cardID));
         NetworkServer.get().sendNetMessage(msg);
     }

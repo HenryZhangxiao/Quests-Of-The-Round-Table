@@ -14,7 +14,7 @@ public class LocalGameManager implements ClientEventListener{
     private int turnID = -1;
     private ArrayList<Card> _cardsOnBoard;
 
-    private Card latestDiscardedCard;
+    private ArrayList<Card> _discardPile;
 
 
     private boolean gameStarted = false;
@@ -23,7 +23,8 @@ public class LocalGameManager implements ClientEventListener{
 
     private LocalGameManager(){
         _players = new ArrayList<Player>();
-        _cardsOnBoard = new ArrayList<>();
+        _cardsOnBoard = new ArrayList<Card>();
+        _discardPile = new ArrayList<Card>();
         NetworkManager.get().addListener(this);
     }
 
@@ -87,8 +88,7 @@ public class LocalGameManager implements ClientEventListener{
 
     public int getConnectedPlayerCount(){return connectedPlayerCount;}
 
-    //Could be null
-    public Card getLatestDiscardedCard(){return latestDiscardedCard;}
+    public ArrayList<Card> getDiscardPile() {return _discardPile;}
 
     //endregion
 
@@ -96,7 +96,6 @@ public class LocalGameManager implements ClientEventListener{
     public void onPlayerConnect(int plyID, String playerName, int[] cardIDs) {
         Player p = new Player(plyID,playerName);
 
-        //todo addcardsByIDs not complete
         p.addCardsByIDs(cardIDs);
 
         _players.add(p);
@@ -143,6 +142,6 @@ public class LocalGameManager implements ClientEventListener{
     public void onCardDiscard(int plyID, int cardID) {
         getPlayerByID(plyID).discardCardFromHand(cardID);
 
-        //todo lookup card by ID and set it to latestDiscardedCard
+        _discardPile.add(Card.getCardByID(cardID));
     }
 }

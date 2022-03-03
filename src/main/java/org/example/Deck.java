@@ -26,6 +26,8 @@ public abstract class Deck {
     }
 
     protected Card drawCard(){
+        if(cards.isEmpty())
+            reshuffle();
         return cards.remove(0);
     }
 

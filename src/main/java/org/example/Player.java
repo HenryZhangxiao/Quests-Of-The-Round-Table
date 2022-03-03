@@ -18,63 +18,6 @@ public class Player{
         hand.add(c);
     }
 
-    protected Card getCardByID(int id){
-        switch(id){
-            case 1:
-                return new ExcaliburWeapon();
-            //break;
-            case 2:
-                return new LanceWeapon();
-            //break;
-            case 3:
-                return new BattleAxWeapon();
-            //break;
-            case 4:
-                return new SwordWeapon();
-            //break;
-            case 5:
-                return new HorseWeapon();
-            //break;
-            case 6:
-                return new DaggerWeapon();
-            //break;
-            case 7:
-                return new DragonFoe();
-            //break;
-            case 8:
-                return new GiantFoe();
-            //break;
-            case 9:
-                return new MordredFoe();
-            //break;
-            case 10:
-                return new GreenKnightFoe();
-            //break;
-            case 11:
-                return new BlackKnightFoe();
-            //break;
-            case 12:
-                return new EvilKnightFoe();
-            //break;
-            case 13:
-                return new SaxonKnightFoe();
-            //break;
-            case 14:
-                return new RobberKnightFoe();
-            //break;
-            case 15:
-                return new SaxonsFoe();
-            //break;
-            case 16:
-                return new BoarFoe();
-            //break;
-            case 17:
-                return new ThievesFoe();
-            //break;
-        }
-        return new ThievesFoe(); //Should never be reached
-    }
-
     public int[] getHandCardIDs(){
         int[] a = new int[hand.size()];
         for(int i = 0; i < hand.size(); i++){
@@ -90,11 +33,11 @@ public class Player{
     }
 
     public void addCardByID(int cardID){
-        hand.add(getCardByID(cardID));
+        hand.add(Card.getCardByID(cardID));
     }
 
     protected void discardCardFromHand(int cardID){
-        Card card = getCardByID(cardID);
+        Card card = Card.getCardByID(cardID);
         hand.remove(card);
         card.discard();
     }
