@@ -90,6 +90,13 @@ public class LocalGameManager implements ClientEventListener{
 
     public ArrayList<Card> getDiscardPile() {return _discardPile;}
 
+    public void startGame(){
+        if(!NetworkManager.get().isHost())
+            return;
+        LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.START_GAME, null);
+        NetworkManager.get().sendNetMessage(msg);
+    }
+
     //endregion
 
     @Override

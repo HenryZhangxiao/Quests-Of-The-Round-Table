@@ -167,6 +167,7 @@ public class NetworkManager extends Thread {
     public static boolean isInstantiated(){
         return networkManger != null;
     }
+    public boolean isHost() {return isHost; }
 
     //Listeners
     public void addListener(ClientEventListener l){
