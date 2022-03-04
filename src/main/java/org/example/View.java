@@ -118,13 +118,11 @@ public class View extends Pane {
         System.out.println(LocalGameManager.get().isMyTurn());
         endTurn.setVisible(LocalGameManager.get().isMyTurn());
 
-        //ArrayList<Integer> localHand = new ArrayList<>();
-        // for all cards in localPlayer's hand, add card.id to localHand
-
-
-        // test code for changing cards
-        for (int i = 0; i < 12; ++i) {
-            cards.get(i).setViewport(getAdvCard(new Random().nextInt(17)+1));
+        // index for ImageView in local arraylist cards
+        int index = 0;
+        for (int id: LocalGameManager.get().getLocalPlayer().getHandCardIDs()) {
+            cards.get(index).setViewport(getAdvCard(id));
+            index++;
         }
 
         advDiscard.setViewport(getAdvCard(new Random().nextInt(17)+1));
