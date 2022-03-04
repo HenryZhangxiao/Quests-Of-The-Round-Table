@@ -42,13 +42,15 @@ public class Game extends Thread implements ServerEventListener {
     }
 
     //region Helpers
-    private Player getPlayerByID(int plyID){
+    public Player getPlayerByID(int plyID){
         for(Player p: _players){
             if(p.getPlayerNum() == plyID)
                 return p;
         }
         return null;
     }
+
+
 
     //endregion
 
@@ -71,6 +73,8 @@ public class Game extends Thread implements ServerEventListener {
 
         ServerMessage msg = new ServerMessage(NetworkMsgType.UPDATE_PLAYERLIST,NetworkMessage.pack(plyID,playerName,p.getHandCardIDs()));
         NetworkServer.get().sendNetMessage(msg);
+
+
 
     }
 

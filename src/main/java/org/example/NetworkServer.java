@@ -58,6 +58,13 @@ public class NetworkServer extends Thread{
                     l.onPlayerConnect(c.getPlayerId(), c.getPlayerName());
                 }
 
+                for(NetworkClient others: _players){
+                    if(others.getPlayerId() != c.getPlayerId()) {
+                        NetworkMessage m = new ServerMessage(NetworkMsgType.UPDATE_PLAYERLIST, NetworkMessage.pack(others.getPlayerId(), others.getPlayerName(), Game.get().getPlayerByID(others.getPlayerId()).getHandCardIDs()));
+                        c.sendNetMsg(m);
+                    }
+                }
+
                 connectedPlayers++;
                 break;
             case DISCONNECT:
