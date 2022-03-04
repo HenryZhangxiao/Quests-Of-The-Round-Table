@@ -1,13 +1,23 @@
 package org.example;
 
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,6 +45,9 @@ public class View extends Pane {
 
         setWidth(1280);
         setHeight(720);
+
+        //maybe only put waiting prompt in constructor
+        // and initialize game when LocalGameManager sends signal???
 
         storyDiscard = new ImageView();
         storyDiscard.setX(getWidth()/2-110);
@@ -120,7 +133,74 @@ public class View extends Pane {
 
     }
 
+    // Basically like join popup, there has to be a better way to do this tho
+    public void doWaitPopup() {
+        Stage waitPopup = new Stage();
+        waitPopup.initModality(Modality.APPLICATION_MODAL);
+        waitPopup.initStyle(StageStyle.UNDECORATED);
+
+        Label lbl = new Label();
+        lbl.setText("Waiting for more players to join");
+
+        Button startBtn = new Button("Start Game");
+        startBtn.setVisible(false);
+        startBtn.setOnAction(e -> LocalGameManager.get().startGame());
+
+        VBox layout = new VBox(10);
+        layout.getChildren().addAll(lbl,startBtn);
+        layout.setAlignment(Pos.CENTER);
+        Scene waitScene = new Scene(layout, 300, 250);
+        waitPopup.setScene(waitScene);
+
+        Task<Void> sleeper1 = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                while (true) {
+                    Thread.sleep(1000);
+                    if (LocalGameManager.get().getConnectedPlayerCount() > 1)
+                        break;
+                }
+                return null;
+            }
+        };
+
+        Task<Void> sleeper2 = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                while (true) {
+                    Thread.sleep(1000);
+                    if (LocalGameManager.get().isGameStarted())
+                        break;
+                }
+                return null;
+            }
+        };
+
+        sleeper1.setOnSucceeded(workerStateEvent -> {
+            if (NetworkManager.get().isHost())
+                startBtn.setVisible(true);
+            lbl.setText("Waiting for host to start game");
+            new Thread(sleeper2).start();
+        });
+
+        sleeper2.setOnSucceeded(workerStateEvent -> waitPopup.close());
+
+        if (NetworkManager.get().isHost())
+            new Thread(sleeper1).start();
+        else {
+            new Thread(sleeper2).start();
+            lbl.setText("Waiting for host to start game");
+        }
+        waitPopup.showAndWait();
+    }
+
     public void update() {
+        System.out.println(LocalGameManager.get().getLocalPlayer().getPlayerName());
+        System.out.println(LocalGameManager.get().isGameStarted());
+        if (!LocalGameManager.get().isGameStarted())
+            LocalGameManager.get().startGame();
+        endTurn.setVisible(LocalGameManager.get().isMyTurn());
+
         //ArrayList<Integer> localHand = new ArrayList<>();
         // for all cards in localPlayer's hand, add card.id to localHand
 

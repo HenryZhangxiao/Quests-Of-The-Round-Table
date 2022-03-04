@@ -42,6 +42,9 @@ public class App extends Application {
             }
         });
 
+        View.get().doWaitPopup();
+
+        stage.setTitle("Quests of the Round Table");
         stage.show();
     }
 
