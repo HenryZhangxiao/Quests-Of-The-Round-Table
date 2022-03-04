@@ -97,6 +97,14 @@ public class LocalGameManager implements ClientEventListener{
         NetworkManager.get().sendNetMessage(msg);
     }
 
+    //not sure if this is where this function should go
+    public void drawCard() {
+        if(!isMyTurn())
+            return;
+        LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.CARD_DRAW, null);
+        NetworkManager.get().sendNetMessage(msg);
+    }
+
     //endregion
 
     @Override
@@ -139,11 +147,15 @@ public class LocalGameManager implements ClientEventListener{
     @Override
     public void onTurnChange(int idOfPlayer) {
         turnID = idOfPlayer;
+        View.get().update();
     }
 
     @Override
     public void onDrawCard(int plyID, int cardID) {
+        //temp if for testing inconsistent _players array
+        //if (plyID == localPlayer.getPlayerNum())
         getPlayerByID(plyID).addCardByID(cardID);
+        View.get().update();
     }
 
     @Override

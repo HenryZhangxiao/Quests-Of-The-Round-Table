@@ -116,7 +116,7 @@ public class View extends Pane {
     public void update() {
         System.out.println(LocalGameManager.get().getLocalPlayer().getPlayerName());
         System.out.println(LocalGameManager.get().isMyTurn());
-        endTurn.setVisible(LocalGameManager.get().isMyTurn());
+        endTurn.setDisable(!LocalGameManager.get().isMyTurn());
 
         // index for ImageView in local arraylist cards
         int index = 0;
@@ -169,10 +169,8 @@ public class View extends Pane {
         advDeck.setPrefSize(100,140);
         getChildren().add(advDeck);
 
-        advDeck.setOnAction(e -> {
-            //model.drawAdvCard(); or smtg like that
-            update();
-        });
+        //should there be 2 draw methods? (adv vs story)
+        advDeck.setOnAction(e -> LocalGameManager.get().drawCard());
 
         Group hand = new Group();
 
@@ -203,45 +201,16 @@ public class View extends Pane {
 
         getChildren().add(hand);
 
-        Task<Void> waitForTurn = new Task<>() {
-            @Override
-            protected Void call() throws Exception {
-                while (true) {
-                    Thread.sleep(1000);
-                    if (LocalGameManager.get().isMyTurn())
-                        break;
-                }
-                return null;
-            }
-        };
-        waitForTurn.setOnSucceeded(workerStateEvent -> update());
-
         endTurn = new Button("End Turn");
         endTurn.relocate(handArea.getX()+790, handArea.getY()-30);
         endTurn.setPrefSize(100,20);
-        endTurn.setVisible(false);
-        endTurn.setOnAction(e -> {
-            LocalGameManager.get().finishTurn();
-            Task<Void> sleeper = new Task<>() {
-                @Override
-                protected Void call() throws Exception {
-                    Thread.sleep(100);
-                    return null;
-                }
-            };
-            sleeper.setOnSucceeded(workerStateEvent -> {
-                update();
-                new Thread(waitForTurn).start();
-            });
-            new Thread(sleeper).start();
-        });
+        endTurn.setDisable(true);
+        endTurn.setOnAction(e -> LocalGameManager.get().finishTurn());
         getChildren().add(endTurn);
 
         Label localPly = new Label(LocalGameManager.get().getLocalPlayer().getPlayerName());
         localPly.relocate(20, getHeight()-50);
         getChildren().add(localPly);
-
-        new Thread(waitForTurn).start();
     }
 
     private Rectangle2D getAdvCard(int id) {
