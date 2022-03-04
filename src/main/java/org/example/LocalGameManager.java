@@ -133,6 +133,7 @@ public class LocalGameManager implements ClientEventListener{
     @Override
     public void onStartGame() {
         gameStarted = true;
+        turnID = 0;
     }
 
     @Override
