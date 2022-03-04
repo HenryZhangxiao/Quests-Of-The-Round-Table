@@ -101,6 +101,7 @@ public class View extends Pane {
         sleeper2.setOnSucceeded(workerStateEvent -> {
             waitPopup.close();
             gameViewInit();
+            update();
         });
 
         if (NetworkManager.get().isHost())
@@ -204,18 +205,45 @@ public class View extends Pane {
 
         getChildren().add(hand);
 
+        Task<Void> waitForTurn = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                while (true) {
+                    Thread.sleep(1000);
+                    if (LocalGameManager.get().isMyTurn())
+                        break;
+                }
+                return null;
+            }
+        };
+        waitForTurn.setOnSucceeded(workerStateEvent -> update());
+
         endTurn = new Button("End Turn");
         endTurn.relocate(handArea.getX()+790, handArea.getY()-30);
         endTurn.setPrefSize(100,20);
         endTurn.setVisible(false);
         endTurn.setOnAction(e -> {
             LocalGameManager.get().finishTurn();
+            Task<Void> sleeper = new Task<>() {
+                @Override
+                protected Void call() throws Exception {
+                    Thread.sleep(100);
+                    return null;
+                }
+            };
+            sleeper.setOnSucceeded(workerStateEvent -> {
+                update();
+                new Thread(waitForTurn).start();
+            });
+            new Thread(sleeper).start();
         });
         getChildren().add(endTurn);
 
         Label localPly = new Label(LocalGameManager.get().getLocalPlayer().getPlayerName());
         localPly.relocate(20, getHeight()-50);
         getChildren().add(localPly);
+
+        new Thread(waitForTurn).start();
     }
 
     private Rectangle2D getAdvCard(int id) {
