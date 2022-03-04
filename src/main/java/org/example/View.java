@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -114,19 +115,23 @@ public class View extends Pane {
     }
 
     public void update() {
-        System.out.println(LocalGameManager.get().getLocalPlayer().getPlayerName());
-        System.out.println(LocalGameManager.get().isMyTurn());
         endTurn.setDisable(!LocalGameManager.get().isMyTurn());
 
+        int[] cardIDs = LocalGameManager.get().getLocalPlayer().getHandCardIDs();
         // index for ImageView in local arraylist cards
-        int index = 0;
-        for (int id: LocalGameManager.get().getLocalPlayer().getHandCardIDs()) {
-            cards.get(index).setViewport(getAdvCard(id));
-            index++;
+        for (int index = 0; index < 16; ++index) {
+            Rectangle2D viewport;
+            if (index < cardIDs.length) {
+                viewport = getAdvCard(cardIDs[index]);
+            } else {
+                viewport = getAdvCard(0);
+            }
+            cards.get(index).setViewport(viewport);
         }
 
-        advDiscard.setViewport(getAdvCard(new Random().nextInt(17)+1));
-
+        ArrayList<Card> discardPile = LocalGameManager.get().getDiscardPile();
+        if (!discardPile.isEmpty())
+            advDiscard.setViewport(getAdvCard(discardPile.get(discardPile.size()-1).getID()));
     }
 
     private void gameViewInit() {
@@ -194,6 +199,15 @@ public class View extends Pane {
             hand.getChildren().add(card);
 
             //add event handling for discarding
+            int finalI = i;
+            card.setOnMouseClicked(mouseEvent -> {
+                if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+                    //discard
+                    LocalGameManager.get().discardCard(finalI);
+                } else {
+                    //play card
+                }
+            });
 
             card.setImage(advCards);
             card.setViewport(getAdvCard(0));

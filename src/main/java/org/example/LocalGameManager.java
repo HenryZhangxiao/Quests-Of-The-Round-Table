@@ -105,6 +105,17 @@ public class LocalGameManager implements ClientEventListener{
         NetworkManager.get().sendNetMessage(msg);
     }
 
+    public void discardCard(int handIndex) {
+        if(!isMyTurn())
+            return;
+
+        ArrayList<Object> objs = new ArrayList<>();
+        objs.add(localPlayer.getHandCardIDs()[handIndex]);
+
+        LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.CARD_DISCARD, objs);
+        NetworkManager.get().sendNetMessage(msg);
+    }
+
     //endregion
 
     @Override
@@ -152,8 +163,6 @@ public class LocalGameManager implements ClientEventListener{
 
     @Override
     public void onDrawCard(int plyID, int cardID) {
-        //temp if for testing inconsistent _players array
-        //if (plyID == localPlayer.getPlayerNum())
         getPlayerByID(plyID).addCardByID(cardID);
         View.get().update();
     }
@@ -163,5 +172,6 @@ public class LocalGameManager implements ClientEventListener{
         getPlayerByID(plyID).discardCardFromHand(cardID);
 
         _discardPile.add(Card.getCardByID(cardID));
+        View.get().update();
     }
 }

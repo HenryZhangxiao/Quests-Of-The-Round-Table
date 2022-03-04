@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.Objects;
+
 public abstract class Card {
 
     protected String name; //Name of card
@@ -8,6 +10,18 @@ public abstract class Card {
     protected String deck;
     protected Integer id;   //used for getCardByID()
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Card card = (Card) o;
+        return Objects.equals(id, card.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
     protected void discard(){
         // send message to server to add this card to discards of deck
