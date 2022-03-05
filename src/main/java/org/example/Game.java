@@ -38,6 +38,7 @@ public class Game extends Thread implements ServerEventListener {
     public void run() {
         while (!stopThread){
             //Game loop in here.
+
         }
     }
 

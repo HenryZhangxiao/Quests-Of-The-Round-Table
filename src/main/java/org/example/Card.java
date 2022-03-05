@@ -122,6 +122,27 @@ public abstract class Card {
             case 17:
                 return new ThievesFoe();
             //break;
+            case 18:
+                return new EnchantedForestQuest();
+            case 19:
+                return new ArthursEnemiesQuest();
+            case 20:
+                return new SaxonRaidersQuest();
+            case 21:
+                return new BoarHuntQuest();
+            case 22:
+                return new QuestingBeastQuest();
+            case 23:
+                return new QueensHonorQuest();
+            case 24:
+                return new SlayTheDragonQuest();
+            case 25:
+                return new FairMaidenQuest();
+            case 26:
+                return new HolyGrailQuest();
+            case 27:
+                return new GreenKnightQuest();
+
         }
         return new ThievesFoe(); //Should never be reached
     }
