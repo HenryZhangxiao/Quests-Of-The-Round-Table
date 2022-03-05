@@ -23,13 +23,6 @@ public abstract class Card {
         return Objects.hash(id);
     }
 
-    protected void discard(){
-        // send message to server to add this card to discards of deck
-        //deck.discards.add(this);
-
-        //TODO: alter x and y coords so no longer on GUI?
-    }
-
     protected void set_x_cord(float x){
         x_cord = x;
     }

@@ -16,6 +16,7 @@ public class Game extends Thread implements ServerEventListener {
     }
 
     private Deck deck;
+    private Deck storyDeck;
 
     private ArrayList<Player> _players;
     private ArrayList<Card> _cardsOnBoard; //For later
@@ -29,17 +30,42 @@ public class Game extends Thread implements ServerEventListener {
     private Game(){
         _players = new ArrayList<Player>();
         deck = new AdventureDeck();
+        storyDeck = new StoryDeck();
         _cardsOnBoard = new ArrayList<>();
         deck.initializeCards();
+        storyDeck.initializeCards();
         NetworkServer.get().addListener(this);
     }
 
     @Override
     public void run() {
-        while (!stopThread){
-            //Game loop in here.
 
+        Integer turnTaker = -5;
+
+        while (!stopThread){
+            //Will only run a single time during a turn due to turnTaker
+            if(gameStarted && turnTaker != turnPlayerID){
+
+                turnTaker = turnPlayerID;
+
+                Card storyCard = storyDeck.drawCard();
+                System.out.println(storyCard.getName());
+
+                //sleep needed or else message will cause error in View, since buttons not instantiated
+                try {
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //TODO: create new message that will display drawn story card to all players, and
+                ServerMessage msg = new ServerMessage(NetworkMsgType.CARD_DRAW,NetworkMessage.pack(turnPlayerID, 1));
+                NetworkServer.get().sendNetMessage(msg);
+
+
+            }
         }
+
+
     }
 
     //region Helpers

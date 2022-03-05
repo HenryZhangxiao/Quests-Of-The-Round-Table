@@ -39,7 +39,6 @@ public class Player{
     protected void discardCardFromHand(int cardID){
         Card card = Card.getCardByID(cardID);
         hand.remove(card);
-        card.discard();
     }
 
     protected void discardCardsFromHand(Integer[] cardIDs){
