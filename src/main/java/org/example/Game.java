@@ -24,6 +24,10 @@ public class Game extends Thread implements ServerEventListener {
 
     private boolean gameStarted = false;
 
+    private enum Phase {
+        defaultPhase, sponsoring, questing
+    }
+
 
     private volatile boolean stopThread = false;
 
@@ -40,7 +44,11 @@ public class Game extends Thread implements ServerEventListener {
     @Override
     public void run() {
 
-        Integer turnTaker = -5;
+        int turnTaker = -5;     //no reason why I keep using -5, just a non valid player ID
+
+        int questDrawerPID = -5;    //keep track of who drew the quest so looking for sponsor will only loop through players once
+        int sponsorPID = -5;
+        Phase phase = Phase.defaultPhase;
 
         while (!stopThread){
             //Will only run a single time during a turn due to turnTaker
@@ -48,18 +56,51 @@ public class Game extends Thread implements ServerEventListener {
 
                 turnTaker = turnPlayerID;
 
-                Card storyCard = storyDeck.drawCard();
-                System.out.println(storyCard.getName());
 
-                //sleep needed or else message will cause error in View, since buttons not instantiated
-                try {
-                    sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if(phase == Phase.defaultPhase){
+                    Card storyCard = storyDeck.drawCard();
+                    _cardsOnBoard.add(storyCard);
+                    System.out.println(storyCard.getName());
+
+                    //sleep needed or else message will cause error in View, since buttons not instantiated
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    //TODO: create new message that will display drawn story card to all players, takes in card id
+                    ServerMessage msg = new ServerMessage(NetworkMsgType.CARD_DRAW,NetworkMessage.pack(turnPlayerID, 1));
+                    NetworkServer.get().sendNetMessage(msg);
+
+                    phase = Phase.sponsoring;   // will now go through players until sponsor chosen, won't draw story cards
+                                                // on their 'turns' since different phase
+
+                    //ask current player if they want to sponsor
+                    //TODO: create new message that will enable a button to be pressed for current player to choose to sponsor
+                    //ServerMessage ...
+
+                    //TODO: when sponsor button is pressed, will need to send back info so game loop knows who sponsored, and not to keep asking for sponsorship from other players
+                    //when this happens, phase which be set to questing
                 }
-                //TODO: create new message that will display drawn story card to all players, and
-                ServerMessage msg = new ServerMessage(NetworkMsgType.CARD_DRAW,NetworkMessage.pack(turnPlayerID, 1));
-                NetworkServer.get().sendNetMessage(msg);
+
+                //happens if
+                if(phase == Phase.sponsoring){
+                    //went around table and nobody decided to sponsor
+                    if(turnPlayerID == sponsorPID){
+                        //TODO: discard story card for cardsOnBoard, so probably a new message
+                        _cardsOnBoard.clear();
+                    }
+                    else{
+                        //ask current player if they want to sponsor,
+                        //TODO: same message as above, line 79
+                        //ServerMessage ...
+
+                    }
+                }
+
+                if(phase == Phase.questing){
+                    //TBD
+                }
 
 
             }

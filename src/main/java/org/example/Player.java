@@ -7,11 +7,13 @@ public class Player{
     private int playerNum;
     private String playerName;
     public ArrayList<Card> hand;
+    private int numShields;
 
     public Player(int ID, String name){
         playerName = name;
         playerNum = ID;
         hand = new ArrayList<>();
+        numShields = 0;
     }
 
     public void addCard(Card c){
@@ -45,6 +47,10 @@ public class Player{
         for(int i = 0; i < cardIDs.length; ++i){
             discardCardFromHand(cardIDs[i]);
         }
+    }
+
+    public void giveShields(int x) {
+        numShields += x;
     }
 
     public void setPlayerNum(int playerNum) {
