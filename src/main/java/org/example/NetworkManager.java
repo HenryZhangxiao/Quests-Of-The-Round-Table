@@ -97,40 +97,52 @@ public class NetworkManager extends Thread {
                 //Todo
                 break;
             case START_GAME:
-
                 for (ClientEventListener l: _listeners) {
                     l.onStartGame();
                 }
-
                 break;
             case UPDATE_PLAYERLIST:
-
                 for (ClientEventListener l: _listeners) {
                     l.onPlayerConnect((int)_objs.get(0),(String) _objs.get(1), (int[])_objs.get(2));
                 }
-
                 break;
             case CARD_DRAW:
-
                 for (ClientEventListener l: _listeners) {
                     l.onDrawCard((int)_objs.get(0),(int)_objs.get(1));
                 }
-
                 break;
             case CARD_DISCARD:
-
                 for (ClientEventListener l: _listeners) {
                     l.onCardDiscard((int)_objs.get(0),(int)_objs.get(1));
                 }
-
                 break;
-
             case TURN_CHANGE:
-
                 for (ClientEventListener l: _listeners) {
                     l.onTurnChange((int)_objs.get(0));
                 }
+                break;
 
+            case QUEST_BEGIN:
+                for (ClientEventListener l: _listeners) {
+                    l.onQuestBegin((int)_objs.get(0),(int)_objs.get(1));
+                }
+                break;
+            case QUEST_SPONSOR_QUERY:
+                for (ClientEventListener l: _listeners) {
+                    l.onQuestSponsorQuery((int)_objs.get(0));
+                }
+                break;
+
+            case QUEST_PARTICIPATE_QUERY:
+                for (ClientEventListener l: _listeners) {
+                    l.onQuestParticipateQuery((int)_objs.get(0),(int)_objs.get(1));
+                }
+                break;
+
+            case QUEST_RESULT:
+                for (ClientEventListener l: _listeners) {
+                    l.onQuestResult((int)_objs.get(0),(int[][])_objs.get(1),(int[])_objs.get(2));
+                }
                 break;
 
             case TEST_MESSAGE:

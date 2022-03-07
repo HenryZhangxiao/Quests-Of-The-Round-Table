@@ -99,6 +99,26 @@ public class NetworkServer extends Thread{
                     l.onTurnChange(c.getPlayerId());
                 }
                 break;
+
+            case QUEST_SPONSOR_QUERY:
+                boolean declinedSponsor = (boolean) _objs.get(0);
+                for(ServerEventListener l: _listeners){
+                    if(declinedSponsor)
+                        l.onQuestSponsorQuery(c.getPlayerId(),declinedSponsor,null);
+                    else
+                        l.onQuestSponsorQuery(c.getPlayerId(),declinedSponsor,(int[][])_objs.get(1));
+                }
+                break;
+
+            case QUEST_PARTICIPATE_QUERY:
+                boolean declinedParticipation = (boolean) _objs.get(0);
+                for(ServerEventListener l: _listeners){
+                    if(declinedParticipation)
+                        l.onQuestParticipateQuery(c.getPlayerId(),declinedParticipation,null);
+                    else
+                        l.onQuestParticipateQuery(c.getPlayerId(),declinedParticipation,(int[])_objs.get(1));
+                }
+                break;
             default:
                 System.out.println("SERVER: Unhandled Message Received.");
                 break;

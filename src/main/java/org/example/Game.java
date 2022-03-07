@@ -226,5 +226,19 @@ public class Game extends Thread implements ServerEventListener {
         NetworkServer.get().sendNetMessage(msg);
     }
 
+    @Override
+    public void onQuestSponsorQuery(int plyID, boolean declined, int[][] questCards) {
+        //Called when a player responds to a query to sponsor the quest. If declined is true, then questCards will be null.
+
+
+    }
+
+    @Override
+    public void onQuestParticipateQuery(int plyID, boolean declined, int[] cards) {
+        //Called when a player responds to a participation query. If declined is true, cards will be null.
+
+
+    }
+
 
 }

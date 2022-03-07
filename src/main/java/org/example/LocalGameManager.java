@@ -174,4 +174,33 @@ public class LocalGameManager implements ClientEventListener{
         _discardPile.add(Card.getCardByID(cardID));
         View.get().update();
     }
+
+    @Override
+    public void onQuestBegin(int plyID, int questCardID) {
+        //Called when a quest card has been played.
+
+
+    }
+
+    @Override
+    public void onQuestSponsorQuery(int questCardID) {
+        //called when asking the local player if they would like to sponsor the quest.
+
+
+    }
+
+    @Override
+    public void onQuestParticipateQuery(int sponsorPlyID, int questID) {
+        //Called when the sponsor has chosen their cards and is asking the local player if they would like to participate.
+
+
+    }
+
+    @Override
+    public void onQuestResult(int winnerID, int[][] sponsorCards, int[] winningPlayerCards) {
+        //Called when the quest is over and shows the winning results. sponsorCards is seperated by stage. eg: sponsorCards[0] will get stage 1's cards.
+
+
+
+    }
 }

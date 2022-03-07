@@ -12,4 +12,8 @@ public interface ServerEventListener {
     public void onDrawCard(int plyID);
     public void onCardDiscard(int plyID, int cardID);
 
+    public void onQuestSponsorQuery(int plyID, boolean declined, int[][] questCards);
+    public void onQuestParticipateQuery(int plyID, boolean declined, int[] cards);
+
+
 }
