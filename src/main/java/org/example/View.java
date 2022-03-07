@@ -135,6 +135,7 @@ public class View extends Pane {
     }
 
     private void gameViewInit() {
+        //TODO: replace precalculated values with constants
         storyDiscard = new ImageView();
         storyDiscard.setX(getWidth()/2-110);
         storyDiscard.setY(getHeight()/3);
@@ -155,9 +156,9 @@ public class View extends Pane {
         advDiscard.setImage(advCards);
         advDiscard.setViewport(getAdvCard(0));
 
-        //Image storyCards = new Image(new File("src/resources/storyComposite.jpg").toURI().toString());
-        //storyDiscard.setImage(storyCards);
-        //storyDiscard.setViewport(getStoryCard(0));
+        Image storyCards = new Image(new File("src/resources/storyComposite.jpg").toURI().toString());
+        storyDiscard.setImage(storyCards);
+        storyDiscard.setViewport(getStoryCard(0));
 
         storyDeck = new Button("Draw story card");
         storyDeck.relocate(storyDiscard.getX()-120, storyDiscard.getY());
@@ -165,8 +166,7 @@ public class View extends Pane {
         getChildren().add(storyDeck);
 
         storyDeck.setOnAction(e -> {
-            //model.drawStoryCard(); or smtg like that
-            //update();
+            //LocalGameManager.get().drawStory();
         });
 
         advDeck = new Button("Draw adventure card");
@@ -174,7 +174,6 @@ public class View extends Pane {
         advDeck.setPrefSize(100,140);
         getChildren().add(advDeck);
 
-        //should there be 2 draw methods? (adv vs story)
         advDeck.setOnAction(e -> LocalGameManager.get().drawCard());
 
         Group hand = new Group();
@@ -231,6 +230,8 @@ public class View extends Pane {
         return new Rectangle2D(((id-1)%8)*200,Math.floorDiv(id-1,8)*280,200,280);
     }
 
-    //private Rectangle2D getStoryCard(int id) { }
+    private Rectangle2D getStoryCard(int id) {
+        return new Rectangle2D(((id-18)%6)*200,Math.floorDiv(id-18,6)*280,200,280);
+    }
 
 }
