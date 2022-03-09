@@ -24,12 +24,8 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         var scene = new Scene(View.get(), View.get().getWidth(), View.get().getHeight());
-        var label = new Label("This is the start of Quests game.");
 
         stage.setScene(scene);
-
-
-
 
         //Join/Create Game popup.
         doJoinPopup();
