@@ -25,9 +25,10 @@ public class Game extends Thread implements ServerEventListener {
     private boolean gameStarted = false;
 
     private enum Phase {
-        defaultPhase, sponsoring, questing
+        defaultPhase, questing
     }
-
+    private Phase phase;
+    private Quest quest;
 
     private volatile boolean stopThread = false;
 
@@ -46,9 +47,7 @@ public class Game extends Thread implements ServerEventListener {
 
         int turnTaker = -5;     //no reason why I keep using -5, just a non valid player ID
 
-        int questDrawerPID = -5;    //keep track of who drew the quest so looking for sponsor will only loop through players once
-        int sponsorPID = -5;
-        Phase phase = Phase.defaultPhase;
+        phase = Phase.defaultPhase;
 
         while (!stopThread){
             //Will only run a single time during a turn due to turnTaker
@@ -68,40 +67,15 @@ public class Game extends Thread implements ServerEventListener {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    //TODO: create new message that will display drawn story card to all players, takes in card id
-                    ServerMessage msg = new ServerMessage(NetworkMsgType.CARD_DRAW,NetworkMessage.pack(turnPlayerID, 1));
-                    NetworkServer.get().sendNetMessage(msg);
 
-                    phase = Phase.sponsoring;   // will now go through players until sponsor chosen, won't draw story cards
-                                                // on their 'turns' since different phase
+                    quest = new Quest((QuestCard) storyCard, turnPlayerID);
+                    phase = Phase.questing;
 
-                    //ask current player if they want to sponsor
-                    //TODO: create new message that will enable a button to be pressed for current player to choose to sponsor
-                    //ServerMessage ...
-
-                    //TODO: when sponsor button is pressed, will need to send back info so game loop knows who sponsored, and not to keep asking for sponsorship from other players
-                    //when this happens, phase which be set to questing
-                }
-
-                //happens if
-                if(phase == Phase.sponsoring){
-                    //went around table and nobody decided to sponsor
-                    if(turnPlayerID == sponsorPID){
-                        //TODO: discard story card for cardsOnBoard, so probably a new message
-                        _cardsOnBoard.clear();
-                    }
-                    else{
-                        //ask current player if they want to sponsor,
-                        //TODO: same message as above, line 79
-                        //ServerMessage ...
-
-                    }
                 }
 
                 if(phase == Phase.questing){
-                    //TBD
+                    quest.execute(turnPlayerID);    //takes one step
                 }
-
 
             }
         }
@@ -229,15 +203,34 @@ public class Game extends Thread implements ServerEventListener {
     @Override
     public void onQuestSponsorQuery(int plyID, boolean declined, int[][] questCards) {
         //Called when a player responds to a query to sponsor the quest. If declined is true, then questCards will be null.
-
-
+        if(!declined){
+            quest.setSponsorPID(plyID);
+        }
+        //next player is the one who drew the quest, meaning no one sponsored
+        else if((plyID == _players.size() -1 && 0 == quest.getQuestDrawerPID()) || (plyID < _players.size() -1 && plyID + 1 == quest.getQuestDrawerPID())){
+            quest = null;
+            phase = Phase.defaultPhase;
+        }
     }
 
     @Override
     public void onQuestParticipateQuery(int plyID, boolean declined, int[] cards) {
         //Called when a player responds to a participation query. If declined is true, cards will be null.
+        if(!declined){
+            quest.addOutPID(plyID);
+        }
+        else{
+            quest.addInPID(plyID);
+        }
 
-
+        //next player is the one who sponsored, meaning no one sponsored
+        if((plyID == _players.size() -1 && 0 == quest.getQuestDrawerPID()) || (plyID < _players.size() -1 && plyID + 1 == quest.getQuestDrawerPID())){
+            //no one has chosen to participate in the quest
+            if(quest.getInPIDs().isEmpty()){
+                quest = null;
+                phase = Phase.defaultPhase;
+            }
+        }
     }
 
 
