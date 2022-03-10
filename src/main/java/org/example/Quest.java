@@ -14,7 +14,7 @@ public class Quest {
     private int currentStage = 0;
 
     private enum Phase {
-        drawn, sponsoring, participating, building, battling
+        drawn, sponsoring, participating, battling
     }
     Phase phase;
 
@@ -29,17 +29,11 @@ public class Quest {
 
     public void execute(int turnPlayerID){
         if(phase == Phase.drawn){
-            //TODO: is this actually necessary? I don't know if we actually need local version of the Quest
 
             ServerMessage questStartMsg = new ServerMessage(NetworkMsgType.QUEST_BEGIN,NetworkMessage.pack(questDrawerPID, questCard.id));
             NetworkServer.get().sendNetMessageToAllPlayers(questStartMsg);
 
-            //LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_BEGIN,NetworkMessage.pack(turnPlayerID, questCard.id));
-            //NetworkManager.get().sendNetMessage(msg);
-
             //ask current player if they want to sponsor
-            //LocalClientMessage msg2 = new LocalClientMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(turnPlayerID));
-            //NetworkManager.get().sendNetMessage(msg2);
             ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(questCard.id));
             NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
 
@@ -62,34 +56,26 @@ public class Quest {
 
             else{
                 //ask current player if they want to sponsor
-                //LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(turnPlayerID));
-                //NetworkManager.get().sendNetMessageToServer(msg);
                 ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(questCard.id));
                 NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
             }
         }
 
         //players choose if they want to join the quest
-        else if(phase == Phase.participating){
-            //went around table and nobody decided to participate
+        //once it gets to the sponsor, then everyone has opted in or out, sponsor picks cards for quest
+        else if(phase == Phase.participating) {
+            //player who sponsored the quest now picks cards for quest
             if(turnPlayerID == sponsorPID){
-                //LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_RESULT,NetworkMessage.pack(turnPlayerID));
-                //NetworkManager.get().sendNetMessageToServer(msg);
-                //TODO: Since nobody participated, maybe send a QUEST_RESULT with something blank to signify that nobody participated?
+                //TODO: picking of cards from hand
+
+                //Henry stuff to validate sponsor's selection
+
+                phase = Phase.battling;
             }
-            else {
-                //LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(turnPlayerID));
-                //NetworkManager.get().sendNetMessageToServer(msg);
-                ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(questCard.id));
+            else{
+                ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(questCard.id));
                 NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
             }
-        }
-
-        //player who sponsored the quest now picks cards for quest
-        else if(phase == Phase.building){
-            //TODO: picking of cards from hand
-
-            //Henry stuff to validate sponsor's selection
         }
 
         //players who opted in pick weapons to fight foes, etc
@@ -111,7 +97,7 @@ public class Quest {
                     weaponPoints += weapons[i].getBP();
                 }
 
-                int playerBP = 5 + weaponPoints;
+                int playerBP = 5 + weaponPoints;    //5 is points from being a squire
 
                 //assumes the first card in a stage will be the foe
                 if(playerBP > ((WeaponCard)stages[currentStage][0]).getBP()){
