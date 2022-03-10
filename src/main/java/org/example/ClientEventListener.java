@@ -11,6 +11,8 @@ public interface ClientEventListener {
     public void onDrawCard(int plyID, int cardID);
     public void onCardDiscard(int plyID, int cardID);
 
+    public void onStoryDrawCard(int plyID, int cardID);
+
     public void onQuestBegin(int plyID, int questCardID);
     public void onQuestSponsorQuery(int questCardID);
     public void onQuestParticipateQuery(int sponsorPlyID, int questID);

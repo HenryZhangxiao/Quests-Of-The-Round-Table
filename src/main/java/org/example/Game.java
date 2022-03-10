@@ -50,6 +50,7 @@ public class Game extends Thread implements ServerEventListener {
         phase = Phase.defaultPhase;
 
         while (!stopThread){
+
             //Will only run a single time during a turn due to turnTaker
             if(gameStarted && turnTaker != turnPlayerID){
 
@@ -114,7 +115,7 @@ public class Game extends Thread implements ServerEventListener {
 
 
         ServerMessage msg = new ServerMessage(NetworkMsgType.UPDATE_PLAYERLIST,NetworkMessage.pack(plyID,playerName,p.getHandCardIDs()));
-        NetworkServer.get().sendNetMessage(msg);
+        NetworkServer.get().sendNetMessageToAllPlayers(msg);
 
 
 
@@ -149,7 +150,7 @@ public class Game extends Thread implements ServerEventListener {
         gameStarted = true;
 
         ServerMessage msg = new ServerMessage(NetworkMsgType.START_GAME,null);
-        NetworkServer.get().sendNetMessage(msg);
+        NetworkServer.get().sendNetMessageToAllPlayers(msg);
     }
 
     @Override
@@ -172,7 +173,7 @@ public class Game extends Thread implements ServerEventListener {
 
         //Sends new turnID to all clients
         ServerMessage msg = new ServerMessage(NetworkMsgType.TURN_CHANGE,NetworkMessage.pack(turnPlayerID));
-        NetworkServer.get().sendNetMessage(msg);
+        NetworkServer.get().sendNetMessageToAllPlayers(msg);
     }
 
     @Override
@@ -184,7 +185,7 @@ public class Game extends Thread implements ServerEventListener {
 
         Card c = deck.drawCard();
         ServerMessage msg = new ServerMessage(NetworkMsgType.CARD_DRAW,NetworkMessage.pack(plyID, c.id));
-        NetworkServer.get().sendNetMessage(msg);
+        NetworkServer.get().sendNetMessageToAllPlayers(msg);
     }
 
     @Override
@@ -197,7 +198,28 @@ public class Game extends Thread implements ServerEventListener {
         deck.discards.add(Card.getCardByID(cardID));
 
         ServerMessage msg = new ServerMessage(NetworkMsgType.CARD_DISCARD,NetworkMessage.pack(plyID, cardID));
-        NetworkServer.get().sendNetMessage(msg);
+        NetworkServer.get().sendNetMessageToAllPlayers(msg);
+    }
+
+    @Override
+    public void onStoryDrawCard(int plyID) {
+        if(plyID != turnPlayerID){
+            System.out.println("SERVER: Not Player " + String.valueOf(plyID) + " turn. Current TurnID is " + String.valueOf(turnPlayerID));
+            return;
+        }
+
+        //Start a quest/event/tournament here
+        Card c = storyDeck.drawCard();
+
+        ServerMessage msg = new ServerMessage(NetworkMsgType.STORY_CARD_DRAW,NetworkMessage.pack(plyID,c.id));
+        NetworkServer.get().sendNetMessageToAllPlayers(msg);
+
+        if(c.getClass() == QuestCard.class){
+            //Is a quest card
+            //todo start quest in here?
+
+        }
+
     }
 
     @Override

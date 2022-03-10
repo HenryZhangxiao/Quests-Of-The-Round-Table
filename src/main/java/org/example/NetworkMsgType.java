@@ -13,7 +13,9 @@ public enum NetworkMsgType {
     CARD_DRAW, //[ID of card drawn]
     CARD_DISCARD, //[ID of card discarded]
 
-    QUEST_BEGIN, //To Client [ID of quest card]
+    STORY_CARD_DRAW, //[ID of card drawn]
+
+    QUEST_BEGIN, //To Client [PlayerID, ID of quest card]
     QUEST_SPONSOR_QUERY, //To Client[ID of quest] - To Server [Declined boolean, Quest Data structure.]
     QUEST_PARTICIPATE_QUERY, //To Client[ID of quest, ID of player who sponsored it.] - To Server [declined boolean, Card Array of cards in quest]
     QUEST_RESULT, //The result of the quest. To client [The ID of the player who won, Sponsors cards, all participants cards]

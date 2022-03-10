@@ -30,12 +30,21 @@ public class Quest {
     public void execute(int turnPlayerID){
         if(phase == Phase.drawn){
             //TODO: is this actually necessary? I don't know if we actually need local version of the Quest
-            LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_BEGIN,NetworkMessage.pack(turnPlayerID, questCard.id));
-            NetworkManager.get().sendNetMessage(msg);
+
+            ServerMessage questStartMsg = new ServerMessage(NetworkMsgType.QUEST_BEGIN,NetworkMessage.pack(questDrawerPID, questCard.id));
+            NetworkServer.get().sendNetMessageToAllPlayers(questStartMsg);
+
+            //LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_BEGIN,NetworkMessage.pack(turnPlayerID, questCard.id));
+            //NetworkManager.get().sendNetMessage(msg);
 
             //ask current player if they want to sponsor
-            LocalClientMessage msg2 = new LocalClientMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(turnPlayerID));
-            NetworkManager.get().sendNetMessage(msg2);
+            //LocalClientMessage msg2 = new LocalClientMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(turnPlayerID));
+            //NetworkManager.get().sendNetMessage(msg2);
+            ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(questCard.id));
+            NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
+
+
+            //NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg();
             //TODO:in onQuestSponsorQuery(), LocalGameManager do stuff to un-disable a button of something to allow player
             // to choose to sponsor. The button(or whatever the input method) will send a onQuestSponsorQuery() ServerMessage
             // through NetworkServer so Game's Quest can set sponsorPID
@@ -53,8 +62,10 @@ public class Quest {
 
             else{
                 //ask current player if they want to sponsor
-                LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(turnPlayerID));
-                NetworkManager.get().sendNetMessage(msg);
+                //LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(turnPlayerID));
+                //NetworkManager.get().sendNetMessageToServer(msg);
+                ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(questCard.id));
+                NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
             }
         }
 
@@ -62,12 +73,15 @@ public class Quest {
         else if(phase == Phase.participating){
             //went around table and nobody decided to participate
             if(turnPlayerID == sponsorPID){
-                LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_RESULT,NetworkMessage.pack(turnPlayerID));
-                NetworkManager.get().sendNetMessage(msg);
+                //LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_RESULT,NetworkMessage.pack(turnPlayerID));
+                //NetworkManager.get().sendNetMessageToServer(msg);
+                //TODO: Since nobody participated, maybe send a QUEST_RESULT with something blank to signify that nobody participated?
             }
             else {
-                LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(turnPlayerID));
-                NetworkManager.get().sendNetMessage(msg);
+                //LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(turnPlayerID));
+                //NetworkManager.get().sendNetMessageToServer(msg);
+                ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(questCard.id));
+                NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
             }
         }
 

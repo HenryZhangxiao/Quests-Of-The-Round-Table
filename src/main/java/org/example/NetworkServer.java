@@ -43,7 +43,7 @@ public class NetworkServer extends Thread{
     }
 
     public void handleMessage(NetworkMessage msg,ArrayList<Object> _objs){
-        NetworkClient c = getByID(msg.playerID);
+        NetworkClient c = getPlayerByID(msg.playerID);
 
         switch (msg.messageType){
             case UNKNOWN:
@@ -92,6 +92,11 @@ public class NetworkServer extends Thread{
             case CARD_DISCARD:
                 for(ServerEventListener l: _listeners){
                     l.onCardDiscard(c.getPlayerId(),(int)msg._objects.get(0));
+                }
+                break;
+            case STORY_CARD_DRAW:
+                for(ServerEventListener l: _listeners){
+                    l.onStoryDrawCard(c.getPlayerId());
                 }
                 break;
             case TURN_CHANGE:
@@ -156,7 +161,7 @@ public class NetworkServer extends Thread{
     //}
 
     //region Helpers
-    public NetworkClient getByID(int plyID){
+    public NetworkClient getPlayerByID(int plyID){
         for(int i = 0; i < _players.size(); i++){
             if(_players.get(i).getPlayerId() == plyID)
                 return  _players.get(i);
@@ -165,7 +170,7 @@ public class NetworkServer extends Thread{
         return null;
     }
 
-    public void sendNetMessage(ServerMessage msg){
+    public void sendNetMessageToAllPlayers(ServerMessage msg){
         for(NetworkClient c: _players){
             c.sendNetMsg(msg);
         }
@@ -186,7 +191,7 @@ public class NetworkServer extends Thread{
     //endregion
 
     public void disconnectPlayer(int plyID){
-        NetworkClient c = getByID(plyID);
+        NetworkClient c = getPlayerByID(plyID);
         c.close();
         _players.remove(c);
     }

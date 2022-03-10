@@ -49,6 +49,10 @@ public class Player{
         }
     }
 
+    public void sendNetMessage(ServerMessage msg){
+        NetworkServer.get().getPlayerByID(playerNum).sendNetMsg(msg);
+    }
+
     public void giveShields(int x) {
         numShields += x;
     }

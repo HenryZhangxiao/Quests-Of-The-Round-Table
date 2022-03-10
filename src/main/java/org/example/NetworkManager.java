@@ -61,7 +61,9 @@ public class NetworkManager extends Thread {
     public boolean createGame(String playerName){
         isHost = true;
         NetworkServer.get().start();
-        Game.get().start();
+        Game.get();
+        //Todo: Reenable this?
+        //Game.get().start();
 
         return joinGame("localhost", playerName);
     }
@@ -116,6 +118,11 @@ public class NetworkManager extends Thread {
                     l.onCardDiscard((int)_objs.get(0),(int)_objs.get(1));
                 }
                 break;
+            case STORY_CARD_DRAW:
+                for (ClientEventListener l: _listeners) {
+                    l.onStoryDrawCard((int)_objs.get(0),(int)_objs.get(1));
+                }
+                break;
             case TURN_CHANGE:
                 for (ClientEventListener l: _listeners) {
                     l.onTurnChange((int)_objs.get(0));
@@ -166,12 +173,12 @@ public class NetworkManager extends Thread {
     public void startGame(){
         if(isHost){
             LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.START_GAME,null);
-            sendNetMessage(msg);
+            sendNetMessageToServer(msg);
         }
     }
 
     //region Helpers/Getters/Setters
-    public void sendNetMessage(LocalClientMessage msg){
+    public void sendNetMessageToServer(LocalClientMessage msg){
         localPlayer.sendNetMsg(msg);
     }
     public NetworkClient getLocalPlayer(){ return localPlayer; }

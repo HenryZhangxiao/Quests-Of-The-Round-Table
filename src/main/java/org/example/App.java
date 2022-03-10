@@ -34,7 +34,7 @@ public class App extends Application {
             public void handle(MouseEvent mouseEvent) {
                 //For quick testing
                 LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.TEST_MESSAGE,null);
-                NetworkManager.get().sendNetMessage(msg);
+                NetworkManager.get().sendNetMessageToServer(msg);
             }
         });
 

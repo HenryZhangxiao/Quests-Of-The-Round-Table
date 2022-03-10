@@ -69,7 +69,7 @@ public class LocalGameManager implements ClientEventListener{
             return;
 
         LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.TURN_CHANGE,null);
-        NetworkManager.get().sendNetMessage(msg);
+        NetworkManager.get().sendNetMessageToServer(msg);
     }
 
     public String[] getAllPlayerNames(){
@@ -94,7 +94,7 @@ public class LocalGameManager implements ClientEventListener{
         if(!NetworkManager.get().isHost())
             return;
         LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.START_GAME, null);
-        NetworkManager.get().sendNetMessage(msg);
+        NetworkManager.get().sendNetMessageToServer(msg);
     }
 
     //not sure if this is where this function should go
@@ -102,7 +102,7 @@ public class LocalGameManager implements ClientEventListener{
         if(!isMyTurn())
             return;
         LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.CARD_DRAW, null);
-        NetworkManager.get().sendNetMessage(msg);
+        NetworkManager.get().sendNetMessageToServer(msg);
     }
 
     public void discardCard(int handIndex) {
@@ -113,7 +113,7 @@ public class LocalGameManager implements ClientEventListener{
         objs.add(localPlayer.getHandCardIDs()[handIndex]);
 
         LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.CARD_DISCARD, objs);
-        NetworkManager.get().sendNetMessage(msg);
+        NetworkManager.get().sendNetMessageToServer(msg);
     }
 
     //endregion
@@ -173,6 +173,12 @@ public class LocalGameManager implements ClientEventListener{
 
         _discardPile.add(Card.getCardByID(cardID));
         View.get().update();
+    }
+
+    @Override
+    public void onStoryDrawCard(int plyID, int cardID) {
+        //Called when a player has drawn a story card.
+
     }
 
     @Override
