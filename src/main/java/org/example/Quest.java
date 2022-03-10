@@ -7,11 +7,10 @@ public class Quest {
 
     private int questDrawerPID = -5;    //keep track of who drew the quest so looking for sponsor will only loop through players once
     private int sponsorPID;
-    private ArrayList<Integer> outPIDs;  //those who have opted out or have been eliminated
-    private ArrayList<Integer> inPIDs;   //those who did not opt out and have not been eliminated
+    protected ArrayList<Integer> outPIDs;  //those who have opted out or have been eliminated
+    protected ArrayList<Integer> inPIDs;   //those who did not opt out and have not been eliminated
 
     private Card[][] stages;
-    private int currentStage = 0;
 
     private enum Phase {
         drawn, sponsoring, participating, battling
@@ -81,43 +80,57 @@ public class Quest {
         //players who opted in pick weapons to fight foes, etc
         else if(phase == Phase.battling){
 
-            //current player is still in the quest
-            if(inPIDs.contains(turnPlayerID)){
+            //loops through all stages
+            for(int currentStage = 0; currentStage < questCard.getStages(); ++currentStage){
 
-                //current player picks 0+ weapons from their hand
-                //TODO: send message to clients so that player of given ID can pick cards from their hand
-                // Remember: no duplicate weapons can be picked, so whenever pick loop through already picked and compare names
-                // will likely also do something to display the weapons picked to that player
+                //current player is still in the quest
+                if(inPIDs.contains(turnPlayerID)){
 
-                WeaponCard[] weapons = new WeaponCard[0];   //To be properly filled with weapons from above functionality
+                    //current player picks 0+ weapons from their hand
+                    //TODO: send message to clients so that player of given ID can pick cards from their hand
+                    // Remember: no duplicate weapons can be picked, so whenever pick loop through already picked and compare names
+                    // will likely also do something to display the weapons picked to that player
 
-                //add up that player's battle points
-                int weaponPoints = 0;
-                for(int i = 0; i < weapons.length; ++i){
-                    weaponPoints += weapons[i].getBP();
-                }
+                    WeaponCard[] weapons = new WeaponCard[0];   //To be properly filled with weapons from above functionality
 
-                int playerBP = 5 + weaponPoints;    //5 is points from being a squire
+                    //add up that player's battle points
+                    int playerBP = 5;   //5 is points from being a squire
+                    for(int i = 0; i < weapons.length; ++i){
+                        playerBP += weapons[i].getBP();
+                    }
 
-                //assumes the first card in a stage will be the foe
-                if(playerBP > ((WeaponCard)stages[currentStage][0]).getBP()){
-                    // player wins, stay in inPIDS
-                    // TODO: message that will tell player that they won the fight.
-                    //  will likely also clear the weapon cards from that player
+                    //add up current foe's battle points
+                    //assumes the first card in a stage will be the foe
+                    int foeBP = ((FoeCard)stages[currentStage][0]).getBP();
+                    for(int i = 1; i < stages[currentStage].length; ++i){
+                        foeBP += ((WeaponCard)stages[currentStage][i]).getBP();
+                    }
 
-                    //beat foe of last stage, get shields
-                    if(currentStage == questCard.getStages()){
-                        //TODO: message that will update shields for all local versions of that player
-                        // takes a number equal to the number of stages as number of shields to get
-                        // using .giveShields() function
+                    if(playerBP > foeBP){
+                        // player wins, draws an Adventure card for winning
+                        //TODO: needs to draw an adventure card, not sure how we'll do that since there's no Deck in Quest
+
+                        // TODO: message that will tell player that they won the fight.
+                        //  will likely also clear the weapon cards from the board that that player used
+
+                        //beat foe of last stage, get shields
+                        if(currentStage == questCard.getStages()){
+                            //TODO: message that will update shields for all local versions of that player
+                            // takes a number equal to the number of stages as number of shields to be given
+                            // using .giveShields() function in Player
+                        }
+                    }
+                    else{
+                        // player loses, pid removed from inPIDS, put in outPIDS
+                        inPIDs.remove(turnPlayerID);
+                        outPIDs.add(turnPlayerID);
+                        // TODO: message that will tell player that they lost the fight, could be same message that they won the fight
+                        //  but with an input flag set to a different value.
+                        //  will likely also clear the weapon cards from that player
                     }
                 }
-                else{
-                    // player loses, pid removed from inPIDS, put in outPIDS
-                    // TODO: message that will tell player that they lost the fight, could be same message, with diff input.
-                    //  will likely also clear the weapon cards from that player
-                }
             }
+
 
 
         }
