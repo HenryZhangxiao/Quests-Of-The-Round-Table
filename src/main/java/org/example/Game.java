@@ -214,7 +214,7 @@ public class Game extends Thread implements ServerEventListener {
         ServerMessage msg = new ServerMessage(NetworkMsgType.STORY_CARD_DRAW,NetworkMessage.pack(plyID,c.id));
         NetworkServer.get().sendNetMessageToAllPlayers(msg);
 
-        if(c.getClass() == QuestCard.class){
+        if(c instanceof QuestCard){
             //Is a quest card
             //todo start quest in here?
 
