@@ -206,6 +206,7 @@ public class Game extends Thread implements ServerEventListener {
 
         if(c instanceof QuestCard){
             //Is a quest card
+            quest = new Quest((QuestCard) c, plyID);
             quest.drawn(turnPlayerID);
         }
 
