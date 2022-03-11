@@ -100,7 +100,14 @@ public class Quest {
 
                     //add up current foe's battle points
                     //assumes the first card in a stage will be the foe
-                    int foeBP = ((FoeCard)stages[currentStage][0]).getBP();
+                    int foeBP;
+                    if(Arrays.asList(questCard.getSpecialFoes()).contains((stages[currentStage][0]).getName()) || questCard.getSpecialFoes()[0].equals("All")){
+                        foeBP = ((FoeCard)stages[currentStage][0]).getAlt_bp();
+                    }
+                    else{
+                        foeBP = ((FoeCard)stages[currentStage][0]).getBP();
+                    }
+
                     for(int i = 1; i < stages[currentStage].length; ++i){
                         foeBP += ((WeaponCard)stages[currentStage][i]).getBP();
                     }
