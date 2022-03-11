@@ -27,8 +27,8 @@ public class Game extends Thread implements ServerEventListener {
     private enum Phase {
         defaultPhase, questing
     }
-    private Phase phase;
-    private Quest quest;
+    private Phase phase = Phase.defaultPhase;
+    private Quest quest = null;
 
     private volatile boolean stopThread = false;
 
@@ -45,43 +45,9 @@ public class Game extends Thread implements ServerEventListener {
     @Override
     public void run() {
 
-        int turnTaker = -5;     //no reason why I keep using -5, just a non valid player ID
+        /*while (!stopThread){
 
-        phase = Phase.defaultPhase;
-
-        while (!stopThread){
-
-            //Will only run a single time during a turn due to turnTaker
-            if(gameStarted && turnTaker != turnPlayerID){
-
-                turnTaker = turnPlayerID;
-
-
-                if(phase == Phase.defaultPhase){
-                    Card storyCard = storyDeck.drawCard();
-                    _cardsOnBoard.add(storyCard);
-                    System.out.println(storyCard.getName());
-
-                    //sleep needed or else message will cause error in View, since buttons not instantiated
-                    try {
-                        sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    quest = new Quest((QuestCard) storyCard, turnPlayerID);
-                    phase = Phase.questing;
-
-                }
-
-                if(phase == Phase.questing){
-                    quest.execute(turnPlayerID);    //takes one step
-                }
-
-            }
-        }
-
-
+        }*/
     }
 
     //region Helpers
@@ -216,8 +182,7 @@ public class Game extends Thread implements ServerEventListener {
 
         if(c instanceof QuestCard){
             //Is a quest card
-            //todo start quest in here?
-
+            quest.drawn(turnPlayerID);
         }
 
     }
@@ -227,11 +192,15 @@ public class Game extends Thread implements ServerEventListener {
         //Called when a player responds to a query to sponsor the quest. If declined is true, then questCards will be null.
         if(!declined){
             quest.setSponsorPID(plyID);
+            quest.sponsoring(turnPlayerID);
         }
         //next player is the one who drew the quest, meaning no one sponsored
         else if((plyID == _players.size() -1 && 0 == quest.getQuestDrawerPID()) || (plyID < _players.size() -1 && plyID + 1 == quest.getQuestDrawerPID())){
             quest = null;
-            phase = Phase.defaultPhase;
+        }
+        else{
+            //they declined but there are other players left who may sponsor
+            quest.sponsoring(turnPlayerID);
         }
     }
 
@@ -240,19 +209,26 @@ public class Game extends Thread implements ServerEventListener {
         //Called when a player responds to a participation query. If declined is true, cards will be null.
         if(!declined){
             quest.addOutPID(plyID);
+            quest.participating(turnPlayerID);
         }
         else{
             quest.addInPID(plyID);
+            quest.participating(turnPlayerID);
         }
 
-        //next player is the one who sponsored, meaning no one sponsored
+        //next player is the one who sponsored
         if((plyID == _players.size() -1 && 0 == quest.getQuestDrawerPID()) || (plyID < _players.size() -1 && plyID + 1 == quest.getQuestDrawerPID())){
             //no one has chosen to participate in the quest
             if(quest.getInPIDs().isEmpty()){
                 quest = null;
-                phase = Phase.defaultPhase;
+            }
+            else{
+                //at least someone has sponsored, go on to battling
+                quest.staging(turnPlayerID);
             }
         }
+
+
     }
 
 
