@@ -121,7 +121,7 @@ public class Quest {
                     }
                     else{
                         // player loses, pid removed from inPIDS, put in outPIDS
-                        inPIDs.removeAll(Arrays.asList(turnPlayerID));
+                        inPIDs.removeAll(Arrays.asList(turnPlayerID)); //to add
                         outPIDs.add(turnPlayerID);
                         // TODO: message that will tell player that they lost the fight, could be same message that they won the fight
                         //  but with an input flag set to a different value.
@@ -134,8 +134,6 @@ public class Quest {
             //turn has gone around table and back to player
             //TODO: message that tells final results to all players
         }
-
-
     }
 
     public boolean isValidSelection(Card[][] stages){
