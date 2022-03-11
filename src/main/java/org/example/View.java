@@ -16,6 +16,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -29,6 +30,16 @@ public class View extends Pane {
     //Singleton
     public static View view;
 
+    private final static int CARD_SRC_W = 200;
+    private final static int CARD_SRC_H = 280;
+    private final static int CARD_W = 100;
+    private final static int CARD_H = 140;
+    private final static int MARGIN = 10;
+    private final static int HAND_COLS = 8;
+    private final static int HAND_ROWS = 2;
+
+    private Image advCards;
+    private Image storyCards;
     private ImageView storyDiscard;
     private ImageView advDiscard;
     private ArrayList<ImageView> cards;
@@ -47,6 +58,20 @@ public class View extends Pane {
         setWidth(1280);
         setHeight(720);
 
+        advCards = new Image(new File("src/resources/advComposite.jpg").toURI().toString());
+        storyCards = new Image(new File("src/resources/storyComposite.jpg").toURI().toString());
+    }
+
+    public Button getStoryDeck() {
+        return storyDeck;
+    }
+
+    public Image getAdvCards() {
+        return advCards;
+    }
+
+    public Image getStoryCards() {
+        return storyCards;
     }
 
     // Basically like join popup, there has to be a better way to do this tho
@@ -135,46 +160,8 @@ public class View extends Pane {
     }
 
     private void gameViewInit() {
-        //TODO: replace precalculated values with constants
-        storyDiscard = new ImageView();
-        storyDiscard.setX(getWidth()/2-110);
-        storyDiscard.setY(getHeight()/3);
-        storyDiscard.setFitWidth(100);
-        storyDiscard.setFitHeight(140);
-        storyDiscard.setPreserveRatio(true);
-        getChildren().add(storyDiscard);
-
-        advDiscard = new ImageView();
-        advDiscard.setX(getWidth()/2+10);
-        advDiscard.setY(getHeight()/3);
-        advDiscard.setFitWidth(100);
-        advDiscard.setFitHeight(140);
-        advDiscard.setPreserveRatio(true);
-        getChildren().add(advDiscard);
-
         Image advCards = new Image(new File("src/resources/advComposite.jpg").toURI().toString());
-        advDiscard.setImage(advCards);
-        advDiscard.setViewport(getAdvCard(0));
-
         Image storyCards = new Image(new File("src/resources/storyComposite.jpg").toURI().toString());
-        storyDiscard.setImage(storyCards);
-        storyDiscard.setViewport(getStoryCard(0));
-
-        storyDeck = new Button("Draw story card");
-        storyDeck.relocate(storyDiscard.getX()-120, storyDiscard.getY());
-        storyDeck.setPrefSize(100,140);
-        getChildren().add(storyDeck);
-
-        storyDeck.setOnAction(e -> {
-            //LocalGameManager.get().drawStory();
-        });
-
-        advDeck = new Button("Draw adventure card");
-        advDeck.relocate(advDiscard.getX()+120, advDiscard.getY());
-        advDeck.setPrefSize(100,140);
-        getChildren().add(advDeck);
-
-        advDeck.setOnAction(e -> LocalGameManager.get().drawCard());
 
         Group hand = new Group();
 
@@ -214,9 +201,42 @@ public class View extends Pane {
 
         getChildren().add(hand);
 
+        storyDeck = new Button("Draw story card");
+        storyDeck.relocate(720, 240);
+        storyDeck.setPrefSize(100,140);
+        storyDeck.setOnAction(e -> LocalGameManager.get().drawStory());
+        getChildren().add(storyDeck);
+
+        storyDiscard = new ImageView();
+        storyDiscard.setX(storyDeck.getLayoutX() + 110);
+        storyDiscard.setY(storyDeck.getLayoutY());
+        storyDiscard.setFitWidth(100);
+        storyDiscard.setFitHeight(140);
+        storyDiscard.setPreserveRatio(true);
+        storyDiscard.setImage(storyCards);
+        storyDiscard.setViewport(getStoryCard(0));
+        getChildren().add(storyDiscard);
+
+        advDiscard = new ImageView();
+        advDiscard.setX(storyDeck.getLayoutX() + 220);
+        advDiscard.setY(storyDeck.getLayoutY());
+        advDiscard.setFitWidth(100);
+        advDiscard.setFitHeight(140);
+        advDiscard.setPreserveRatio(true);
+        advDiscard.setImage(advCards);
+        advDiscard.setViewport(getAdvCard(0));
+        getChildren().add(advDiscard);
+
+        advDeck = new Button("Draw\nadventure card");
+        advDeck.relocate(storyDeck.getLayoutX() + 330, advDiscard.getY());
+        advDeck.setPrefSize(100,140);
+        advDeck.setTextAlignment(TextAlignment.CENTER);
+        advDeck.setOnAction(e -> LocalGameManager.get().drawCard());
+        getChildren().add(advDeck);
+
         endTurn = new Button("End Turn");
-        endTurn.relocate(handArea.getX()+790, handArea.getY()-30);
-        endTurn.setPrefSize(100,20);
+        endTurn.relocate(storyDeck.getLayoutX() + 440, storyDeck.getLayoutY() + 110);
+        endTurn.setPrefSize(100,30);
         endTurn.setDisable(true);
         endTurn.setOnAction(e -> LocalGameManager.get().finishTurn());
         getChildren().add(endTurn);
@@ -226,11 +246,11 @@ public class View extends Pane {
         getChildren().add(localPly);
     }
 
-    private Rectangle2D getAdvCard(int id) {
+    public Rectangle2D getAdvCard(int id) {
         return new Rectangle2D(((id-1)%8)*200,Math.floorDiv(id-1,8)*280,200,280);
     }
 
-    private Rectangle2D getStoryCard(int id) {
+    public Rectangle2D getStoryCard(int id) {
         return new Rectangle2D(((id-18)%6)*200,Math.floorDiv(id-18,6)*280,200,280);
     }
 

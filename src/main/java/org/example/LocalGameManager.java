@@ -16,7 +16,6 @@ public class LocalGameManager implements ClientEventListener{
 
     private ArrayList<Card> _discardPile;
 
-
     private boolean gameStarted = false;
     private int connectedPlayerCount = 0;
 
@@ -97,7 +96,6 @@ public class LocalGameManager implements ClientEventListener{
         NetworkManager.get().sendNetMessageToServer(msg);
     }
 
-    //not sure if this is where this function should go
     public void drawCard() {
         if(!isMyTurn())
             return;
@@ -113,6 +111,13 @@ public class LocalGameManager implements ClientEventListener{
         objs.add(localPlayer.getHandCardIDs()[handIndex]);
 
         LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.CARD_DISCARD, objs);
+        NetworkManager.get().sendNetMessageToServer(msg);
+    }
+
+    public void drawStory() {
+        if(!isMyTurn())
+            return;
+        LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.STORY_CARD_DRAW, null);
         NetworkManager.get().sendNetMessageToServer(msg);
     }
 
@@ -196,6 +201,7 @@ public class LocalGameManager implements ClientEventListener{
     public void onStoryDrawCard(int plyID, int cardID) {
         //Called when a player has drawn a story card.
 
+        View.get().update();
     }
 
     @Override
@@ -208,7 +214,8 @@ public class LocalGameManager implements ClientEventListener{
     @Override
     public void onQuestSponsorQuery(int questCardID) {
         //called when asking the local player if they would like to sponsor the quest.
-
+        QuestCard c = (QuestCard) Card.getCardByID(questCardID);
+        QuestSponsorView q = new QuestSponsorView(c.getName(), c.getStages());
 
     }
 
@@ -222,8 +229,6 @@ public class LocalGameManager implements ClientEventListener{
     @Override
     public void onQuestResult(int winnerID, int[][] sponsorCards, int[] winningPlayerCards) {
         //Called when the quest is over and shows the winning results. sponsorCards is seperated by stage. eg: sponsorCards[0] will get stage 1's cards.
-
-
 
     }
 }
