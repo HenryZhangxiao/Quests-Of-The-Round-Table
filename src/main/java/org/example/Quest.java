@@ -66,9 +66,16 @@ public class Quest {
             //player who sponsored the quest now picks cards for quest
             if(turnPlayerID == sponsorPID){
                 //TODO: picking of cards from hand
+                //TODO: Assuming cards picked are added to the stages variable
+
 
                 //Henry stuff to validate sponsor's selection
+                //This boolean basically takes the selected cards and checks if its valid (incremental order)
+                //I don't know how you want to use this yet, maybe wrap this in a while loop to continue
+                //to prompt while false (??)
+                boolean isValidSelection = isValidSelection(stages);
 
+                //If going with the while loop approach, this goes outside the while loop
                 phase = Phase.battling;
             }
             else{
@@ -136,6 +143,44 @@ public class Quest {
         }
     }
 
+    public boolean isValidSelection(Card[][] stages){
+        int[] stageBPTotals = new int[stages.length];
+
+        for(int i=0; i < stages.length; i++){ //Loop through each stage
+            int currentStageBPTotal = 0;
+
+            for(int j=0; j < stages[i].length; j++){ //Loop through the cards of each stage
+                int cardBP = 0;
+
+                if(stages[i][j] instanceof WeaponCard){
+                    WeaponCard currentCard = (WeaponCard) stages[i][j];
+                    cardBP = currentCard.getBP();
+                }
+                else if(stages[i][j] instanceof FoeCard){
+                    FoeCard currentCard = (FoeCard) stages[i][j];
+                    cardBP = currentCard.getBP();
+                }
+                else{
+                    //TODO: Add the rest of the card types later
+                }
+
+                currentStageBPTotal += cardBP;
+            }
+            stageBPTotals[i] = currentStageBPTotal;
+        }
+
+        // Check to see if the stage BPs are in incremental order
+        for(int i=0; i < stageBPTotals.length; i++) {
+            int lastStageBP = 0;
+
+            if(stageBPTotals[i] > lastStageBP){ //This is good. Valid selection. At least for this stage
+                lastStageBP = stageBPTotals[i];
+                continue;
+            }
+            return false; //We missed the if statement which checks validity so return false
+        }
+        return true; //If we got here there was no problem with the selection
+    }
 
     public void setSponsorPID(int sponsorPID) {
         this.sponsorPID = sponsorPID;
