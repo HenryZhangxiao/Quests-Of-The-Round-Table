@@ -198,7 +198,7 @@ public class LocalGameManager implements ClientEventListener{
     @Override
     public void onQuestParticipateQuery(int sponsorPlyID, int questID) {
         //Called when the sponsor has chosen their cards and is asking the local player if they would like to participate.
-
+        QuestParticipationView q = new QuestParticipationView(true);
 
     }
 

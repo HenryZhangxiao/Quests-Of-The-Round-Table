@@ -8,12 +8,14 @@ public class Player{
     private String playerName;
     public ArrayList<Card> hand;
     private int numShields;
+    private int battlePoints;
 
     public Player(int ID, String name){
         playerName = name;
         playerNum = ID;
         hand = new ArrayList<>();
         numShields = 0;
+        battlePoints = 5;//Default for rank squire
     }
 
     public void addCard(Card c){
@@ -56,6 +58,8 @@ public class Player{
     public void giveShields(int x) {
         numShields += x;
     }
+
+    public int getBattlePoints(){return battlePoints;}
 
     public void setPlayerNum(int playerNum) {
         this.playerNum = playerNum;
