@@ -8,7 +8,10 @@ public interface ClientEventListener {
 
     public void onTurnChange(int idOfPlayer);
 
+    public void onUpdateHand(int plyID, int[] cardIDs);
+
     public void onDrawCard(int plyID, int cardID);
+    public void onDrawCardX(int plyID, int[] cardIDs);
     public void onCardDiscard(int plyID, int cardID);
 
     public void onStoryDrawCard(int plyID, int cardID);

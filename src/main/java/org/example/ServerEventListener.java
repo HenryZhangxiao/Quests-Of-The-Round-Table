@@ -9,7 +9,10 @@ public interface ServerEventListener {
 
     public void onTurnChange(int idOfPlayer);
 
+    public void onUpdateHand(int plyID, int[] cardIDs);
+
     public void onDrawCard(int plyID);
+    public void onDrawCardX(int plyID, int amountOfCards);
     public void onCardDiscard(int plyID, int cardID);
 
     public void onStoryDrawCard(int plyID);

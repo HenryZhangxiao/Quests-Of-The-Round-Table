@@ -162,8 +162,25 @@ public class LocalGameManager implements ClientEventListener{
     }
 
     @Override
+    public void onUpdateHand(int plyID, int[] cardIDs) {
+        getPlayerByID(plyID).hand.clear();
+        for(int i = 0; i < cardIDs.length; i++) {
+            getPlayerByID(plyID).addCardByID(cardIDs[i]);
+        }
+        View.get().update();
+    }
+
+    @Override
     public void onDrawCard(int plyID, int cardID) {
         getPlayerByID(plyID).addCardByID(cardID);
+        View.get().update();
+    }
+
+    @Override
+    public void onDrawCardX(int plyID, int[] cardIDs) {
+        for(int i = 0; i < cardIDs.length; i++) {
+            getPlayerByID(plyID).addCardByID(cardIDs[i]);
+        }
         View.get().update();
     }
 

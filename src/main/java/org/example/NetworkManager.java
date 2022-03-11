@@ -108,6 +108,16 @@ public class NetworkManager extends Thread {
                     l.onPlayerConnect((int)_objs.get(0),(String) _objs.get(1), (int[])_objs.get(2));
                 }
                 break;
+            case UPDATE_HAND:
+                for (ClientEventListener l: _listeners) {
+                    l.onUpdateHand((int)_objs.get(0),(int[])_objs.get(1));
+                }
+                break;
+            case CARD_DRAW_X:
+                for (ClientEventListener l: _listeners) {
+                    l.onDrawCardX((int)_objs.get(0),(int[])_objs.get(1));
+                }
+                break;
             case CARD_DRAW:
                 for (ClientEventListener l: _listeners) {
                     l.onDrawCard((int)_objs.get(0),(int)_objs.get(1));

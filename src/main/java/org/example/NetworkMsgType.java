@@ -9,8 +9,11 @@ public enum NetworkMsgType {
     START_GAME, //Send by host to start game.
     TEST_MESSAGE, //For Testing
 
-    TURN_CHANGE, //[ID of whos turn it now is.]
-    CARD_DRAW, //[ID of card drawn]
+    UPDATE_HAND, //To Client[PlyID, Array of Card IDs in hand now] - To Server [Array of Card IDs in hand now]
+
+    TURN_CHANGE, //To Server [] - To Client [ID of whos turn it now is.]
+    CARD_DRAW, //To Client[ID of card drawn] - To Server []
+    CARD_DRAW_X, //To Client [[] of cards drawn] - To Server[Amount of cards to draw]
     CARD_DISCARD, //[ID of card discarded]
 
     STORY_CARD_DRAW, //[ID of card drawn]

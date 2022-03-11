@@ -233,6 +233,18 @@ public class QuestParticipationView {
 
                 LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY,NetworkMessage.pack(false,sendCards));
                 NetworkManager.get().sendNetMessageToServer(msg);
+
+                int[] cardIDs = new int[hand.size()];
+                for(int i = 0; i < hand.size(); i++){
+                    cardIDs[i] = hand.get(i).id;
+                }
+
+                LocalClientMessage msg2 = new LocalClientMessage(NetworkMsgType.UPDATE_HAND,NetworkMessage.pack(cardIDs));
+                NetworkManager.get().sendNetMessageToServer(msg2);
+
+                LocalGameManager.get().getLocalPlayer().hand = hand;
+                View.get().update();
+                
                 stage.close();
             }
         });

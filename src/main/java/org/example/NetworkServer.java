@@ -84,6 +84,11 @@ public class NetworkServer extends Thread{
             case TEST_MESSAGE:
 
                 break;
+            case UPDATE_HAND:
+                for(ServerEventListener l: _listeners){
+                    l.onUpdateHand(c.getPlayerId(),(int[])_objs.get(0));
+                }
+                break;
             case CARD_DRAW:
                 for(ServerEventListener l: _listeners){
                     l.onDrawCard(c.getPlayerId());
@@ -92,6 +97,11 @@ public class NetworkServer extends Thread{
             case CARD_DISCARD:
                 for(ServerEventListener l: _listeners){
                     l.onCardDiscard(c.getPlayerId(),(int)msg._objects.get(0));
+                }
+                break;
+            case CARD_DRAW_X:
+                for(ServerEventListener l: _listeners){
+                    l.onDrawCardX(c.getPlayerId(),(int)_objs.get(0));
                 }
                 break;
             case STORY_CARD_DRAW:

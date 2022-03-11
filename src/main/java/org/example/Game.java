@@ -143,6 +143,16 @@ public class Game extends Thread implements ServerEventListener {
     }
 
     @Override
+    public void onUpdateHand(int plyID, int[] cardIDs) {
+        getPlayerByID(plyID).hand.clear();
+        for(int i = 0; i < cardIDs.length; i++) {
+            getPlayerByID(plyID).addCardByID(cardIDs[i]);
+        }
+        ServerMessage msg = new ServerMessage(NetworkMsgType.UPDATE_HAND,NetworkMessage.pack(plyID,cardIDs));
+        NetworkServer.get().sendNetMessageToAllPlayers(msg);
+    }
+
+    @Override
     public void onDrawCard(int plyID) {
         if(plyID != turnPlayerID){
             System.out.println("SERVER: Not Player " + String.valueOf(plyID) + " turn. Current TurnID is " + String.valueOf(turnPlayerID));
@@ -150,8 +160,21 @@ public class Game extends Thread implements ServerEventListener {
         }
 
         Card c = deck.drawCard();
+        getPlayerByID(plyID).hand.add(c);
         ServerMessage msg = new ServerMessage(NetworkMsgType.CARD_DRAW,NetworkMessage.pack(plyID, c.id));
         NetworkServer.get().sendNetMessageToAllPlayers(msg);
+    }
+
+    @Override
+    public void onDrawCardX(int plyID, int amountOfCards) {
+        //For Drawing multiple cards
+        int cardIDs[] = new int[amountOfCards];
+        for(int i = 0; i < amountOfCards; i++){
+            Card c = deck.drawCard();
+            getPlayerByID(plyID).hand.add(c);
+            cardIDs[i] = c.id;
+        }
+        ServerMessage msg = new ServerMessage(NetworkMsgType.CARD_DRAW_X,NetworkMessage.pack(plyID,cardIDs));
     }
 
     @Override
@@ -161,6 +184,7 @@ public class Game extends Thread implements ServerEventListener {
             return;
         }
 
+        getPlayerByID(plyID).hand.remove(Card.getCardByID(cardID));
         deck.discards.add(Card.getCardByID(cardID));
 
         ServerMessage msg = new ServerMessage(NetworkMsgType.CARD_DISCARD,NetworkMessage.pack(plyID, cardID));
