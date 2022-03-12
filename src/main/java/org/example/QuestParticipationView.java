@@ -260,7 +260,7 @@ public class QuestParticipationView {
 
         //Opens the window and waits.
         stage.setScene(s1);
-
+        stage.setTitle(String.valueOf(LocalGameManager.get().getLocalPlayer().getPlayerNum()) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
         stage.showAndWait();
 
     }

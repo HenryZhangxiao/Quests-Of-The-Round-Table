@@ -241,7 +241,7 @@ public class View extends Pane {
         endTurn.setOnAction(e -> LocalGameManager.get().finishTurn());
         getChildren().add(endTurn);
 
-        Label localPly = new Label(LocalGameManager.get().getLocalPlayer().getPlayerName());
+        Label localPly = new Label(String.valueOf(LocalGameManager.get().getLocalPlayer().getPlayerNum()) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName() + "\n Shields: " + String.valueOf(LocalGameManager.get().getLocalPlayer().getShields()));
         localPly.relocate(20, getHeight()-50);
         getChildren().add(localPly);
     }

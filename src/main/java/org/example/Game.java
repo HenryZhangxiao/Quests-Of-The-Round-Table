@@ -234,12 +234,13 @@ public class Game extends Thread implements ServerEventListener {
             }
 
             //if sponsor card selection is valid, then go ahead, otherwise redo sponsoring
-            if(Quest.isValidSelection(stageCards)){
-                //invalid selection
-                System.out.println("invalid selection");
-                quest.sponsoring();
-            }
-            else{
+            //Todo fix this. It validates clientside for now, but theres something up when sending cards over
+            //if(Quest.isValidSelection(stageCards, quest.getQuestCard())){
+            //    //invalid selection
+            //    System.out.println("SERVER: invalid selection from " + String.valueOf(plyID));
+            //    quest.sponsoring();
+            //}
+            //else{
                 //valid selection
                 quest.setSponsorPID(plyID);
                 quest.setStages(stageCards);
@@ -248,7 +249,7 @@ public class Game extends Thread implements ServerEventListener {
 
                 quest.goToNextTurn();
                 quest.participating();
-            }
+            //}
 
         }
         //next player is the one who drew the quest, meaning no one sponsored

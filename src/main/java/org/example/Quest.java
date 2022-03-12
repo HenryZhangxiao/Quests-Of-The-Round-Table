@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Quest {
-    private static QuestCard questCard;
+    private QuestCard questCard;
     private int turnPlayerID;
     private int numPlayers;
 
@@ -62,8 +62,10 @@ public class Quest {
     //players choose if they want to join the quest
     //once it gets to the sponsor, then everyone has opted in or out, sponsor picks cards for quest
     public void participating() {
-        ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(sponsorPID,questCard.id));
-        NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
+        if(turnPlayerID != sponsorPID && !outPIDs.contains(turnPlayerID)) {
+            ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(sponsorPID, questCard.id));
+            NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
+        }
 
         goToNextTurn();
     }
@@ -80,7 +82,7 @@ public class Quest {
                 if(inPIDs.contains(turnPlayerID)){
 
                     //add up that player's battle points
-                    int playerBP = 5;   //5 is points from being a squire
+                    int playerBP = Game.get().getPlayerByID(turnPlayerID).getBattlePoints();   //5 is points from being a squire
                     for(int i = 0; i < playerCards.length; ++i){
                         playerBP += ((WeaponCard)playerCards[i]).getBP();
                     }
@@ -143,7 +145,7 @@ public class Quest {
         goToNextTurn();
     }
 
-    public static boolean isValidSelection(Card[][] stages){
+    public static boolean isValidSelection(Card[][] stages, QuestCard aQuestCard){
         int[] stageBPTotals = new int[stages.length];
 
         for(int i=0; i < stages.length; i++){ //Loop through each stage
@@ -158,7 +160,7 @@ public class Quest {
                 }
                 else if(stages[i][j] instanceof FoeCard){
                     FoeCard currentCard = (FoeCard) stages[i][j];
-                    if(Arrays.asList(questCard.getSpecialFoes()).contains(currentCard.getName()) || (questCard.getSpecialFoes().length != 0 && questCard.getSpecialFoes()[0].equals("All"))){
+                    if(Arrays.asList(aQuestCard.getSpecialFoes()).contains(currentCard.getName()) || (aQuestCard.getSpecialFoes().length != 0 && aQuestCard.getSpecialFoes()[0].equals("All"))){
                         cardBP = currentCard.getAlt_bp();
                     } else{
                         cardBP = currentCard.getBP();
@@ -217,4 +219,6 @@ public class Quest {
     public int getTurnPlayerID() {
         return turnPlayerID;
     }
+
+    public QuestCard getQuestCard(){return questCard;}
 }

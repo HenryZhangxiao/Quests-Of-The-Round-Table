@@ -178,6 +178,7 @@ public class LocalGameManager implements ClientEventListener{
     @Override
     public void onUpdateShields(int plyID, int shieldCount) {
         getPlayerByID(plyID).setShields(shieldCount);
+        View.get().update();
     }
 
     @Override
@@ -220,7 +221,7 @@ public class LocalGameManager implements ClientEventListener{
     public void onQuestSponsorQuery(int questCardID) {
         //called when asking the local player if they would like to sponsor the quest.
         QuestCard c = (QuestCard) Card.getCardByID(questCardID);
-        QuestSponsorView q = new QuestSponsorView(c.getName(), c.getStages());
+        QuestSponsorView q = new QuestSponsorView(c);
 
     }
 
@@ -235,12 +236,16 @@ public class LocalGameManager implements ClientEventListener{
     public void onQuestStageResult(int questCardID, boolean wonStage, int[] stageCardsIDs, int[] playerCardsIDs) {
         //TODO Show result of stage.
         // wonStage will be true if they won the stage
+        if(wonStage)
+            System.out.println("CLIENT: You won the stage.");
+        else
+            System.out.println("CLIENT: You lost the stage.");
 
     }
 
     @Override
-    public void onQuestFinalResult(int winnerID, int[][] sponsorCards, int[] winningPlayerCards) {
+    public void onQuestFinalResult(int winnerID, int[][] sponsorCards) {
         //Called when the quest is over and shows the winning results. sponsorCards is separated by stage. eg: sponsorCards[0] will get stage 1's cards.
-
+        System.out.println("CLIENT: The Quest has ended.");
     }
 }

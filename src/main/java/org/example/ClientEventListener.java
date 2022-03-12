@@ -21,6 +21,6 @@ public interface ClientEventListener {
     public void onQuestSponsorQuery(int questCardID);
     public void onQuestParticipateQuery(int sponsorPlyID, int questID);
     public void onQuestStageResult(int questCardID, boolean wonStage, int[] stageCardsIDs, int[] playerCardsIDs);
-    public void onQuestFinalResult(int winnerID, int[][] sponsorCards, int[] playerCards);
+    public void onQuestFinalResult(int winnerID, int[][] sponsorCards);
 
 }

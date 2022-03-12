@@ -167,7 +167,7 @@ public class NetworkManager extends Thread {
                 break;
             case QUEST_FINAL_RESULT:
                 for (ClientEventListener l: _listeners) {
-                    l.onQuestFinalResult((int)_objs.get(0),(int[][])_objs.get(1),(int[])_objs.get(2));
+                    l.onQuestFinalResult((int)_objs.get(0),(int[][])_objs.get(1));
                 }
                 break;
 

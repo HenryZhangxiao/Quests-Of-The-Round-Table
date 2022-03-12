@@ -42,9 +42,12 @@ public class QuestSponsorView {
     private Group selectionCardGroup;
     private Group handCardGroup;
 
-    public QuestSponsorView(String n, int s) {
-        name = n;
-        numStages = s;
+    private QuestCard questCard;
+
+    public QuestSponsorView(QuestCard aQuestCard) {
+        questCard = aQuestCard;
+        name = questCard.name;
+        numStages = questCard.stages;
         foesSelected = 0;
         width = 1000;
         height = 550 + 150 * numStages;
@@ -150,13 +153,24 @@ public class QuestSponsorView {
         yesBtn.relocate(100,100);
         yesBtn.setDisable(true);
         yesBtn.setOnAction(actionEvent -> {
+            Card[][] valCards = new Card[numStages][];
             int[][] sendCards = new int[numStages][];
             for (int i = 0; i < numStages; i++){
                 sendCards[i] = new int[selectedCards.get(i).size()];
+                valCards[i] = new Card[selectedCards.get(i).size()];
                 for (int j = 0; j < selectedCards.get(i).size(); j++) {
                     sendCards[i][j] = selectedCards.get(i).get(j).getID();
+                    valCards[i][j] = selectedCards.get(i).get(j);
                 }
             }
+
+            if(!Quest.isValidSelection(valCards,questCard)){
+                //Todo show invalid selection through a label or something?
+                System.out.println("CLIENT: Invalid Sponsor Selection");
+                return;
+            }
+            else
+                System.out.println("CLIENT: Valid Sponsor Selection");
 
             LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(false,sendCards));
             NetworkManager.get().sendNetMessageToServer(msg);
@@ -204,6 +218,7 @@ public class QuestSponsorView {
         root.getChildren().addAll(lbl,noBtn,yesBtn,selectionGroup,handGroup);
         Scene scene = new Scene(root,width,height);
         stage.setScene(scene);
+        stage.setTitle(String.valueOf(LocalGameManager.get().getLocalPlayer().getPlayerNum()) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
         stage.showAndWait();
     }
 
