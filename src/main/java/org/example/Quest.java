@@ -12,23 +12,25 @@ public class Quest {
     private int sponsorPID;
     protected ArrayList<Integer> outPIDs;  //those who have opted out or have been eliminated
     protected ArrayList<Integer> inPIDs;   //those who did not opt out and have not been eliminated
+    private int winnerID;
 
-    private Card[][] stages;
+    private Card[][] stageCards;
     private Card[] playerCards;
 
     public Quest(QuestCard _questCard, int _questDrawerPID, int _numPlayers){
         questCard = _questCard;
         questDrawerPID = _questDrawerPID;
+        turnPlayerID = questDrawerPID;
         numPlayers = _numPlayers;
 
         sponsorPID = -5;
-        stages = new Card[questCard.getStages()][];
+        stageCards = new Card[questCard.getStages()][];
 
         outPIDs = new ArrayList<>();
         inPIDs = new ArrayList<>();
     }
 
-    private int getNextPID(int currentPID){
+    protected int getNextPID(int currentPID){
         if(currentPID == numPlayers - 1){
             return 0;
         }
@@ -86,15 +88,15 @@ public class Quest {
                     //add up current foe's battle points
                     //assumes the first card in a stage will be the foe
                     int foeBP;
-                    if(Arrays.asList(questCard.getSpecialFoes()).contains((stages[currentStage][0]).getName()) || questCard.getSpecialFoes()[0].equals("All")){
-                        foeBP = ((FoeCard)stages[currentStage][0]).getAlt_bp();
+                    if(Arrays.asList(questCard.getSpecialFoes()).contains((stageCards[currentStage][0]).getName()) || questCard.getSpecialFoes()[0].equals("All")){
+                        foeBP = ((FoeCard)stageCards[currentStage][0]).getAlt_bp();
                     }
                     else{
-                        foeBP = ((FoeCard)stages[currentStage][0]).getBP();
+                        foeBP = ((FoeCard)stageCards[currentStage][0]).getBP();
                     }
 
-                    for(int i = 1; i < stages[currentStage].length; ++i){
-                        foeBP += ((WeaponCard)stages[currentStage][i]).getBP();
+                    for(int i = 1; i < stageCards[currentStage].length; ++i){
+                        foeBP += ((WeaponCard)stageCards[currentStage][i]).getBP();
                     }
 
                     if(playerBP > foeBP){
@@ -105,7 +107,7 @@ public class Quest {
                         // message that will tell player that they won the fight.
                         //  will likely also clear the weapon cards from the board that that player used
 
-                        ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,NetworkMessage.pack(questCard.id, true, stages, playerCards));
+                        ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,NetworkMessage.pack(questCard.id, true, stageCards, playerCards));
                         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
 
                         //beat foe of last stage, get shields
@@ -184,7 +186,7 @@ public class Quest {
 
 
     public void setStages(Card[][] _stageCards){
-        stages = _stageCards;
+        stageCards = _stageCards;
     }
 
     public void setPlayerCards(Card[] _playerCards){
@@ -207,4 +209,8 @@ public class Quest {
     public void addOutPID(int pid){ outPIDs.add(pid);}
 
     public void addInPID(int pid){ inPIDs.add(pid);}
+
+    public int getTurnPlayerID() {
+        return turnPlayerID;
+    }
 }

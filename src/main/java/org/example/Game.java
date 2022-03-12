@@ -210,6 +210,7 @@ public class Game extends Thread implements ServerEventListener {
         if(c instanceof QuestCard){
             //Is a quest card
             quest = new Quest((QuestCard) c, plyID, _players.size());
+            System.out.println("player " + plyID + " has drawn a quest");
             quest.drawn();
         }
 
@@ -218,18 +219,24 @@ public class Game extends Thread implements ServerEventListener {
     @Override
     public void onQuestSponsorQuery(int plyID, boolean declined, int[][] questCards) {
         //Called when a player responds to a query to sponsor the quest. If declined is true, then questCards will be null.
+        System.out.println("player " + plyID + " asked to sponsor");
+        System.out.println("quest's player id is " + quest.getTurnPlayerID());
         if(!declined){
 
             Card[][] stageCards = new Card[questCards.length][];
             for(int i = 0; i < questCards.length; ++i){
+                Card[] stage = new Card[questCards[i].length];
+
                 for(int j = 0; j < questCards[i].length; ++j){
-                    stageCards[i][j] = Card.getCardByID(questCards[i][j]);
+                    stage[j] = (Card.getCardByID(questCards[i][j]));
                 }
+                stageCards[i] = stage;
             }
 
             //if sponsor card selection is valid, then go ahead, otherwise redo sponsoring
             if(Quest.isValidSelection(stageCards)){
                 //invalid selection
+                System.out.println("invalid selection");
                 quest.sponsoring();
             }
             else{
@@ -237,17 +244,22 @@ public class Game extends Thread implements ServerEventListener {
                 quest.setSponsorPID(plyID);
                 quest.setStages(stageCards);
 
+                System.out.println("valid selection, to next turn");
+
                 quest.goToNextTurn();
                 quest.participating();
             }
 
         }
         //next player is the one who drew the quest, meaning no one sponsored
-        else if((plyID == _players.size() -1 && 0 == quest.getQuestDrawerPID()) || (plyID < _players.size() -1 && plyID + 1 == quest.getQuestDrawerPID())){
+        else if(quest.getNextPID(quest.getTurnPlayerID()) == quest.getQuestDrawerPID()){
+            System.out.println("quest over because quest drawer is next: " + quest.getQuestDrawerPID());
             quest = null;
         }
         else{
             //they declined but there are other players left who may sponsor
+            System.out.println("still more to sponsor");
+            quest.goToNextTurn();
             quest.sponsoring();
         }
     }
@@ -269,7 +281,7 @@ public class Game extends Thread implements ServerEventListener {
         }
 
         //next player is the one who sponsored
-        if((plyID == _players.size() -1 && 0 == quest.getQuestDrawerPID()) || (plyID < _players.size() -1 && plyID + 1 == quest.getQuestDrawerPID())){
+        if(quest.getNextPID(quest.getTurnPlayerID()) == quest.getSponsorPID()){
             //no one has chosen to participate in the quest
             if(quest.getInPIDs().isEmpty()){
                 quest = null;
