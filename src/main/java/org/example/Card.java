@@ -149,6 +149,22 @@ public abstract class Card {
         return cardArry;
     }
 
+    public static int[] getCardIDsFromArray(Card[] cards){
+        int[] cardArry = new int[cards.length];
+        for(int i = 0; i < cards.length; i++){
+            cardArry[i] = cards[i].id;
+        }
+        return cardArry;
+    }
+
+    public static int[][] getStageCardIDsFromMDArray(Card[][] cards){
+        int[][] cardArry = new int[cards.length][];
+        for(int i = 0; i < cards.length; i++){
+            cardArry[i] = getCardIDsFromArray(cards[i]);
+        }
+        return cardArry;
+    }
+
     /*
     protected Image getImg(){
         return img;

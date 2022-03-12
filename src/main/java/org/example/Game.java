@@ -284,6 +284,8 @@ public class Game extends Thread implements ServerEventListener {
             System.out.println("accepted participation");
         }
 
+
+
         //next player is the one who sponsored
         System.out.println("the next pid is " + quest.getNextPID(quest.getTurnPlayerID()) + ", the sponsor pid is " + quest.getSponsorPID());
         if(quest.getNextPID(quest.getTurnPlayerID()) == quest.getSponsorPID()){
