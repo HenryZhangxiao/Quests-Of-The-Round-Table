@@ -206,8 +206,8 @@ public class Game extends Thread implements ServerEventListener {
 
         if(c instanceof QuestCard){
             //Is a quest card
-            quest = new Quest((QuestCard) c, plyID);
-            quest.drawn(turnPlayerID);
+            quest = new Quest((QuestCard) c, plyID, _players.size());
+            quest.drawn();
         }
 
     }
@@ -217,7 +217,7 @@ public class Game extends Thread implements ServerEventListener {
         //Called when a player responds to a query to sponsor the quest. If declined is true, then questCards will be null.
         if(!declined){
             quest.setSponsorPID(plyID);
-            quest.sponsoring(turnPlayerID);
+            quest.sponsoring();
         }
         //next player is the one who drew the quest, meaning no one sponsored
         else if((plyID == _players.size() -1 && 0 == quest.getQuestDrawerPID()) || (plyID < _players.size() -1 && plyID + 1 == quest.getQuestDrawerPID())){
@@ -225,7 +225,7 @@ public class Game extends Thread implements ServerEventListener {
         }
         else{
             //they declined but there are other players left who may sponsor
-            quest.sponsoring(turnPlayerID);
+            quest.sponsoring();
         }
     }
 
@@ -234,11 +234,11 @@ public class Game extends Thread implements ServerEventListener {
         //Called when a player responds to a participation query. If declined is true, cards will be null.
         if(!declined){
             quest.addOutPID(plyID);
-            quest.participating(turnPlayerID);
+            quest.participating();
         }
         else{
             quest.addInPID(plyID);
-            quest.participating(turnPlayerID);
+            quest.participating();
         }
 
         //next player is the one who sponsored
@@ -249,7 +249,7 @@ public class Game extends Thread implements ServerEventListener {
             }
             else{
                 //at least someone has sponsored, go on to battling
-                quest.staging(turnPlayerID);
+                quest.staging();
             }
         }
 

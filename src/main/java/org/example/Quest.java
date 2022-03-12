@@ -5,6 +5,8 @@ import java.util.Arrays;
 
 public class Quest {
     private QuestCard questCard;
+    private int turnPlayerID;
+    private int numPlayers;
 
     private int questDrawerPID = -5;    //keep track of who drew the quest so looking for sponsor will only loop through players once
     private int sponsorPID;
@@ -13,15 +15,29 @@ public class Quest {
 
     private Card[][] stages;
 
-    public Quest(QuestCard _questCard, int _questDrawerPID){
+    public Quest(QuestCard _questCard, int _questDrawerPID, int _numPlayers){
         questCard = _questCard;
         questDrawerPID = _questDrawerPID;
+        numPlayers = _numPlayers;
 
         sponsorPID = -5;
         stages = new Card[questCard.getStages()][];
     }
 
-    public void drawn(int turnPlayerID) {
+    private int getNextPID(int currentPID){
+        if(currentPID == numPlayers - 1){
+            return 0;
+        }
+        else{
+            return currentPID + 1;
+        }
+    }
+
+    private void goToNextTurn(){
+        turnPlayerID = getNextPID(turnPlayerID);
+    }
+
+    public void drawn() {
         ServerMessage questStartMsg = new ServerMessage(NetworkMsgType.QUEST_BEGIN, NetworkMessage.pack(questDrawerPID, questCard.id));
         NetworkServer.get().sendNetMessageToAllPlayers(questStartMsg);
 
@@ -31,13 +47,15 @@ public class Quest {
         //TODO:in onQuestSponsorQuery(), LocalGameManager do stuff to un-disable a button of something to allow player
         // to choose to sponsor. The button(or whatever the input method) will send a onQuestSponsorQuery() ServerMessage
         // through NetworkServer so Game's Quest can set sponsorPID
+
+        goToNextTurn();
     }
 
     //happens if player who drew quest doesn't sponsor it, goes around table
-    public void sponsoring(int turnPlayerID) {
+    public void sponsoring() {
         //player who drew the quest sponsored it already
         if(sponsorPID != -5){
-            participating(turnPlayerID);
+            participating();
         }
 
         else{
@@ -45,17 +63,21 @@ public class Quest {
             ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(questCard.id));
             NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
         }
+
+        goToNextTurn();
     }
 
     //players choose if they want to join the quest
     //once it gets to the sponsor, then everyone has opted in or out, sponsor picks cards for quest
-    public void participating(int turnPlayerID) {
+    public void participating() {
         ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(questCard.id));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
+
+        goToNextTurn();
     }
 
     //player who sponsored the quest now picks cards for quest
-    public void staging(int turnPlayerID){
+    public void staging(){
         //TODO: picking of cards from hand
         //TODO: Assuming cards picked are added to the stages variable
 
@@ -72,10 +94,12 @@ public class Quest {
         // and call quest.battling()
         // when the selection is valid it would also have to onTurnChange() so that the game will be calling quest.battling() with
         // the next player's id as its arg (don't want the sponsor to battle)
+
+        goToNextTurn();
     }
 
     //players who opted in pick weapons to fight foes, etc
-    public void battling(int turnPlayerID) {
+    public void battling() {
         //the turn player is not the sponsor (not all players have fought)
         if(turnPlayerID != sponsorPID){
 
@@ -141,6 +165,8 @@ public class Quest {
             //turn has gone around table and back to player
             //TODO: message that tells final results to all players
         }
+
+        goToNextTurn();
     }
 
     public boolean isValidSelection(Card[][] stages){
