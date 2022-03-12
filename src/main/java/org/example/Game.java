@@ -23,11 +23,7 @@ public class Game extends Thread implements ServerEventListener {
     private int turnPlayerID = 0;
 
     private boolean gameStarted = false;
-
-    private enum Phase {
-        defaultPhase, questing
-    }
-    private Phase phase = Phase.defaultPhase;
+    
     private Quest quest = null;
 
     private volatile boolean stopThread = false;
