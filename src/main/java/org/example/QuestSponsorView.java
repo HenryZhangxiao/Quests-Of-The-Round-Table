@@ -150,8 +150,9 @@ public class QuestSponsorView {
         yesBtn.relocate(100,100);
         yesBtn.setDisable(true);
         yesBtn.setOnAction(actionEvent -> {
-            int[][] sendCards = new int[numStages][7];
+            int[][] sendCards = new int[numStages][];
             for (int i = 0; i < numStages; i++){
+                sendCards[i] = new int[selectedCards.get(i).size()];
                 for (int j = 0; j < selectedCards.get(i).size(); j++) {
                     sendCards[i][j] = selectedCards.get(i).get(j).getID();
                 }

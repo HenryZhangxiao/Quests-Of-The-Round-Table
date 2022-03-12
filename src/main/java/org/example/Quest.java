@@ -136,10 +136,8 @@ public class Quest {
         }
         else{
             //turn has gone around table and back to player
-            //TODO: message that tells final results to all players
-            // Needs the winner's playerID, the winning player's cardsID array, and the entire cards from the sponsor.
-            // NetworkMessage finalResultMsg = new ServerMessage(NetworkMsgType.QUEST_FINAL_RESULT,NetworkMessage.pack(winnerID, sponsorCards, winningPlayerCards));
-            // NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
+             ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.QUEST_FINAL_RESULT,NetworkMessage.pack(winnerID, stageCards));
+             NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
         }
 
         goToNextTurn();
@@ -160,7 +158,7 @@ public class Quest {
                 }
                 else if(stages[i][j] instanceof FoeCard){
                     FoeCard currentCard = (FoeCard) stages[i][j];
-                    if(Arrays.asList(questCard.getSpecialFoes()).contains(currentCard.getName()) || questCard.getSpecialFoes()[0].equals("All")){
+                    if(Arrays.asList(questCard.getSpecialFoes()).contains(currentCard.getName()) || (questCard.getSpecialFoes().length != 0 && questCard.getSpecialFoes()[0].equals("All"))){
                         cardBP = currentCard.getAlt_bp();
                     } else{
                         cardBP = currentCard.getBP();
