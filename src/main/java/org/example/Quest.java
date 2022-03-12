@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Quest {
-    private QuestCard questCard;
+    private static QuestCard questCard;
     private int turnPlayerID;
     private int numPlayers;
 
@@ -160,7 +160,11 @@ public class Quest {
                 }
                 else if(stages[i][j] instanceof FoeCard){
                     FoeCard currentCard = (FoeCard) stages[i][j];
-                    cardBP = currentCard.getBP();
+                    if(Arrays.asList(questCard.getSpecialFoes()).contains(currentCard.getName())){
+                        cardBP = currentCard.getAlt_bp();
+                    } else{
+                        cardBP = currentCard.getBP();
+                    }
                 }
                 else{
                     //TODO: Add the rest of the card types later
@@ -168,19 +172,21 @@ public class Quest {
 
                 currentStageBPTotal += cardBP;
             }
+
             stageBPTotals[i] = currentStageBPTotal;
         }
 
         // Check to see if the stage BPs are in incremental order
         int lastStageBP = 0;
         for(int i=0; i < stageBPTotals.length; i++) {
-
             if(stageBPTotals[i] > lastStageBP){ //This is good. Valid selection. At least for this stage
                 lastStageBP = stageBPTotals[i];
                 continue;
             }
+
             return false; //We missed the if statement which checks validity so return false
         }
+
         return true; //If we got here there was no problem with the selection
     }
 
