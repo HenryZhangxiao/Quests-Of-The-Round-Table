@@ -37,7 +37,7 @@ public class Quest {
         }
     }
 
-    private void goToNextTurn(){
+    protected void goToNextTurn(){
         turnPlayerID = getNextPID(turnPlayerID);
     }
 
@@ -48,24 +48,13 @@ public class Quest {
         //ask current player if they want to sponsor
         ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_SPONSOR_QUERY, NetworkMessage.pack(questCard.id));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
-
-        goToNextTurn();
     }
 
     //happens if player who drew quest doesn't sponsor it, goes around table
     public void sponsoring() {
-        //player who drew the quest sponsored it already
-        if(sponsorPID != -5){
-            participating();
-        }
-
-        else{
-            //ask current player if they want to sponsor
-            ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(questCard.id));
-            NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
-        }
-
-        goToNextTurn();
+        //ask current player if they want to sponsor
+        ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(questCard.id));
+        NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
     }
 
     //players choose if they want to join the quest
@@ -73,30 +62,6 @@ public class Quest {
     public void participating() {
         ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(sponsorPID,questCard.id));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
-
-        goToNextTurn();
-    }
-
-    //player who sponsored the quest now picks cards for quest
-    public void staging(){
-
-        //Henry stuff to validate sponsor's selection
-        //This boolean basically takes the selected cards and checks if its valid (incremental order)
-        //I don't know how you want to use this yet, maybe wrap this in a while loop to continue
-        //to prompt while false (??)
-        boolean isValidSelection = isValidSelection(stages);
-
-
-
-        // I think the best approach (or at least one I know would work) would be to have the validation locally when the cards
-        // are picked, then depending on if they're a valid selection, change a flag in the onCardPickingQuery (or whatever its name)
-        // then in onCardPickingQuery in Game, it will either call quest.staging() again, or it will update Quest's stages variable
-        // and call quest.battling()
-        // when the selection is valid it would also have to onTurnChange() so that the game will be calling quest.battling() with
-        // the next player's id as its arg (don't want the sponsor to battle)
-        //Todo onQuestSponsorQuery will be called in game when any client responds to a query with a valid selection, or by pressing the decline button
-        // the boolean declined will be true if they pressed the declined button, where it should ask the next player. This can be done here or in Game's
-        // onQuestSponsorQuery function.
 
         goToNextTurn();
     }
@@ -140,7 +105,7 @@ public class Quest {
                         // message that will tell player that they won the fight.
                         //  will likely also clear the weapon cards from the board that that player used
 
-                        ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,NetworkMessage.pack(questCard.id, true, stageCards, playerCards));
+                        ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,NetworkMessage.pack(questCard.id, true, stages, playerCards));
                         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
 
                         //beat foe of last stage, get shields
@@ -160,8 +125,8 @@ public class Quest {
                         //  but with an input flag set to a different value.
                         //  will likely also clear the weapon cards from that player
                         //Todo: false since the player lost. Needs the current stages cards and players cards set to arrays above.
-                        // ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,NetworkMessage.pack(questCard.id, false, stageCards, playerCards));
-                        // NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
+                        ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,NetworkMessage.pack(questCard.id, false, stageCards, playerCards));
+                        NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
 
                     }
                 }

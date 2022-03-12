@@ -218,8 +218,7 @@ public class Game extends Thread implements ServerEventListener {
     @Override
     public void onQuestSponsorQuery(int plyID, boolean declined, int[][] questCards) {
         //Called when a player responds to a query to sponsor the quest. If declined is true, then questCards will be null.
-        if(declined){
-            quest.setSponsorPID(plyID);
+        if(!declined){
 
             Card[][] stageCards = new Card[questCards.length][];
             for(int i = 0; i < questCards.length; ++i){
@@ -227,9 +226,21 @@ public class Game extends Thread implements ServerEventListener {
                     stageCards[i][j] = Card.getCardByID(questCards[i][j]);
                 }
             }
-            quest.setStages(stageCards);
 
-            quest.sponsoring();
+            //if sponsor card selection is valid, then go ahead, otherwise redo sponsoring
+            if(Quest.isValidSelection(stageCards)){
+                //invalid selection
+                quest.sponsoring();
+            }
+            else{
+                //valid selection
+                quest.setSponsorPID(plyID);
+                quest.setStages(stageCards);
+
+                quest.goToNextTurn();
+                quest.participating();
+            }
+
         }
         //next player is the one who drew the quest, meaning no one sponsored
         else if((plyID == _players.size() -1 && 0 == quest.getQuestDrawerPID()) || (plyID < _players.size() -1 && plyID + 1 == quest.getQuestDrawerPID())){
@@ -246,7 +257,6 @@ public class Game extends Thread implements ServerEventListener {
         //Called when a player responds to a participation query. If declined is true, cards will be null.
         if(declined){
             quest.addOutPID(plyID);
-            quest.participating();
         }
         else{
             quest.addInPID(plyID);
@@ -256,8 +266,6 @@ public class Game extends Thread implements ServerEventListener {
                 playerCards[i] = Card.getCardByID(cards[i]);
             }
             quest.setPlayerCards(playerCards);
-
-            quest.participating();
         }
 
         //next player is the one who sponsored
@@ -268,8 +276,12 @@ public class Game extends Thread implements ServerEventListener {
             }
             else{
                 //at least someone has sponsored, go on to battling
-                quest.staging();
+                quest.battling();
             }
+        }
+        //still more people to choose to participate
+        else{
+            quest.participating();
         }
 
 
