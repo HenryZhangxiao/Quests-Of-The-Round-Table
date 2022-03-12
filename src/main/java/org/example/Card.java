@@ -1,5 +1,6 @@
 package org.example;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public abstract class Card {
@@ -138,6 +139,14 @@ public abstract class Card {
 
         }
         return new ThievesFoe(); //Should never be reached
+    }
+
+    public static int[] getCardIDsFromArrayList(ArrayList<Card> cards){
+        int[] cardArry = new int[cards.size()];
+        for(int i = 0; i < cards.size(); i++){
+            cardArry[i] = cards.get(i).id;
+        }
+        return cardArry;
     }
 
     /*

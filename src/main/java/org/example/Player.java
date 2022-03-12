@@ -55,9 +55,10 @@ public class Player{
         NetworkServer.get().getPlayerByID(playerNum).sendNetMsg(msg);
     }
 
-    public void giveShields(int x) {
-        numShields += x;
+    public void setShields(int x) {
+        numShields = x;
     }
+    public int getShields(){return numShields; }
 
     public int getBattlePoints(){return battlePoints;}
 

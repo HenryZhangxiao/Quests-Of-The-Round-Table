@@ -113,6 +113,11 @@ public class NetworkManager extends Thread {
                     l.onUpdateHand((int)_objs.get(0),(int[])_objs.get(1));
                 }
                 break;
+            case UPDATE_SHIELDS:
+                for (ClientEventListener l: _listeners) {
+                    l.onUpdateShields((int)_objs.get(0),(int)_objs.get(1));
+                }
+                break;
             case CARD_DRAW_X:
                 for (ClientEventListener l: _listeners) {
                     l.onDrawCardX((int)_objs.get(0),(int[])_objs.get(1));
@@ -155,10 +160,14 @@ public class NetworkManager extends Thread {
                     l.onQuestParticipateQuery((int)_objs.get(0),(int)_objs.get(1));
                 }
                 break;
-
-            case QUEST_RESULT:
+            case QUEST_STAGE_RESULT:
                 for (ClientEventListener l: _listeners) {
-                    l.onQuestResult((int)_objs.get(0),(int[][])_objs.get(1),(int[])_objs.get(2));
+                    l.onQuestStageResult((int)_objs.get(0),(boolean)_objs.get(1),(int[])_objs.get(2),(int[])_objs.get(3));
+                }
+                break;
+            case QUEST_FINAL_RESULT:
+                for (ClientEventListener l: _listeners) {
+                    l.onQuestFinalResult((int)_objs.get(0),(int[][])_objs.get(1),(int[])_objs.get(2));
                 }
                 break;
 

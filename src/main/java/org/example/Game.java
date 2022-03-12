@@ -55,6 +55,13 @@ public class Game extends Thread implements ServerEventListener {
         return null;
     }
 
+    public Card drawAdvCard(){
+        return deck.drawCard();
+    }
+
+    public Card drawStoryCard(){
+        return storyDeck.drawCard();
+    }
 
 
     //endregion
@@ -211,7 +218,8 @@ public class Game extends Thread implements ServerEventListener {
     @Override
     public void onQuestSponsorQuery(int plyID, boolean declined, int[][] questCards) {
         //Called when a player responds to a query to sponsor the quest. If declined is true, then questCards will be null.
-        if(!declined){
+        //todo send the sponsor cards to the quest object eg questCards
+        if(declined){
             quest.setSponsorPID(plyID);
             quest.sponsoring();
         }
@@ -228,7 +236,8 @@ public class Game extends Thread implements ServerEventListener {
     @Override
     public void onQuestParticipateQuery(int plyID, boolean declined, int[] cards) {
         //Called when a player responds to a participation query. If declined is true, cards will be null.
-        if(!declined){
+        //Todo send the cards to the quest object.
+        if(declined){
             quest.addOutPID(plyID);
             quest.participating();
         }

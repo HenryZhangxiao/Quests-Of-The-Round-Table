@@ -116,7 +116,7 @@ public class NetworkServer extends Thread{
                 break;
 
             case QUEST_SPONSOR_QUERY:
-                boolean declinedSponsor = (boolean) _objs.get(0);
+                boolean declinedSponsor = (boolean)_objs.get(0);
                 for(ServerEventListener l: _listeners){
                     if(declinedSponsor)
                         l.onQuestSponsorQuery(c.getPlayerId(),declinedSponsor,null);

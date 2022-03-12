@@ -176,6 +176,11 @@ public class LocalGameManager implements ClientEventListener{
     }
 
     @Override
+    public void onUpdateShields(int plyID, int shieldCount) {
+        getPlayerByID(plyID).setShields(shieldCount);
+    }
+
+    @Override
     public void onDrawCard(int plyID, int cardID) {
         getPlayerByID(plyID).addCardByID(cardID);
         View.get().update();
@@ -227,8 +232,15 @@ public class LocalGameManager implements ClientEventListener{
     }
 
     @Override
-    public void onQuestResult(int winnerID, int[][] sponsorCards, int[] winningPlayerCards) {
-        //Called when the quest is over and shows the winning results. sponsorCards is seperated by stage. eg: sponsorCards[0] will get stage 1's cards.
+    public void onQuestStageResult(int questCardID, boolean wonStage, int[] stageCardsIDs, int[] playerCardsIDs) {
+        //TODO Show result of stage.
+        // wonStage will be true if they won the stage
+
+    }
+
+    @Override
+    public void onQuestFinalResult(int winnerID, int[][] sponsorCards, int[] winningPlayerCards) {
+        //Called when the quest is over and shows the winning results. sponsorCards is separated by stage. eg: sponsorCards[0] will get stage 1's cards.
 
     }
 }

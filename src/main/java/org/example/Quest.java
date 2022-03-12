@@ -22,6 +22,9 @@ public class Quest {
 
         sponsorPID = -5;
         stages = new Card[questCard.getStages()][];
+
+        outPIDs = new ArrayList<>();
+        inPIDs = new ArrayList<>();
     }
 
     private int getNextPID(int currentPID){
@@ -44,9 +47,6 @@ public class Quest {
         //ask current player if they want to sponsor
         ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_SPONSOR_QUERY, NetworkMessage.pack(questCard.id));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
-        //TODO:in onQuestSponsorQuery(), LocalGameManager do stuff to un-disable a button of something to allow player
-        // to choose to sponsor. The button(or whatever the input method) will send a onQuestSponsorQuery() ServerMessage
-        // through NetworkServer so Game's Quest can set sponsorPID
 
         goToNextTurn();
     }
@@ -70,7 +70,7 @@ public class Quest {
     //players choose if they want to join the quest
     //once it gets to the sponsor, then everyone has opted in or out, sponsor picks cards for quest
     public void participating() {
-        ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(questCard.id));
+        ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(sponsorPID,questCard.id));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
 
         goToNextTurn();
@@ -78,8 +78,7 @@ public class Quest {
 
     //player who sponsored the quest now picks cards for quest
     public void staging(){
-        //TODO: picking of cards from hand
-        //TODO: Assuming cards picked are added to the stages variable
+        //TODO: Get Cards from onQuestSponsorQuery in Game and store them in the object.
 
         //Henry stuff to validate sponsor's selection
         //This boolean basically takes the selected cards and checks if its valid (incremental order)
@@ -88,12 +87,16 @@ public class Quest {
         boolean isValidSelection = isValidSelection(stages);
 
 
-        //TODO: I think the best approach (or at least one I know would work) would be to have the validation locally when the cards
+
+        // I think the best approach (or at least one I know would work) would be to have the validation locally when the cards
         // are picked, then depending on if they're a valid selection, change a flag in the onCardPickingQuery (or whatever its name)
         // then in onCardPickingQuery in Game, it will either call quest.staging() again, or it will update Quest's stages variable
         // and call quest.battling()
         // when the selection is valid it would also have to onTurnChange() so that the game will be calling quest.battling() with
         // the next player's id as its arg (don't want the sponsor to battle)
+        //Todo onQuestSponsorQuery will be called in game when any client responds to a query with a valid selection, or by pressing the decline button
+        // the boolean declined will be true if they pressed the declined button, where it should ask the next player. This can be done here or in Game's
+        // onQuestSponsorQuery function.
 
         goToNextTurn();
     }
@@ -110,9 +113,11 @@ public class Quest {
                 if(inPIDs.contains(turnPlayerID)){
 
                     //current player picks 0+ weapons from their hand
-                    //TODO: send message to clients so that player of given ID can pick cards from their hand
-                    // Remember: no duplicate weapons can be picked, so whenever pick loop through already picked and compare names
-                    // will likely also do something to display the weapons picked to that player
+                    // send message to clients so that player of given ID can pick cards from their hand
+
+                    //TODO: >This is done from the Game onQuestParticipationQuery. The two following arrays need to be set somehow.
+                    // int[] stageCards = Card.getCardIDsFromArrayList(currentStageCards);
+                    // int[] playerCards = Card.getCardIDsFromArrayList(playerCardsfromPID??);
 
                     WeaponCard[] weapons = new WeaponCard[0];   //To be properly filled with weapons from above functionality
 
@@ -138,25 +143,36 @@ public class Quest {
 
                     if(playerBP > foeBP){
                         // player wins, draws an Adventure card for winning
-                        //TODO: needs to draw an adventure card, not sure how we'll do that since there's no Deck in Quest
+                        ServerMessage drawCardMsg = new ServerMessage(NetworkMsgType.CARD_DRAW,NetworkMessage.pack(turnPlayerID, Game.get().drawAdvCard().id));
+                        NetworkServer.get().sendNetMessageToAllPlayers(drawCardMsg);
 
-                        // TODO: message that will tell player that they won the fight.
+                        // message that will tell player that they won the fight.
                         //  will likely also clear the weapon cards from the board that that player used
+
+                        //TODO: need the current stage's cards and the current player's hand in here to send to the player. This needs to be done from Game
+                        // ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,NetworkMessage.pack(questCard.id, true, stageCards, playerCards));
+                        // NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
 
                         //beat foe of last stage, get shields
                         if(currentStage == questCard.getStages()){
-                            //TODO: message that will update shields for all local versions of that player
-                            // takes a number equal to the number of stages as number of shields to be given
-                            // using .giveShields() function in Player
+                            // message that will update shields for all local versions of that player
+                            int shields = Game.get().getPlayerByID(turnPlayerID).getShields();
+                            shields += ((int) questCard.stages);
+                            Game.get().getPlayerByID(turnPlayerID).setShields(shields);
+                            NetworkMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(turnPlayerID,shields));
                         }
                     }
                     else{
                         // player loses, pid removed from inPIDS, put in outPIDS
                         inPIDs.removeAll(Arrays.asList(turnPlayerID)); //to add
                         outPIDs.add(turnPlayerID);
-                        // TODO: message that will tell player that they lost the fight, could be same message that they won the fight
+                        // message that will tell player that they lost the fight, could be same message that they won the fight
                         //  but with an input flag set to a different value.
                         //  will likely also clear the weapon cards from that player
+                        //Todo: false since the player lost. Needs the current stages cards and players cards set to arrays above.
+                        // ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,NetworkMessage.pack(questCard.id, false, stageCards, playerCards));
+                        // NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
+
                     }
                 }
             }
@@ -164,12 +180,15 @@ public class Quest {
         else{
             //turn has gone around table and back to player
             //TODO: message that tells final results to all players
+            // Needs the winner's playerID, the winning player's cardsID array, and the entire cards from the sponsor.
+            // NetworkMessage finalResultMsg = new ServerMessage(NetworkMsgType.QUEST_FINAL_RESULT,NetworkMessage.pack(winnerID, sponsorCards, winningPlayerCards));
+            // NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
         }
 
         goToNextTurn();
     }
 
-    public boolean isValidSelection(Card[][] stages){
+    public static boolean isValidSelection(Card[][] stages){
         int[] stageBPTotals = new int[stages.length];
 
         for(int i=0; i < stages.length; i++){ //Loop through each stage
@@ -222,5 +241,5 @@ public class Quest {
 
     public void addOutPID(int pid){ outPIDs.add(pid);}
 
-    public void addInPID(int pid){ outPIDs.add(pid);}
+    public void addInPID(int pid){ inPIDs.add(pid);}
 }
