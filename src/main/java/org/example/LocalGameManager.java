@@ -35,7 +35,7 @@ public class LocalGameManager implements ClientEventListener{
 
 
     //region Helpers
-    private Player getPlayerByID(int plyID){
+    public Player getPlayerByID(int plyID){
         for(Player p: _players){
             if(p.getPlayerNum() == plyID)
                 return p;
@@ -241,11 +241,14 @@ public class LocalGameManager implements ClientEventListener{
         else
             System.out.println("CLIENT: You lost the stage.");
 
+        View.get().update();
     }
 
     @Override
     public void onQuestFinalResult(int winnerID, int[][] sponsorCards) {
         //Called when the quest is over and shows the winning results. sponsorCards is separated by stage. eg: sponsorCards[0] will get stage 1's cards.
         System.out.println("CLIENT: The Quest has ended.");
+
+        QuestResultView q = new QuestResultView(winnerID);
     }
 }

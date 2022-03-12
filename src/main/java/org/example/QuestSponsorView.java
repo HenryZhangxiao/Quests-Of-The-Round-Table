@@ -17,13 +17,13 @@ import java.util.ArrayList;
 public class QuestSponsorView {
 
     // Quest info
-    private String name;
-    private int numStages;
+    private final String name;
+    private final int numStages;
     private int foesSelected;
 
     // Window size
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
 
     // Lists of cards
     ArrayList<Card> hand;
@@ -42,7 +42,7 @@ public class QuestSponsorView {
     private Group selectionCardGroup;
     private Group handCardGroup;
 
-    private QuestCard questCard;
+    private final QuestCard questCard;
 
     public QuestSponsorView(QuestCard aQuestCard) {
         questCard = aQuestCard;
@@ -170,7 +170,6 @@ public class QuestSponsorView {
             }
 
             if(!Quest.isValidSelection(valCards,questCard)){
-                //Todo show invalid selection through a label or something?
                 System.out.println("CLIENT: Invalid Sponsor Selection");
                 lblError.setVisible(true);
                 return;
@@ -224,7 +223,7 @@ public class QuestSponsorView {
         root.getChildren().addAll(lblMain,noBtn,yesBtn,lblError,selectionGroup,handGroup);
         Scene scene = new Scene(root,width,height);
         stage.setScene(scene);
-        stage.setTitle(String.valueOf(LocalGameManager.get().getLocalPlayer().getPlayerNum()) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
+        stage.setTitle(LocalGameManager.get().getLocalPlayer().getPlayerNum() + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
         stage.showAndWait();
     }
 
