@@ -138,8 +138,8 @@ public class QuestSponsorView {
         Stage stage = new Stage();
         Group root = new Group();
 
-        Label lbl = new Label("A quest is available! " + name + "\nWould you like to sponsor it? (select at least " + numStages + " foes)");
-        lbl.relocate(20,20);
+        Label lblMain = new Label("A quest is available! " + name + "\nWould you like to sponsor it? (select at least " + numStages + " foes)");
+        lblMain.relocate(20,20);
 
         Button noBtn = new Button("Decline");
         noBtn.relocate(20, 100);
@@ -148,6 +148,11 @@ public class QuestSponsorView {
             NetworkManager.get().sendNetMessageToServer(msg);
             stage.close();
         });
+
+        Label lblError = new Label("The total BP of each stage must be greater than that of the previous stage");
+        lblError.setTextFill(Color.RED);
+        lblError.relocate(200, 100);
+        lblError.setVisible(false);
 
         yesBtn = new Button("Accept");
         yesBtn.relocate(100,100);
@@ -167,6 +172,7 @@ public class QuestSponsorView {
             if(!Quest.isValidSelection(valCards,questCard)){
                 //Todo show invalid selection through a label or something?
                 System.out.println("CLIENT: Invalid Sponsor Selection");
+                lblError.setVisible(true);
                 return;
             }
             else
@@ -215,7 +221,7 @@ public class QuestSponsorView {
 
         updateCards();
 
-        root.getChildren().addAll(lbl,noBtn,yesBtn,selectionGroup,handGroup);
+        root.getChildren().addAll(lblMain,noBtn,yesBtn,lblError,selectionGroup,handGroup);
         Scene scene = new Scene(root,width,height);
         stage.setScene(scene);
         stage.setTitle(String.valueOf(LocalGameManager.get().getLocalPlayer().getPlayerNum()) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
