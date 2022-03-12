@@ -109,7 +109,7 @@ public class Quest {
                         // message that will tell player that they won the fight.
                         //  will likely also clear the weapon cards from the board that that player used
 
-                        ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,NetworkMessage.pack(questCard.id, true, stageCards, playerCards));
+                        ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,NetworkMessage.pack(questCard.id, true, Card.getStageCardIDsFromMDArray(stageCards), Card.getCardIDsFromArray(playerCards)));
                         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
 
                         //beat foe of last stage, get shields
@@ -128,8 +128,8 @@ public class Quest {
                         // message that will tell player that they lost the fight, could be same message that they won the fight
                         //  but with an input flag set to a different value.
                         //  will likely also clear the weapon cards from that player
-                        //Todo: false since the player lost. Needs the current stages cards and players cards set to arrays above.
-                        ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,NetworkMessage.pack(questCard.id, false, stageCards, playerCards));
+
+                        ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,NetworkMessage.pack(questCard.id, false, Card.getStageCardIDsFromMDArray(stageCards), Card.getCardIDsFromArray(playerCards)));
                         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
 
                     }
@@ -138,7 +138,7 @@ public class Quest {
         }
         else{
             //turn has gone around table and back to player
-             ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.QUEST_FINAL_RESULT,NetworkMessage.pack(winnerID, stageCards));
+             ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.QUEST_FINAL_RESULT,NetworkMessage.pack(winnerID, Card.getStageCardIDsFromMDArray(stageCards)));
              NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
         }
 

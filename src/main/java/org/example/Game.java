@@ -281,8 +281,11 @@ public class Game extends Thread implements ServerEventListener {
             quest.setPlayerCards(playerCards);
         }
 
+
+
         //next player is the one who sponsored
-        if(quest.getNextPID(quest.getTurnPlayerID()) == quest.getSponsorPID()){
+        // if(quest.getNextPID(quest.getTurnPlayerID()) == quest.getSponsorPID()){
+        if(quest.outPIDs.size() + quest.inPIDs.size() == _players.size() - 1){
             //no one has chosen to participate in the quest
             if(quest.getInPIDs().isEmpty()){
                 quest = null;
