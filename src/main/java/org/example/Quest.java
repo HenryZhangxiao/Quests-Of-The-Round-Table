@@ -160,7 +160,7 @@ public class Quest {
                 }
                 else if(stages[i][j] instanceof FoeCard){
                     FoeCard currentCard = (FoeCard) stages[i][j];
-                    if(Arrays.asList(questCard.getSpecialFoes()).contains(currentCard.getName())){
+                    if(Arrays.asList(questCard.getSpecialFoes()).contains(currentCard.getName()) || questCard.getSpecialFoes()[0].equals("All")){
                         cardBP = currentCard.getAlt_bp();
                     } else{
                         cardBP = currentCard.getBP();
