@@ -14,6 +14,7 @@ public class Quest {
     protected ArrayList<Integer> inPIDs;   //those who did not opt out and have not been eliminated
 
     private Card[][] stages;
+    private Card[] playerCards;
 
     public Quest(QuestCard _questCard, int _questDrawerPID, int _numPlayers){
         questCard = _questCard;
@@ -78,7 +79,6 @@ public class Quest {
 
     //player who sponsored the quest now picks cards for quest
     public void staging(){
-        //TODO: Get Cards from onQuestSponsorQuery in Game and store them in the object.
 
         //Henry stuff to validate sponsor's selection
         //This boolean basically takes the selected cards and checks if its valid (incremental order)
@@ -112,19 +112,10 @@ public class Quest {
                 //current player is still in the quest
                 if(inPIDs.contains(turnPlayerID)){
 
-                    //current player picks 0+ weapons from their hand
-                    // send message to clients so that player of given ID can pick cards from their hand
-
-                    //TODO: >This is done from the Game onQuestParticipationQuery. The two following arrays need to be set somehow.
-                    // int[] stageCards = Card.getCardIDsFromArrayList(currentStageCards);
-                    // int[] playerCards = Card.getCardIDsFromArrayList(playerCardsfromPID??);
-
-                    WeaponCard[] weapons = new WeaponCard[0];   //To be properly filled with weapons from above functionality
-
                     //add up that player's battle points
                     int playerBP = 5;   //5 is points from being a squire
-                    for(int i = 0; i < weapons.length; ++i){
-                        playerBP += weapons[i].getBP();
+                    for(int i = 0; i < playerCards.length; ++i){
+                        playerBP += ((WeaponCard)playerCards[i]).getBP();
                     }
 
                     //add up current foe's battle points
@@ -149,9 +140,8 @@ public class Quest {
                         // message that will tell player that they won the fight.
                         //  will likely also clear the weapon cards from the board that that player used
 
-                        //TODO: need the current stage's cards and the current player's hand in here to send to the player. This needs to be done from Game
-                        // ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,NetworkMessage.pack(questCard.id, true, stageCards, playerCards));
-                        // NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
+                        ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,NetworkMessage.pack(questCard.id, true, stageCards, playerCards));
+                        NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
 
                         //beat foe of last stage, get shields
                         if(currentStage == questCard.getStages()){
@@ -226,6 +216,16 @@ public class Quest {
         }
         return true; //If we got here there was no problem with the selection
     }
+
+
+    public void setStages(Card[][] _stageCards){
+        stages = _stageCards;
+    }
+
+    public void setPlayerCards(Card[] _playerCards){
+        playerCards = _playerCards;
+    }
+
 
     public void setSponsorPID(int sponsorPID) {
         this.sponsorPID = sponsorPID;

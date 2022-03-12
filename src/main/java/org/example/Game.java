@@ -218,9 +218,17 @@ public class Game extends Thread implements ServerEventListener {
     @Override
     public void onQuestSponsorQuery(int plyID, boolean declined, int[][] questCards) {
         //Called when a player responds to a query to sponsor the quest. If declined is true, then questCards will be null.
-        //todo send the sponsor cards to the quest object eg questCards
         if(declined){
             quest.setSponsorPID(plyID);
+
+            Card[][] stageCards = new Card[questCards.length][];
+            for(int i = 0; i < questCards.length; ++i){
+                for(int j = 0; j < questCards[i].length; ++j){
+                    stageCards[i][j] = Card.getCardByID(questCards[i][j]);
+                }
+            }
+            quest.setStages(stageCards);
+
             quest.sponsoring();
         }
         //next player is the one who drew the quest, meaning no one sponsored
@@ -236,13 +244,19 @@ public class Game extends Thread implements ServerEventListener {
     @Override
     public void onQuestParticipateQuery(int plyID, boolean declined, int[] cards) {
         //Called when a player responds to a participation query. If declined is true, cards will be null.
-        //Todo send the cards to the quest object.
         if(declined){
             quest.addOutPID(plyID);
             quest.participating();
         }
         else{
             quest.addInPID(plyID);
+
+            Card[] playerCards = new Card[cards.length];
+            for(int i = 0; i < cards.length; ++i){
+                playerCards[i] = Card.getCardByID(cards[i]);
+            }
+            quest.setPlayerCards(playerCards);
+
             quest.participating();
         }
 
