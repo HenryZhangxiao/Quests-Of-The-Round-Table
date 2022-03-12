@@ -15,7 +15,7 @@ public class Quest {
     private int winnerID;
 
     private Card[][] stageCards;
-    private Card[] playerCards;
+    private Card[][] playerCards;
 
     public Quest(QuestCard _questCard, int _questDrawerPID, int _numPlayers){
         questCard = _questCard;
@@ -25,6 +25,7 @@ public class Quest {
 
         sponsorPID = -5;
         stageCards = new Card[questCard.getStages()][];
+        playerCards = new Card[numPlayers][];
 
         outPIDs = new ArrayList<>();
         inPIDs = new ArrayList<>();
@@ -40,6 +41,7 @@ public class Quest {
     }
 
     protected void goToNextTurn(){
+        System.out.println("turnPlayerID going from " + turnPlayerID + " to " + getNextPID(turnPlayerID));
         turnPlayerID = getNextPID(turnPlayerID);
     }
 
@@ -62,16 +64,16 @@ public class Quest {
     //players choose if they want to join the quest
     //once it gets to the sponsor, then everyone has opted in or out, sponsor picks cards for quest
     public void participating() {
-        if(turnPlayerID != sponsorPID && !outPIDs.contains(turnPlayerID)) {
-            ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(sponsorPID, questCard.id));
-            NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
-        }
-
-        goToNextTurn();
+        System.out.println("in participating QUEST " + turnPlayerID);
+        //if(turnPlayerID != sponsorPID && !outPIDs.contains(turnPlayerID)) {
+        ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(sponsorPID, questCard.id));
+        NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
+        //}
     }
 
     //players who opted in pick weapons to fight foes, etc
     public void battling() {
+        System.out.println("in battling QUEST "  + turnPlayerID);
         //the turn player is not the sponsor (not all players have fought)
         if(turnPlayerID != sponsorPID){
 
@@ -83,14 +85,18 @@ public class Quest {
 
                     //add up that player's battle points
                     int playerBP = Game.get().getPlayerByID(turnPlayerID).getBattlePoints();   //5 is points from being a squire
-                    for(int i = 0; i < playerCards.length; ++i){
-                        playerBP += ((WeaponCard)playerCards[i]).getBP();
+                    for(int i = 0; i < playerCards[turnPlayerID].length; ++i){
+                        playerBP += ((WeaponCard)playerCards[turnPlayerID][i]).getBP();
                     }
 
                     //add up current foe's battle points
                     //assumes the first card in a stage will be the foe
                     int foeBP;
-                    if(Arrays.asList(questCard.getSpecialFoes()).contains((stageCards[currentStage][0]).getName()) || questCard.getSpecialFoes()[0].equals("All")){
+                    System.out.println("s: " + stageCards.length);
+                    System.out.println("sc: " + stageCards[currentStage].length);
+                    System.out.println("sf: " + questCard.specialFoes.length);
+                    System.out.println(questCard.name);
+                    if(Arrays.asList(questCard.getSpecialFoes()).contains((stageCards[currentStage][0]).getName()) || (questCard.getSpecialFoes().length == 1 && questCard.getSpecialFoes()[0].equals("All"))){
                         foeBP = ((FoeCard)stageCards[currentStage][0]).getAlt_bp();
                     }
                     else{
@@ -195,8 +201,8 @@ public class Quest {
         stageCards = _stageCards;
     }
 
-    public void setPlayerCards(Card[] _playerCards){
-        playerCards = _playerCards;
+    public void setPlayerCards(int pid, Card[] _playerCards){
+        playerCards[pid] = _playerCards;
     }
 
 

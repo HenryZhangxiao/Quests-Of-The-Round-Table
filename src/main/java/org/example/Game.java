@@ -267,9 +267,11 @@ public class Game extends Thread implements ServerEventListener {
 
     @Override
     public void onQuestParticipateQuery(int plyID, boolean declined, int[] cards) {
+        System.out.println("in on participate GAME " + turnPlayerID);
         //Called when a player responds to a participation query. If declined is true, cards will be null.
         if(declined){
             quest.addOutPID(plyID);
+            System.out.println("declined participation");
         }
         else{
             quest.addInPID(plyID);
@@ -278,22 +280,31 @@ public class Game extends Thread implements ServerEventListener {
             for(int i = 0; i < cards.length; ++i){
                 playerCards[i] = Card.getCardByID(cards[i]);
             }
-            quest.setPlayerCards(playerCards);
+            quest.setPlayerCards(plyID, playerCards);
+            System.out.println("accepted participation");
         }
 
         //next player is the one who sponsored
+        System.out.println("the next pid is " + quest.getNextPID(quest.getTurnPlayerID()) + ", the sponsor pid is " + quest.getSponsorPID());
         if(quest.getNextPID(quest.getTurnPlayerID()) == quest.getSponsorPID()){
+            System.out.println("final participant");
             //no one has chosen to participate in the quest
             if(quest.getInPIDs().isEmpty()){
                 quest = null;
+                System.out.println("no one participated");
             }
             else{
                 //at least someone has sponsored, go on to battling
+                System.out.println("in battling GAME");
+                quest.goToNextTurn();
+                quest.goToNextTurn();
                 quest.battling();
             }
         }
         //still more people to choose to participate
         else{
+            System.out.println("more participating");
+            quest.goToNextTurn();
             quest.participating();
         }
 
