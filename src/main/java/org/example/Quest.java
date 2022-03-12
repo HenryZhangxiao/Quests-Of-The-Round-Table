@@ -172,8 +172,8 @@ public class Quest {
         }
 
         // Check to see if the stage BPs are in incremental order
+        int lastStageBP = 0;
         for(int i=0; i < stageBPTotals.length; i++) {
-            int lastStageBP = 0;
 
             if(stageBPTotals[i] > lastStageBP){ //This is good. Valid selection. At least for this stage
                 lastStageBP = stageBPTotals[i];
