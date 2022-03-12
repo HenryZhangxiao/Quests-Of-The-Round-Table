@@ -115,7 +115,8 @@ public class Quest {
                         // message that will tell player that they won the fight.
                         //  will likely also clear the weapon cards from the board that that player used
 
-                        ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,NetworkMessage.pack(questCard.id, true, Card.getStageCardIDsFromMDArray(stageCards), Card.getCardIDsFromArray(playerCards[turnPlayerID])));
+                        ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,
+                                NetworkMessage.pack(questCard.id, true, Card.getStageCardIDsFromMDArray(stageCards)[currentStage], Card.getCardIDsFromArray(playerCards[turnPlayerID])));
                         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
 
                         //beat foe of last stage, get shields
@@ -135,7 +136,8 @@ public class Quest {
                         //  but with an input flag set to a different value.
                         //  will likely also clear the weapon cards from that player
 
-                        ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,NetworkMessage.pack(questCard.id, false, Card.getStageCardIDsFromMDArray(stageCards), Card.getCardIDsFromArray(playerCards[turnPlayerID])));
+                        ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,
+                                NetworkMessage.pack(questCard.id, false, Card.getStageCardIDsFromMDArray(stageCards)[currentStage], Card.getCardIDsFromArray(playerCards[turnPlayerID])));
                         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
 
                     }
