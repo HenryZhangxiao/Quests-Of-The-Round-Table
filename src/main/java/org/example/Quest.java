@@ -13,6 +13,7 @@ public class Quest {
     protected ArrayList<Integer> outPIDs;  //those who have opted out or have been eliminated
     protected ArrayList<Integer> inPIDs;   //those who did not opt out and have not been eliminated
     private int winnerID;
+    private int currentStage;
 
     private Card[][] stageCards;
     private Card[][] playerCards;
@@ -29,6 +30,9 @@ public class Quest {
 
         outPIDs = new ArrayList<>();
         inPIDs = new ArrayList<>();
+
+        winnerID = -1;
+        currentStage = 0;
     }
 
     protected int getNextPID(int currentPID){
@@ -74,83 +78,99 @@ public class Quest {
     //players who opted in pick weapons to fight foes, etc
     public void battling() {
         System.out.println("in battling QUEST "  + turnPlayerID);
+        boolean passToNext = false;
+
         //the turn player is not the sponsor (not all players have fought)
         if(turnPlayerID != sponsorPID){
 
-            //loops through all stages
-            for(int currentStage = 0; currentStage < questCard.getStages(); ++currentStage){
+            //current player is still in the quest
+            if(inPIDs.contains(turnPlayerID)){
 
-                //current player is still in the quest
-                if(inPIDs.contains(turnPlayerID)){
+                //add up that player's battle points
+                int playerBP = Game.get().getPlayerByID(turnPlayerID).getBattlePoints();   //5 is points from being a squire
+                for(int i = 0; i < playerCards[turnPlayerID].length; ++i){
+                    playerBP += ((WeaponCard)playerCards[turnPlayerID][i]).getBP();
+                }
 
-                    //add up that player's battle points
-                    int playerBP = Game.get().getPlayerByID(turnPlayerID).getBattlePoints();   //5 is points from being a squire
-                    for(int i = 0; i < playerCards[turnPlayerID].length; ++i){
-                        playerBP += ((WeaponCard)playerCards[turnPlayerID][i]).getBP();
-                    }
+                //add up current foe's battle points
+                //assumes the first card in a stage will be the foe
+                int foeBP;
+                System.out.println("s: " + stageCards.length);
+                System.out.println("sc: " + stageCards[currentStage].length);
+                System.out.println("sf: " + questCard.specialFoes.length);
+                System.out.println(questCard.name);
+                if(Arrays.asList(questCard.getSpecialFoes()).contains((stageCards[currentStage][0]).getName()) || (questCard.getSpecialFoes().length == 1 && questCard.getSpecialFoes()[0].equals("All"))){
+                    foeBP = ((FoeCard)stageCards[currentStage][0]).getAlt_bp();
+                }
+                else{
+                    foeBP = ((FoeCard)stageCards[currentStage][0]).getBP();
+                }
 
-                    //add up current foe's battle points
-                    //assumes the first card in a stage will be the foe
-                    int foeBP;
-                    System.out.println("s: " + stageCards.length);
-                    System.out.println("sc: " + stageCards[currentStage].length);
-                    System.out.println("sf: " + questCard.specialFoes.length);
-                    System.out.println(questCard.name);
-                    if(Arrays.asList(questCard.getSpecialFoes()).contains((stageCards[currentStage][0]).getName()) || (questCard.getSpecialFoes().length == 1 && questCard.getSpecialFoes()[0].equals("All"))){
-                        foeBP = ((FoeCard)stageCards[currentStage][0]).getAlt_bp();
-                    }
-                    else{
-                        foeBP = ((FoeCard)stageCards[currentStage][0]).getBP();
-                    }
+                for(int i = 1; i < stageCards[currentStage].length; ++i){
+                    foeBP += ((WeaponCard)stageCards[currentStage][i]).getBP();
+                }
 
-                    for(int i = 1; i < stageCards[currentStage].length; ++i){
-                        foeBP += ((WeaponCard)stageCards[currentStage][i]).getBP();
-                    }
+                if(playerBP > foeBP){
+                    // player wins, draws an Adventure card for winning
+                    ServerMessage drawCardMsg = new ServerMessage(NetworkMsgType.CARD_DRAW,NetworkMessage.pack(turnPlayerID, Game.get().drawAdvCard().id));
+                    NetworkServer.get().sendNetMessageToAllPlayers(drawCardMsg);
 
-                    if(playerBP > foeBP){
-                        // player wins, draws an Adventure card for winning
-                        ServerMessage drawCardMsg = new ServerMessage(NetworkMsgType.CARD_DRAW,NetworkMessage.pack(turnPlayerID, Game.get().drawAdvCard().id));
-                        NetworkServer.get().sendNetMessageToAllPlayers(drawCardMsg);
+                    // message that will tell player that they won the fight.
+                    //  will likely also clear the weapon cards from the board that that player used
 
-                        // message that will tell player that they won the fight.
-                        //  will likely also clear the weapon cards from the board that that player used
+                    ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,
+                            NetworkMessage.pack(questCard.id, true, Card.getStageCardIDsFromMDArray(stageCards)[currentStage], Card.getCardIDsFromArray(playerCards[turnPlayerID])));
+                    NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
 
-                        ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,
-                                NetworkMessage.pack(questCard.id, true, Card.getStageCardIDsFromMDArray(stageCards)[currentStage], Card.getCardIDsFromArray(playerCards[turnPlayerID])));
-                        NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
+                    //beat foe of last stage, get shields
+                    if(currentStage+1 == questCard.getStages()){
+                        // message that will update shields for all local versions of that player
+                        int shields = Game.get().getPlayerByID(turnPlayerID).getShields();
+                        shields += ((int) questCard.stages);
+                        Game.get().getPlayerByID(turnPlayerID).setShields(shields);
+                        NetworkMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(turnPlayerID,shields));
 
-                        //beat foe of last stage, get shields
-                        if(currentStage == questCard.getStages()){
-                            // message that will update shields for all local versions of that player
-                            int shields = Game.get().getPlayerByID(turnPlayerID).getShields();
-                            shields += ((int) questCard.stages);
-                            Game.get().getPlayerByID(turnPlayerID).setShields(shields);
-                            NetworkMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(turnPlayerID,shields));
-                        }
-                    }
-                    else{
-                        // player loses, pid removed from inPIDS, put in outPIDS
-                        inPIDs.removeAll(Arrays.asList(turnPlayerID)); //to add
-                        outPIDs.add(turnPlayerID);
-                        // message that will tell player that they lost the fight, could be same message that they won the fight
-                        //  but with an input flag set to a different value.
-                        //  will likely also clear the weapon cards from that player
+                        winnerID = turnPlayerID;
 
-                        ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,
-                                NetworkMessage.pack(questCard.id, false, Card.getStageCardIDsFromMDArray(stageCards)[currentStage], Card.getCardIDsFromArray(playerCards[turnPlayerID])));
-                        NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
-
+                        passToNext = true;
                     }
                 }
+                else{
+                    // player loses, pid removed from inPIDS, put in outPIDS
+                    inPIDs.removeAll(Arrays.asList(turnPlayerID)); //to add
+                    outPIDs.add(turnPlayerID);
+                    // message that will tell player that they lost the fight, could be same message that they won the fight
+                    //  but with an input flag set to a different value.
+                    //  will likely also clear the weapon cards from that player
+
+                    ServerMessage stageResultMsg = new ServerMessage(NetworkMsgType.QUEST_STAGE_RESULT,
+                            NetworkMessage.pack(questCard.id, false, Card.getStageCardIDsFromMDArray(stageCards)[currentStage], Card.getCardIDsFromArray(playerCards[turnPlayerID])));
+                    NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
+
+                    passToNext = true;
+                }
+            } else {
+                //player declined
+                passToNext = true;
             }
         }
-        else{
-            //turn has gone around table and back to player
-             ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.QUEST_FINAL_RESULT,NetworkMessage.pack(winnerID, Card.getStageCardIDsFromMDArray(stageCards)));
-             NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
+
+        // if the player declined to participate, lost this stage, or won the last stage,
+        // query the next player for participation
+        if (passToNext) {
+            goToNextTurn();
+            currentStage = 0;
+        } else {
+            currentStage++;
         }
 
-        goToNextTurn();
+        // if the next player to play is not the sponsor, query for participation
+        if (turnPlayerID != sponsorPID)
+            participating();
+        else {    //turn has gone around table and back to player
+            ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.QUEST_FINAL_RESULT,NetworkMessage.pack(winnerID, Card.getStageCardIDsFromMDArray(stageCards)));
+            NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
+        }
     }
 
     public static boolean isValidSelection(Card[][] stages, QuestCard aQuestCard){
@@ -220,13 +240,25 @@ public class Quest {
         return inPIDs;
     }
 
-    public void addOutPID(int pid){ outPIDs.add(pid);}
+    public void addOutPID(int pid){
+        if (inPIDs.contains(pid))
+            inPIDs.removeAll(Arrays.asList(pid));
+        if (!outPIDs.contains(pid) && !inPIDs.contains(pid))
+            outPIDs.add(pid);
+    }
 
-    public void addInPID(int pid){ inPIDs.add(pid);}
+    public void addInPID(int pid){
+        if (!outPIDs.contains(pid) && !inPIDs.contains(pid))
+            inPIDs.add(pid);
+    }
 
     public int getTurnPlayerID() {
         return turnPlayerID;
     }
 
     public QuestCard getQuestCard(){return questCard;}
+
+    public int getCurrentStage() {
+        return currentStage;
+    }
 }

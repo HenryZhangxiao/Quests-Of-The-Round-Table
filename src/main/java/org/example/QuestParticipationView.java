@@ -159,6 +159,7 @@ public class QuestParticipationView {
 
         //Selected Cards subgroup
         Group selectionGroup = new Group();
+        //TODO: add info about stage number and number of cards in the stage
         Label selectionLabel = new Label("Select cards for the stage of the quest!");
         selectionLabel.setFont(largeFont);
         selectionLabel.setLayoutX(20);

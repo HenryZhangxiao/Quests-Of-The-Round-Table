@@ -284,33 +284,7 @@ public class Game extends Thread implements ServerEventListener {
             System.out.println("accepted participation");
         }
 
-
-
-        //next player is the one who sponsored
-        System.out.println("the next pid is " + quest.getNextPID(quest.getTurnPlayerID()) + ", the sponsor pid is " + quest.getSponsorPID());
-        if(quest.getNextPID(quest.getTurnPlayerID()) == quest.getSponsorPID()){
-            System.out.println("final participant");
-            //no one has chosen to participate in the quest
-            if(quest.getInPIDs().isEmpty()){
-                quest = null;
-                System.out.println("no one participated");
-            }
-            else{
-                //at least someone has sponsored, go on to battling
-                System.out.println("in battling GAME");
-                quest.goToNextTurn();
-                quest.goToNextTurn();
-                quest.battling();
-            }
-        }
-        //still more people to choose to participate
-        else{
-            System.out.println("more participating");
-            quest.goToNextTurn();
-            quest.participating();
-        }
-
-
+        quest.battling();   // no need to check for participants or if it's the last turn, all handled in Quest
     }
 
 

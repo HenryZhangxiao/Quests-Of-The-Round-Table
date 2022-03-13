@@ -24,7 +24,9 @@ public class QuestResultView {
         VBox root = new VBox();
 
         Label result = new Label();
-        if (LocalGameManager.get().getLocalPlayer().getPlayerNum() == winnerID) {
+        if (winnerID == -1) {
+            result.setText("Sorry, no one won this quest");
+        } else if (LocalGameManager.get().getLocalPlayer().getPlayerNum() == winnerID) {
             result.setText("Congratulations! You won the quest");
         } else {
             result.setText(LocalGameManager.get().getPlayerByID(winnerID).getPlayerName() + " won this quest");
@@ -33,9 +35,10 @@ public class QuestResultView {
         Button btn = new Button("OK");
         btn.setOnAction(actionEvent -> {
             // If you drew this story card, your turn ends
-            if (LocalGameManager.get().isMyTurn()) {
-                LocalGameManager.get().finishTurn();
-            }
+            //TODO: only change turn if you drew the story card
+            //if (LocalGameManager.get().isMyTurn()) {
+            //    LocalGameManager.get().finishTurn();
+            //}
 
             stage.close();
         });

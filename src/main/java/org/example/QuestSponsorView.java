@@ -138,7 +138,8 @@ public class QuestSponsorView {
         Stage stage = new Stage();
         Group root = new Group();
 
-        Label lblMain = new Label("A quest is available! " + name + "\nWould you like to sponsor it? (select at least " + numStages + " foes)");
+        //TODO: add info about alt BPs
+        Label lblMain = new Label("A quest is available! " + name + "\nWould you like to sponsor it? (select " + numStages + " foes)");
         lblMain.relocate(20,20);
 
         Button noBtn = new Button("Decline");
