@@ -1,6 +1,7 @@
 package org.example;
 
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -44,8 +45,9 @@ public class QuestResultView {
         });
 
         root.getChildren().addAll(result, btn);
+        root.setAlignment(Pos.CENTER);
 
-        Scene scene = new Scene(root, 300, 200);
+        Scene scene = new Scene(root, 160, 100);
         stage.setScene(scene);
         stage.showAndWait();
     }

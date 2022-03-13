@@ -152,8 +152,8 @@ public class QuestParticipationView {
         Group mainGroup = new Group();
 
         //The areas for the selected cards and the cards in the hand
-        selectArea = new Rectangle(0,200,width,200);
-        handArea = new Rectangle(0,height-200,width,200);
+        selectArea = new Rectangle(55,200,890,200);
+        handArea = new Rectangle(55,height-400,890,310);
 
         Font largeFont = new Font("Arial", 20);
 
@@ -207,7 +207,7 @@ public class QuestParticipationView {
         if(showDeclineButton) {
             Button declineButton = new Button();
             declineButton.setLayoutX(10);
-            declineButton.setLayoutY(height - 250);
+            declineButton.setLayoutY(height - 450);
             declineButton.setText("Decline");
 
             declineButton.setOnAction(e -> {
@@ -222,7 +222,7 @@ public class QuestParticipationView {
         //Accept button
         Button acceptButton = new Button();
         acceptButton.setLayoutX(width - 55);
-        acceptButton.setLayoutY(height - 250);
+        acceptButton.setLayoutY(height - 450);
         acceptButton.setText("Battle!");
 
         acceptButton.setOnAction(e -> {
