@@ -46,6 +46,7 @@ public class View extends Pane {
     private Button storyDeck;
     private Button advDeck;
     private Button endTurn;
+    private Label localPly;
 
     public static View get() {
         if (view == null)
@@ -157,6 +158,11 @@ public class View extends Pane {
         ArrayList<Card> discardPile = LocalGameManager.get().getDiscardPile();
         if (!discardPile.isEmpty())
             advDiscard.setViewport(getAdvCard(discardPile.get(discardPile.size()-1).getID()));
+
+        // causes JavaFX thread error
+        //localPly.setText((LocalGameManager.get().getLocalPlayer().getPlayerNum()+1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName() + "\n Shields: " + LocalGameManager.get().getLocalPlayer().getShields());
+
+        // TODO: show last story card drawn in story discard
     }
 
     private void gameViewInit() {
@@ -241,7 +247,7 @@ public class View extends Pane {
         endTurn.setOnAction(e -> LocalGameManager.get().finishTurn());
         getChildren().add(endTurn);
 
-        Label localPly = new Label(String.valueOf(LocalGameManager.get().getLocalPlayer().getPlayerNum()) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName() + "\n Shields: " + String.valueOf(LocalGameManager.get().getLocalPlayer().getShields()));
+        localPly = new Label((LocalGameManager.get().getLocalPlayer().getPlayerNum()+1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName() + "\n Shields: " + LocalGameManager.get().getLocalPlayer().getShields());
         localPly.relocate(20, getHeight()-50);
         getChildren().add(localPly);
     }

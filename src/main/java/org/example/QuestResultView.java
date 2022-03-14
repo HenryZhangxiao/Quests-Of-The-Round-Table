@@ -47,7 +47,7 @@ public class QuestResultView {
         root.getChildren().addAll(result, btn);
         root.setAlignment(Pos.CENTER);
 
-        Scene scene = new Scene(root, 160, 100);
+        Scene scene = new Scene(root, 200, 100);
         stage.setScene(scene);
         stage.showAndWait();
     }
