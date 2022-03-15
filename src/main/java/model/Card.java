@@ -100,24 +100,54 @@ public abstract class Card {
             case 17:
                 return new ThievesFoe();
             case 18:
-                return new EnchantedForestQuest();
+                return new TestOfValorTest();
             case 19:
-                return new ArthursEnemiesQuest();
+                return new TestOfTemptationTest();
             case 20:
-                return new SaxonRaidersQuest();
+                return new TestOfMorganLeFeyTest();
             case 21:
-                return new BoarHuntQuest();
+                return new TestOfTheQuestingBeastTest();
             case 22:
-                return new QuestingBeastQuest();
+                return new SirGalahadAlly();
             case 23:
-                return new QueensHonorQuest();
+                return new SirLancelotAlly();
             case 24:
-                return new SlayTheDragonQuest();
+                return new KingArthurAlly();
             case 25:
-                return new FairMaidenQuest();
+                return new SirTristanAlly();
             case 26:
-                return new HolyGrailQuest();
+                return new KingPellinoreAlly();
             case 27:
+                return new SirGawainAlly();
+            case 28:
+                return new SirPercivalAlly();
+            case 29:
+                return new QueenGuinevereAlly();
+            case 30:
+                return new QueenIseultAlly();
+            case 31:
+                return new MerlinAlly();
+            case 32:
+                return new AmourCard();
+            case 33:
+                return new EnchantedForestQuest();
+            case 34:
+                return new ArthursEnemiesQuest();
+            case 35:
+                return new SaxonRaidersQuest();
+            case 36:
+                return new BoarHuntQuest();
+            case 37:
+                return new QuestingBeastQuest();
+            case 38:
+                return new QueensHonorQuest();
+            case 39:
+                return new SlayTheDragonQuest();
+            case 40:
+                return new FairMaidenQuest();
+            case 41:
+                return new HolyGrailQuest();
+            case 42:
                 return new GreenKnightQuest();
             case 51:
                 return new CamelotTournament();
