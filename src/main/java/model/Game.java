@@ -227,8 +227,8 @@ public class Game extends Thread implements ServerEventListener {
         }
         else if(c instanceof EventCard){
 
-            ServerMessage msg3 = new ServerMessage(NetworkMsgType.EVENT_BEGIN,NetworkMessage.pack(plyID,c.getID()));
-            NetworkServer.get().sendNetMessageToAllPlayers(msg3);
+            ServerMessage msg1 = new ServerMessage(NetworkMsgType.EVENT_BEGIN,NetworkMessage.pack(plyID,c.getID()));
+            NetworkServer.get().sendNetMessageToAllPlayers(msg1);
 
             //Is an event card
             switch(c.getName()){

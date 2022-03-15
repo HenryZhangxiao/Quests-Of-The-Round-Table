@@ -13,6 +13,15 @@ public class StoryDeck extends Deck{
     private static final int NUM_BOAR_HUNT = 2;
     private static final int NUM_SAXON_RAIDERS = 2;
 
+    private static final int NUM_KINGS_RECOGNITION = 2;
+    private static final int NUM_QUEENS_FAVOR = 2;
+    private static final int NUM_COURT_TO_CAMELOT = 2;
+    private static final int NUM_POX = 1;
+    private static final int NUM_PLAGUE = 1;
+    private static final int NUM_CHIVALROUS_DEED = 1;
+    private static final int NUM_PROSPERITY = 1;
+    private static final int NUM_KINGS_CALL_TO_ARMS = 1;
+
     protected void initializeCards() {
         // Quests
         for(int i = 0; i < NUM_HOLY_GRAIL; ++i){
@@ -44,6 +53,31 @@ public class StoryDeck extends Deck{
         }
         for(int i = 0; i < NUM_SAXON_RAIDERS; ++i){
             cards.add(new SaxonRaidersQuest());
+        }
+
+        for(int i = 0; i < NUM_KINGS_RECOGNITION; ++i){
+            cards.add(new KingsRecognitionEvent());
+        }
+        for(int i = 0; i < NUM_QUEENS_FAVOR; ++i){
+            cards.add(new QueensFavorEvent());
+        }
+        for(int i = 0; i < NUM_COURT_TO_CAMELOT; ++i){
+            cards.add(new CourtToCamelotEvent());
+        }
+        for(int i = 0; i < NUM_POX; ++i){
+            cards.add(new PoxEvent());
+        }
+        for(int i = 0; i < NUM_PLAGUE; ++i){
+            cards.add(new PlagueEvent());
+        }
+        for(int i = 0; i < NUM_CHIVALROUS_DEED; ++i){
+            cards.add(new ChivalrousDeedEvent());
+        }
+        for(int i = 0; i < NUM_PROSPERITY; ++i){
+            cards.add(new ProsperityEvent());
+        }
+        for(int i = 0; i < NUM_KINGS_CALL_TO_ARMS; ++i){
+            cards.add(new KingsCallToArmsEvent());
         }
 
         shuffle();
