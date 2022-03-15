@@ -13,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import model.*;
 import network.*;
 
@@ -157,9 +158,20 @@ public class EventStoryView {
         Font largeFont = new Font("Arial", 20);
 
         if(!discardCards) {
+
+            Label cardLabel = new Label("A new event has been drawn!");
+            cardLabel.setLayoutX(0);
+            cardLabel.setLayoutY(10);
+            mainGroup.getChildren().add(cardLabel);
+
+
             ImageView eventCardView = new ImageView();
-            eventCardView.setFitWidth(width);
+
+            eventCardView.setFitWidth(width - 10);
             eventCardView.setFitHeight(height - 100);
+            eventCardView.setX(10);
+            eventCardView.setY(40);
+
             eventCardView.setPreserveRatio(true);
             eventCardView.setImage(storyCards);
             Rectangle2D r = View.getStoryCard(eventCard.getID());
@@ -172,14 +184,27 @@ public class EventStoryView {
             Group selectionGroup = new Group();
 
             //The areas for the selected cards and the cards in the hand
-            selectArea = new Rectangle(5, 40,width - 130,160);
+            selectArea = new Rectangle(5, 40,240,160);
             handArea = new Rectangle(5,400,width - 10,310);
 
+            Label eventCardLabel = new Label("Event Card: ");
+            eventCardLabel.setLayoutX(500);
+            eventCardLabel.setLayoutY(20);
+            mainGroup.getChildren().add(eventCardLabel);
+
+            Rectangle eventCardArea = new Rectangle(500,40,210,300);
+            eventCardArea.setFill(Color.DARKCYAN);
+            eventCardArea.setStroke(Color.SADDLEBROWN);
+            eventCardArea.setArcWidth(30);
+            eventCardArea.setArcHeight(20);
+            mainGroup.getChildren().add(eventCardArea);
+
+
             ImageView eventCardView = new ImageView();
-            eventCardView.setFitWidth(100);
-            eventCardView.setFitHeight(140);
-            eventCardView.setX(width - 120);
-            eventCardView.setY(40);
+            eventCardView.setFitWidth(200);
+            eventCardView.setFitHeight(280);
+            eventCardView.setX(505);
+            eventCardView.setY(50);
             eventCardView.setPreserveRatio(true);
             eventCardView.setImage(storyCards);
             Rectangle2D r = View.getStoryCard(eventCard.getID());
@@ -187,7 +212,12 @@ public class EventStoryView {
             mainGroup.getChildren().add(eventCardView);
 
 
-            Label selectLabel = new Label("Please select some cards to discard.");
+            Label selectLabel = new Label();
+            if(!choosingFoes)
+                selectLabel.setText("Please choose one weapon to discard.");
+            else
+                selectLabel.setText("Please choose " + String.valueOf(Math.min(2,foeCount) + " foe card(s) to discard."));
+
             selectLabel.setLayoutY(20);
             mainGroup.getChildren().add(selectLabel);
 
@@ -272,6 +302,8 @@ public class EventStoryView {
         //Opens the window and waits.
         stage.setScene(s1);
         stage.setTitle(String.valueOf(LocalGameManager.get().getLocalPlayer().getPlayerNum()) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
+        stage.setResizable(false);
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.showAndWait();
     }
 
