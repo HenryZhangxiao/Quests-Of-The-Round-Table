@@ -1,9 +1,6 @@
 package model;
 
-import network.NetworkMessage;
-import network.NetworkMsgType;
-import network.NetworkServer;
-import network.ServerMessage;
+import network.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +9,8 @@ public class Quest {
     private QuestCard questCard;
     private int turnPlayerID;
     private int numPlayers;
+
+    private int numVictoryShields;
 
     private int questDrawerPID = -5;    //keep track of who drew the quest so looking for sponsor will only loop through players once
     private int sponsorPID;
@@ -23,7 +22,7 @@ public class Quest {
     private Card[][] stageCards;
     private Card[][] playerCards;
 
-    public Quest(QuestCard _questCard, int _questDrawerPID, int _numPlayers){
+    public Quest(QuestCard _questCard, int _questDrawerPID, int _numPlayers, boolean _kingsRecognition){
         questCard = _questCard;
         questDrawerPID = _questDrawerPID;
         turnPlayerID = questDrawerPID;
@@ -38,6 +37,11 @@ public class Quest {
 
         winnerID = -1;
         currentStage = 0;
+
+        numVictoryShields = questCard.getStages();
+        if(_kingsRecognition){
+            numVictoryShields += 2;
+        }
     }
 
     protected int getNextPID(int currentPID){
@@ -131,7 +135,7 @@ public class Quest {
                     if(currentStage+1 == questCard.getStages()){
                         // message that will update shields for all local versions of that player
                         int shields = Game.get().getPlayerByID(turnPlayerID).getShields();
-                        shields += ((int) questCard.stages);
+                        shields += numVictoryShields;
                         Game.get().getPlayerByID(turnPlayerID).setShields(shields);
 
                         ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(turnPlayerID,shields));
