@@ -119,7 +119,14 @@ public abstract class Card {
                 return new HolyGrailQuest();
             case 27:
                 return new GreenKnightQuest();
-
+            case 51:
+                return new CamelotTournament();
+            case 52:
+                return new OrkneyTournament();
+            case 53:
+                return new TintagelTournament();
+            case 54:
+                return new YorkTournament();
         }
         return new ThievesFoe(); //Should never be reached
     }
