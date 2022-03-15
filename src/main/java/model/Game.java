@@ -29,6 +29,8 @@ public class Game extends Thread implements ServerEventListener {
     
     private Quest quest = null;
 
+    private boolean kingsRecognition = false;
+
     private volatile boolean stopThread = false;
 
     private Game(){
@@ -217,12 +219,88 @@ public class Game extends Thread implements ServerEventListener {
 
         if(c instanceof QuestCard){
             //Is a quest card
-            quest = new Quest((QuestCard) c, plyID, _players.size());
+            quest = new Quest((QuestCard) c, plyID, _players.size(), kingsRecognition);
             System.out.println("player " + plyID + " has drawn a quest");
             quest.drawn();
+
+            kingsRecognition = false;
         }
         else if(c instanceof EventCard){
+
+            ServerMessage msg3 = new ServerMessage(NetworkMsgType.EVENT_BEGIN,NetworkMessage.pack(plyID,c.getID()));
+            NetworkServer.get().sendNetMessageToAllPlayers(msg3);
+
             //Is an event card
+            switch(c.getName()){
+                case "Chivalrous Deed":
+                    int minShields = 100;
+                    for(int i = 0; i < _players.size(); ++i){
+                        int numShields = _players.get(i).getShields();
+                        if(numShields < minShields){
+                            minShields = numShields;
+                        }
+                    }
+
+                    //gives 3 shields to each player who ties for lowest number of shields
+                    for(Player p : _players) {
+                        int shields = getPlayerByID(p.getPlayerNum()).getShields();
+                        shields += 3;
+                        getPlayerByID(p.getPlayerNum()).setShields(shields);
+                    }
+                    return;
+
+                case "Pox":
+                    //all players but drawer lose a shield
+                    for(Player p : _players) {
+                        if(p.getPlayerNum() != plyID) {
+                            int shields = getPlayerByID(p.getPlayerNum()).getShields();
+                            if(shields > 0) {
+                                shields--;
+                            }
+                            getPlayerByID(p.getPlayerNum()).setShields(shields);
+                        }
+                    }
+                    return;
+                case "Plague":
+                    //drawer loses 2 shields if possible
+                    int shields = getPlayerByID(plyID).getShields();
+                    shields -= 2;
+                    if(shields < 0) {
+                        shields = 0;
+                    }
+                    getPlayerByID(plyID).setShields(shields);
+                    return;
+
+                case "King's Recognition":
+                    kingsRecognition = true;
+                    return;
+
+                case "Queen's Favor":
+                    //All players are tied for lowest rank, so all draw 2 cards
+                    for(Player p : _players){
+                        Card[] cards = deck.drawCardX(2);
+                        ServerMessage msg2 = new ServerMessage(NetworkMsgType.CARD_DRAW_X, NetworkMessage.pack(p.getPlayerNum(), Card.getCardIDsFromArray(cards)));
+                        NetworkServer.get().sendNetMessageToAllPlayers(msg2);
+                    }
+                    return;
+
+                case "Court Called to Camelot":
+                    //We don't have allies yet
+                    return;
+
+                case "King's Call to Arms":
+                    //already handled serverside?
+                    return;
+
+                case "Prosperity Throughout the Realm":
+                    //All players draw 2 cards
+                    for(Player p : _players){
+                        Card[] cards = deck.drawCardX(2);
+                        ServerMessage msg3 = new ServerMessage(NetworkMsgType.CARD_DRAW_X, NetworkMessage.pack(p.getPlayerNum(), Card.getCardIDsFromArray(cards)));
+                        NetworkServer.get().sendNetMessageToAllPlayers(msg3);
+                    }
+                    return;
+            }
 
             //todo drawing card are here
             /*
