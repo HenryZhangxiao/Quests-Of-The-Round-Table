@@ -2,6 +2,6 @@ package model;
 
 public class PoxEvent extends EventCard{
     public PoxEvent(){
-        super("Pox",58);
+        super("Pox",44);
     }
 }

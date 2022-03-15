@@ -149,6 +149,22 @@ public abstract class Card {
                 return new HolyGrailQuest();
             case 42:
                 return new GreenKnightQuest();
+            case 43:
+                return new ChivalrousDeedEvent();
+            case 44:
+                return new PoxEvent();
+            case 45:
+                return new PlagueEvent();
+            case 46:
+                return new KingsRecognitionEvent();
+            case 47:
+                return new QueensFavorEvent();
+            case 48:
+                return new CourtToCamelotEvent();
+            case 49:
+                return new KingsCallToArmsEvent();
+            case 50:
+                return new ProsperityEvent();
             case 51:
                 return new CamelotTournament();
             case 52:
@@ -157,22 +173,6 @@ public abstract class Card {
                 return new TintagelTournament();
             case 54:
                 return new YorkTournament();
-            case 55:
-                return new KingsRecognitionEvent();
-            case 56:
-                return new QueensFavorEvent();
-            case 57:
-                return new CourtToCamelotEvent();
-            case 58:
-                return new PoxEvent();
-            case 59:
-                return new PlagueEvent();
-            case 50:
-                return new ChivalrousDeedEvent();
-            case 61:
-                return new ProsperityEvent();
-            case 62:
-                return new KingsCallToArmsEvent();
         }
         return new ThievesFoe(); //Should never be reached
     }
