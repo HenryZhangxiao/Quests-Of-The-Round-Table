@@ -257,7 +257,7 @@ public class View extends Pane {
     }
 
     public static Rectangle2D getStoryCard(int id) {
-        return new Rectangle2D(((id-18)%6)*200,Math.floorDiv(id-18,6)*280,200,280);
+        return new Rectangle2D(((id-33)%6)*200,Math.floorDiv(id-33,6)*280,200,280);
     }
 
 }
