@@ -101,6 +101,11 @@ public class NetworkServer extends Thread{
                     l.onCardDiscard(c.getPlayerId(),(int)msg._objects.get(0));
                 }
                 break;
+            case CARD_DISCARD_X:
+                for(ServerEventListener l: _listeners){
+                    l.onCardDiscardX(c.getPlayerId(),(int[])msg._objects.get(0));
+                }
+                break;
             case CARD_DRAW_X:
                 for(ServerEventListener l: _listeners){
                     l.onDrawCardX(c.getPlayerId(),(int)_objs.get(0));
@@ -110,6 +115,9 @@ public class NetworkServer extends Thread{
                 for(ServerEventListener l: _listeners){
                     l.onStoryDrawCard(c.getPlayerId());
                 }
+                //For Testing
+                //ServerMessage m = new ServerMessage(NetworkMsgType.EVENT_BEGIN,NetworkMessage.pack(0,49));
+                //NetworkServer.get().sendNetMessageToAllPlayers(m);
                 break;
             case TURN_CHANGE:
                 for(ServerEventListener l: _listeners){

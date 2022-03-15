@@ -14,11 +14,13 @@ public interface ServerEventListener {
     void onDrawCard(int plyID);
     void onDrawCardX(int plyID, int amountOfCards);
     void onCardDiscard(int plyID, int cardID);
+    void onCardDiscardX(int plyID, int[] cardIDs);
 
     void onStoryDrawCard(int plyID);
 
     void onQuestSponsorQuery(int plyID, boolean declined, int[][] questCards);
     void onQuestParticipateQuery(int plyID, boolean declined, int[] cards);
+
 
 
 }

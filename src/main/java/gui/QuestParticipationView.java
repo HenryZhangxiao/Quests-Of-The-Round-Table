@@ -100,7 +100,7 @@ public class QuestParticipationView {
             aCard.setX(selectArea.getX() + 10 + (i%8)*110);
             aCard.setY(selectArea.getY() + 10 + Math.floorDiv(i,8)*150);
             aCard.setImage(advCards);
-            aCard.setViewport(getAdvCard(selectedCards.get(i).getID()));
+            aCard.setViewport(View.getAdvCard(selectedCards.get(i).getID()));
             selectionCardGroup.getChildren().add(aCard);
 
             int finalI = i;
@@ -124,7 +124,7 @@ public class QuestParticipationView {
             aCard.setX(handArea.getX() + 10 + (i%8)*110);
             aCard.setY(handArea.getY() + 10 + Math.floorDiv(i,8)*150);
             aCard.setImage(advCards);
-            aCard.setViewport(getAdvCard(hand.get(i).getID()));
+            aCard.setViewport(View.getAdvCard(hand.get(i).getID()));
             handCardGroup.getChildren().add(aCard);
 
             int finalI = i;
@@ -243,6 +243,10 @@ public class QuestParticipationView {
                 LocalClientMessage msg2 = new LocalClientMessage(NetworkMsgType.UPDATE_HAND,NetworkMessage.pack(cardIDs));
                 NetworkManager.get().sendNetMessageToServer(msg2);
 
+                //For discarding
+                LocalClientMessage msg3 = new LocalClientMessage(NetworkMsgType.CARD_DISCARD_X, NetworkMessage.pack(Card.getCardIDsFromArrayList(selectedCards)));
+                NetworkManager.get().sendNetMessageToServer(msg3);
+
                 LocalGameManager.get().getLocalPlayer().hand = hand;
                 View.get().update();
                 
@@ -276,13 +280,6 @@ public class QuestParticipationView {
                 return false;
         }
         return true;
-    }
-
-
-
-    //From View
-    private Rectangle2D getAdvCard(int id) {
-        return new Rectangle2D(((id-1)%8)*200,Math.floorDiv(id-1,8)*280,200,280);
     }
 
 }

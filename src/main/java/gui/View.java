@@ -252,11 +252,11 @@ public class View extends Pane {
         getChildren().add(localPly);
     }
 
-    public Rectangle2D getAdvCard(int id) {
+    public static Rectangle2D getAdvCard(int id) {
         return new Rectangle2D(((id-1)%8)*200,Math.floorDiv(id-1,8)*280,200,280);
     }
 
-    public Rectangle2D getStoryCard(int id) {
+    public static Rectangle2D getStoryCard(int id) {
         return new Rectangle2D(((id-18)%6)*200,Math.floorDiv(id-18,6)*280,200,280);
     }
 

@@ -16,6 +16,7 @@ public enum NetworkMsgType {
     CARD_DRAW, //To Client[ID of card drawn] - To Server []
     CARD_DRAW_X, //To Client [[] of cards drawn] - To Server[Amount of cards to draw]
     CARD_DISCARD, //[ID of card discarded]
+    CARD_DISCARD_X, //To Server [IDs of cards discarded]
 
     STORY_CARD_DRAW, //[ID of card drawn]
 
@@ -25,7 +26,7 @@ public enum NetworkMsgType {
     QUEST_STAGE_RESULT, //To Client[ID of the quest, []IDs of quest stage cards, []IDs of players cards]
     QUEST_FINAL_RESULT, //The result of the quest. To client [The ID of the player who won, Sponsors cards, all participants cards]
 
-
+    EVENT_BEGIN //To client[plyID, cardID] To Server | unhandled
 
     //GAME_NEW_ROUND, Example message types
     //GAME_PLAYER_CARDDRAW

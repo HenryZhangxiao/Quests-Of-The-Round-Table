@@ -31,6 +31,23 @@ public abstract class Deck {
         return cards.remove(0);
     }
 
+    protected void discardCard(Card c){
+        discards.add(c);
+    }
+
+    protected void discardCards(Card[] cards){
+        for(Card c: cards)
+            discardCard(c);
+    }
+
+    protected Card[] drawCardX(int amountToDraw){
+        Card[] cards = new Card[amountToDraw];
+        for(int i = 0; i < amountToDraw; i++){
+            cards[i] = drawCard();
+        }
+        return cards;
+    }
+
     protected String getName(){
         return name;
     }

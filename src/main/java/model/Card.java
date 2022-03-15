@@ -201,6 +201,14 @@ public abstract class Card {
         return cardArry;
     }
 
+    public static Card[] getCardsFromIDArray(int[] cardIDs){
+        Card[] cards = new Card[cardIDs.length];
+        for(int i = 0; i < cards.length; i++){
+            cards[i] = Card.getCardByID(cardIDs[i]);
+        }
+        return cards;
+    }
+
     /*
     protected Image getImg(){
         return img;

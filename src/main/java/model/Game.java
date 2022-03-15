@@ -1,5 +1,6 @@
 package model;
 
+import gui.EventStoryView;
 import network.*;
 
 import java.util.ArrayList;
@@ -197,6 +198,11 @@ public class Game extends Thread implements ServerEventListener {
     }
 
     @Override
+    public void onCardDiscardX(int plyID, int[] cardIDs) {
+        deck.discardCards(Card.getCardsFromIDArray(cardIDs));
+    }
+
+    @Override
     public void onStoryDrawCard(int plyID) {
         if(plyID != turnPlayerID){
             System.out.println("SERVER: Not Player " + String.valueOf(plyID) + " turn. Current TurnID is " + String.valueOf(turnPlayerID));
@@ -214,6 +220,33 @@ public class Game extends Thread implements ServerEventListener {
             quest = new Quest((QuestCard) c, plyID, _players.size());
             System.out.println("player " + plyID + " has drawn a quest");
             quest.drawn();
+        }
+        else if(c instanceof EventCard){
+            //Is an event card
+
+            //todo drawing card are here
+            /*
+
+            //The card drawing message should be sent to all players, regardless if they themselves are drawing a card. The one who
+            //is drawing a card is packed as the first argument in the obj array. eg plyID in the following messages.
+
+            //Drawing One Card. plyID is who is drawing/getting the card.
+            ServerMessage msg = new ServerMessage(NetworkMsgType.CARD_DRAW, NetworkMessage.pack(plyID, drawAdvCard().getID()));
+            NetworkServer.get().sendNetMessageToAllPlayers(msg);
+
+            //Drawing multiple cards. plyID is who is drawing/getting all the cards.
+            Card[] cards = deck.drawCardX(2);
+            ServerMessage msg2 = new ServerMessage(NetworkMsgType.CARD_DRAW_X, NetworkMessage.pack(plyID, Card.getCardIDsFromArray(cards)));
+            NetworkServer.get().sendNetMessageToAllPlayers(msg);
+
+            //Showing card to client. The select cards for Kings call to arms is already handled serverside
+            ServerMessage msg3 = new ServerMessage(NetworkMsgType.EVENT_BEGIN,NetworkMessage.pack(plyID,c.getID()));
+            NetworkServer.get().sendNetMessageToAllPlayers(msg3);
+
+
+             */
+
+
         }
 
     }

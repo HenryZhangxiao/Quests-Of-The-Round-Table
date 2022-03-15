@@ -172,7 +172,11 @@ public class NetworkManager extends Thread {
                     l.onQuestFinalResult((int)_objs.get(0),(int[][])_objs.get(1));
                 }
                 break;
-
+            case EVENT_BEGIN:
+                for (ClientEventListener l: _listeners) {
+                    l.onEventStoryBegin((int)_objs.get(0),(int)_objs.get(1));
+                }
+                break;
             case TEST_MESSAGE:
                 System.out.println("Got a message from: " + String.valueOf(msg.playerID));
                 break;

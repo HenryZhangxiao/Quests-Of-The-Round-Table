@@ -1,9 +1,6 @@
 package network;
 
-import gui.QuestParticipationView;
-import gui.QuestResultView;
-import gui.QuestSponsorView;
-import gui.View;
+import gui.*;
 import model.Card;
 import model.Player;
 import model.QuestCard;
@@ -258,5 +255,10 @@ public class LocalGameManager implements ClientEventListener{
         System.out.println("CLIENT: The Quest has ended.");
 
         QuestResultView q = new QuestResultView(winnerID);
+    }
+
+    @Override
+    public void onEventStoryBegin(int plyID, int eventCardID) {
+        EventStoryView e = new EventStoryView(plyID,eventCardID);
     }
 }
