@@ -116,7 +116,7 @@ public class NetworkServer extends Thread{
                     l.onStoryDrawCard(c.getPlayerId());
                 }
                 //For Testing
-                //ServerMessage m = new ServerMessage(NetworkMsgType.EVENT_BEGIN,NetworkMessage.pack(0,49));
+                //ServerMessage m = new ServerMessage(NetworkMsgType.EVENT_BEGIN,NetworkMessage.pack(0,45));
                 //NetworkServer.get().sendNetMessageToAllPlayers(m);
                 break;
             case TURN_CHANGE:

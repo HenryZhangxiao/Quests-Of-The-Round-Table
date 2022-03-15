@@ -133,7 +133,10 @@ public class Quest {
                         int shields = Game.get().getPlayerByID(turnPlayerID).getShields();
                         shields += ((int) questCard.stages);
                         Game.get().getPlayerByID(turnPlayerID).setShields(shields);
-                        NetworkMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(turnPlayerID,shields));
+
+                        ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(turnPlayerID,shields));
+                        NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
+
 
                         winnerID = turnPlayerID;
 
