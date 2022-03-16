@@ -246,21 +246,29 @@ public class Game extends Thread implements ServerEventListener {
                         int shields = getPlayerByID(p.getPlayerNum()).getShields();
                         shields += 3;
                         getPlayerByID(p.getPlayerNum()).setShields(shields);
+
+                        ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(p.getPlayerNum(),shields));
+                        NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
                     }
                     return;
 
                 case "Pox":
                     //all players but drawer lose a shield
                     for(Player p : _players) {
+                        int shields = 0;
                         if(p.getPlayerNum() != plyID) {
-                            int shields = getPlayerByID(p.getPlayerNum()).getShields();
+                            shields = getPlayerByID(p.getPlayerNum()).getShields();
                             if(shields > 0) {
                                 shields--;
                             }
                             getPlayerByID(p.getPlayerNum()).setShields(shields);
                         }
+
+                        ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(p.getPlayerNum(),shields));
+                        NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
                     }
                     return;
+
                 case "Plague":
                     //drawer loses 2 shields if possible
                     int shields = getPlayerByID(plyID).getShields();
@@ -269,6 +277,9 @@ public class Game extends Thread implements ServerEventListener {
                         shields = 0;
                     }
                     getPlayerByID(plyID).setShields(shields);
+
+                    ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(plyID,shields));
+                    NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
                     return;
 
                 case "King's Recognition":
