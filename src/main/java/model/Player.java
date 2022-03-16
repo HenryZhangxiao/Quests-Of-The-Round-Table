@@ -1,5 +1,7 @@
 package model;
 
+import network.NetworkMessage;
+import network.NetworkMsgType;
 import network.NetworkServer;
 import network.ServerMessage;
 
@@ -12,6 +14,8 @@ public class Player{
     public ArrayList<Card> hand;
     private int numShields;
     private int battlePoints;
+    private AmourCard amourCard;
+    private ArrayList<AllyCard> allies;
 
     public Player(int ID, String name){
         playerName = name;
@@ -19,6 +23,7 @@ public class Player{
         hand = new ArrayList<>();
         numShields = 0;
         battlePoints = 5;//Default for rank squire
+        allies = new ArrayList<>();
     }
 
     public void addCard(Card c){
@@ -62,6 +67,29 @@ public class Player{
         numShields = x;
     }
     public int getShields(){return numShields; }
+
+    public void setAmour(AmourCard card){
+        amourCard = card;
+    }
+
+    public AmourCard getAmour(){
+        return amourCard;
+    }
+
+    public ArrayList<AllyCard> getAllies(){
+        return allies;
+    }
+
+    public void setAllies(int[] cardIDs){
+        allies.clear();
+        for(int i = 0; i < cardIDs.length; i++){
+            allies.add((AllyCard) Card.getCardByID(cardIDs[i]));
+        }
+    }
+
+    public void addAlly(AllyCard card){
+        allies.add(card);
+    }
 
     public int getBattlePoints(){return battlePoints;}
 

@@ -120,6 +120,21 @@ public class NetworkManager extends Thread {
                     l.onUpdateShields((int)_objs.get(0),(int)_objs.get(1));
                 }
                 break;
+            case UPDATE_ALLIES:
+                for (ClientEventListener l: _listeners) {
+                    l.onUpdateAllies((int)_objs.get(0),(int[])_objs.get(1));
+                }
+                break;
+            case UPDATE_AMOUR:
+                for (ClientEventListener l: _listeners) {
+                    l.onUpdateAmour((int)_objs.get(0),(int)_objs.get(1));
+                }
+                break;
+            case CLEAR_ALLIES:
+                for (ClientEventListener l: _listeners) {
+                    l.onClearAllies((int)_objs.get(0));
+                }
+                break;
             case CARD_DRAW_X:
                 for (ClientEventListener l: _listeners) {
                     l.onDrawCardX((int)_objs.get(0),(int[])_objs.get(1));

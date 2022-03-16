@@ -161,6 +161,18 @@ public class Game extends Thread implements ServerEventListener {
     }
 
     @Override
+    public void onUpdateAllies(int plyID, int[] cardIDs) {
+        getPlayerByID(plyID).setAllies(cardIDs);
+        NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.UPDATE_ALLIES, NetworkMessage.pack(plyID,cardIDs)));
+    }
+
+    @Override
+    public void onUpdateAmour(int plyID, int cardID) {
+        getPlayerByID(plyID).setAmour((AmourCard) Card.getCardByID(cardID));
+        NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.UPDATE_AMOUR, NetworkMessage.pack(plyID,cardID)));
+    }
+
+    @Override
     public void onDrawCard(int plyID) {
         if(plyID != turnPlayerID){
             System.out.println("SERVER: Not Player " + String.valueOf(plyID) + " turn. Current TurnID is " + String.valueOf(turnPlayerID));

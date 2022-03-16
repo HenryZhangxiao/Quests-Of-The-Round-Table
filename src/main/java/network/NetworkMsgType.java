@@ -11,6 +11,9 @@ public enum NetworkMsgType {
 
     UPDATE_HAND, //To Client[PlyID, Array of Card IDs in hand now] - To Server [Array of Card IDs in hand now]
     UPDATE_SHIELDS, //To Client[PlyID, Shieldcount]
+    UPDATE_ALLIES, //To Client[PlyID, cardIDs] - To Server [cardIDs]
+    UPDATE_AMOUR, //To Client[PlyID, cardID] - To Server [cardID] | If ply == -1 then clear all players amours
+    CLEAR_ALLIES, //To Client[plyID] | If plyID == -1 then clear all players amours
 
     TURN_CHANGE, //To Server [] - To Client [ID of whos turn it now is.]
     CARD_DRAW, //To Client[ID of card drawn] - To Server []

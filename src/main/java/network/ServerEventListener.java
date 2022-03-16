@@ -11,6 +11,9 @@ public interface ServerEventListener {
 
     void onUpdateHand(int plyID, int[] cardIDs);
 
+    void onUpdateAllies(int plyID, int[] cardIDs);
+    void onUpdateAmour(int plyID, int cardID);
+
     void onDrawCard(int plyID);
     void onDrawCardX(int plyID, int amountOfCards);
     void onCardDiscard(int plyID, int cardID);

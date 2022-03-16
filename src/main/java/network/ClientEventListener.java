@@ -10,6 +10,9 @@ public interface ClientEventListener {
 
     void onUpdateHand(int plyID, int[] cardIDs);
     void onUpdateShields(int plyID, int shieldCount);
+    void onUpdateAllies(int plyID, int[] cardIDs);
+    void onUpdateAmour(int plyID, int cardID);
+    void onClearAllies(int plyID);
 
     void onDrawCard(int plyID, int cardID);
     void onDrawCardX(int plyID, int[] cardIDs);

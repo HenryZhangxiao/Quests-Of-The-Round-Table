@@ -1,6 +1,7 @@
 package network;
 
 import gui.*;
+import model.AmourCard;
 import model.Card;
 import model.Player;
 import model.QuestCard;
@@ -184,6 +185,38 @@ public class LocalGameManager implements ClientEventListener{
     public void onUpdateShields(int plyID, int shieldCount) {
         getPlayerByID(plyID).setShields(shieldCount);
         View.get().update();
+    }
+
+    @Override
+    public void onUpdateAllies(int plyID, int[] cardIDs) {
+        getPlayerByID(plyID).setAllies(cardIDs);
+        View.get().update();
+    }
+
+    @Override
+    public void onUpdateAmour(int plyID, int cardID) {
+        // clears amours for all players eg end of quest.
+        if(plyID == -1){
+            for(Player p : _players)
+                p.setAmour(null);
+        }
+        else
+            getPlayerByID(plyID).setAmour((AmourCard) Card.getCardByID(cardID));
+
+        View.get().update();
+    }
+
+    @Override
+    public void onClearAllies(int plyID) {
+        if(plyID == -1){
+            for(Player p : _players)
+                p.getAllies().clear();
+        }
+        else
+            getPlayerByID(plyID).getAllies().clear();
+
+        View.get().update();
+
     }
 
     @Override
