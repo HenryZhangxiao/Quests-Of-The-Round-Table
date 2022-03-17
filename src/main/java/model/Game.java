@@ -225,6 +225,8 @@ public class Game extends Thread implements ServerEventListener {
 
         //Start a quest/event/tournament here
         Card c = storyDeck.drawCard();
+        //For Testing. CardIDs are in Card
+        //Card c = Card.getCardByID(48);
 
         ServerMessage msg = new ServerMessage(NetworkMsgType.STORY_CARD_DRAW,NetworkMessage.pack(plyID,c.id));
         NetworkServer.get().sendNetMessageToAllPlayers(msg);
@@ -308,11 +310,19 @@ public class Game extends Thread implements ServerEventListener {
                     return;
 
                 case "Court Called to Camelot":
-                    //We don't have allies yet
+                    //Add all cards to discard pile and then clear them
+                    for(Player p: _players){
+                        for(int i = 0; i < p.getAllies().size(); i++)
+                            deck.discardCard(p.getAllies().get(i));
+                        p.getAllies().clear();
+                    }
+
+                    //Sending -1 as plyID will clear all allies of all players on the local instance.
+                    NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.CLEAR_ALLIES,NetworkMessage.pack(-1)));
                     return;
 
                 case "King's Call to Arms":
-                    //already handled serverside?
+                    //Handled clientside.
                     return;
 
                 case "Prosperity Throughout the Realm":
@@ -350,6 +360,8 @@ public class Game extends Thread implements ServerEventListener {
 
         }
 
+        //Adds it into the discard pile.
+        storyDeck.discardCard(c);
     }
 
     @Override

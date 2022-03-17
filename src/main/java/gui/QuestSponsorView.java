@@ -56,7 +56,7 @@ public class QuestSponsorView {
         width = 1000;
         height = 550 + 150 * numStages;
 
-        hand = LocalGameManager.get().getLocalPlayer().hand;
+        hand = new ArrayList<>(LocalGameManager.get().getLocalPlayer().hand);
         selectedCards = new ArrayList<>();
         for (int i = 0; i < numStages; ++i) {
             selectedCards.add(new ArrayList<>());

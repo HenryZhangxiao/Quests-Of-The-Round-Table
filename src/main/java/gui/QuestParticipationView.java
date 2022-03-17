@@ -56,7 +56,7 @@ public class QuestParticipationView {
 
     public QuestParticipationView(boolean showDeclineButton){
         //Gets the hand of the local player
-        hand = LocalGameManager.get().getLocalPlayer().hand;
+        hand = new ArrayList<>(LocalGameManager.get().getLocalPlayer().hand);
         selectedCards = new ArrayList<>();
         handViews = new ArrayList<>();
         selectionViews = new ArrayList<>();
