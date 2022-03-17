@@ -184,7 +184,7 @@ public class Quest {
             NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
 
             //Clear all Amours in play
-            NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(-1)));
+            NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(-1, -1)));
         }
     }
 

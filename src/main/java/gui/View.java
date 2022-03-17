@@ -159,8 +159,8 @@ public class View extends Pane {
         if (!discardPile.isEmpty())
             advDiscard.setViewport(getAdvCard(discardPile.get(discardPile.size()-1).getID()));
 
-        // causes JavaFX thread error
-        //localPly.setText((LocalGameManager.get().getLocalPlayer().getPlayerNum()+1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName() + "\n Shields: " + LocalGameManager.get().getLocalPlayer().getShields());
+        // Update shields
+        localPly.setText((LocalGameManager.get().getLocalPlayer().getPlayerNum()+1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName() + "\n Shields: " + LocalGameManager.get().getLocalPlayer().getShields());
 
         // TODO: show last story card drawn in story discard
     }
