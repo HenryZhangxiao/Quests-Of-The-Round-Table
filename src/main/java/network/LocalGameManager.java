@@ -1,6 +1,7 @@
 package network;
 
 import gui.*;
+import javafx.application.Platform;
 import model.AmourCard;
 import model.Card;
 import model.Player;
@@ -169,7 +170,7 @@ public class LocalGameManager implements ClientEventListener{
     @Override
     public void onTurnChange(int idOfPlayer) {
         turnID = idOfPlayer;
-        View.get().update();
+        Platform.runLater(() -> View.get().update());
     }
 
     @Override
@@ -178,19 +179,19 @@ public class LocalGameManager implements ClientEventListener{
         for(int i = 0; i < cardIDs.length; i++) {
             getPlayerByID(plyID).addCardByID(cardIDs[i]);
         }
-        View.get().update();
+        Platform.runLater(() -> View.get().update());
     }
 
     @Override
     public void onUpdateShields(int plyID, int shieldCount) {
         getPlayerByID(plyID).setShields(shieldCount);
-        View.get().update();
+        Platform.runLater(() -> View.get().update());
     }
 
     @Override
     public void onUpdateAllies(int plyID, int[] cardIDs) {
         getPlayerByID(plyID).setAllies(cardIDs);
-        View.get().update();
+        Platform.runLater(() -> View.get().update());
     }
 
     @Override
@@ -203,7 +204,7 @@ public class LocalGameManager implements ClientEventListener{
         else
             getPlayerByID(plyID).setAmour((AmourCard) Card.getCardByID(cardID));
 
-        View.get().update();
+        Platform.runLater(() -> View.get().update());
     }
 
     @Override
@@ -215,14 +216,14 @@ public class LocalGameManager implements ClientEventListener{
         else
             getPlayerByID(plyID).getAllies().clear();
 
-        View.get().update();
+        Platform.runLater(() -> View.get().update());
 
     }
 
     @Override
     public void onDrawCard(int plyID, int cardID) {
         getPlayerByID(plyID).addCardByID(cardID);
-        View.get().update();
+        Platform.runLater(() -> View.get().update());
     }
 
     @Override
@@ -230,7 +231,7 @@ public class LocalGameManager implements ClientEventListener{
         for(int i = 0; i < cardIDs.length; i++) {
             getPlayerByID(plyID).addCardByID(cardIDs[i]);
         }
-        View.get().update();
+        Platform.runLater(() -> View.get().update());
     }
 
     @Override
@@ -238,14 +239,14 @@ public class LocalGameManager implements ClientEventListener{
         getPlayerByID(plyID).discardCardFromHand(cardID);
 
         _discardPile.add(Card.getCardByID(cardID));
-        View.get().update();
+        Platform.runLater(() -> View.get().update());
     }
 
     @Override
     public void onStoryDrawCard(int plyID, int cardID) {
         //Called when a player has drawn a story card.
 
-        View.get().update();
+        Platform.runLater(() -> View.get().update());
     }
 
     @Override
@@ -279,7 +280,7 @@ public class LocalGameManager implements ClientEventListener{
         else
             System.out.println("CLIENT: You lost the stage.");
 
-        View.get().update();
+        Platform.runLater(() -> View.get().update());
     }
 
     @Override
