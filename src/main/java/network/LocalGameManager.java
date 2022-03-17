@@ -21,16 +21,18 @@ public class LocalGameManager implements ClientEventListener{
     private int turnID = -1;
     private ArrayList<Card> _cardsOnBoard;
 
-    private ArrayList<Card> _discardPile;
+    private ArrayList<Card> _adventurePile;
+    private ArrayList<Card> _storyPile;
 
     private boolean gameStarted = false;
     private int connectedPlayerCount = 0;
 
 
     private LocalGameManager(){
-        _players = new ArrayList<Player>();
-        _cardsOnBoard = new ArrayList<Card>();
-        _discardPile = new ArrayList<Card>();
+        _players = new ArrayList<>();
+        _cardsOnBoard = new ArrayList<>();
+        _adventurePile = new ArrayList<>();
+        _storyPile = new ArrayList<>();
         NetworkManager.get().addListener(this);
     }
 
@@ -94,7 +96,9 @@ public class LocalGameManager implements ClientEventListener{
 
     public int getConnectedPlayerCount(){return connectedPlayerCount;}
 
-    public ArrayList<Card> getDiscardPile() {return _discardPile;}
+    public ArrayList<Card> getAdvPile() {return _adventurePile;}
+
+    public ArrayList<Card> getStoryPile() {return _storyPile;}
 
     public void startGame(){
         if(!NetworkManager.get().isHost())
@@ -238,13 +242,14 @@ public class LocalGameManager implements ClientEventListener{
     public void onCardDiscard(int plyID, int cardID) {
         getPlayerByID(plyID).discardCardFromHand(cardID);
 
-        _discardPile.add(Card.getCardByID(cardID));
+        _adventurePile.add(Card.getCardByID(cardID));
         Platform.runLater(() -> View.get().update());
     }
 
     @Override
     public void onStoryDrawCard(int plyID, int cardID) {
         //Called when a player has drawn a story card.
+        _storyPile.add(Card.getCardByID(cardID));
 
         Platform.runLater(() -> View.get().update());
     }

@@ -155,14 +155,16 @@ public class View extends Pane {
             cards.get(index).setViewport(viewport);
         }
 
-        ArrayList<Card> discardPile = LocalGameManager.get().getDiscardPile();
-        if (!discardPile.isEmpty())
-            advDiscard.setViewport(getAdvCard(discardPile.get(discardPile.size()-1).getID()));
+        ArrayList<Card> advPile = LocalGameManager.get().getAdvPile();
+        if (!advPile.isEmpty())
+            advDiscard.setViewport(getAdvCard(advPile.get(advPile.size()-1).getID()));
+
+        ArrayList<Card> storyPile = LocalGameManager.get().getStoryPile();
+        if (!storyPile.isEmpty())
+            storyDiscard.setViewport(getStoryCard(storyPile.get(storyPile.size()-1).getID()));
 
         // Update shields
         localPly.setText((LocalGameManager.get().getLocalPlayer().getPlayerNum()+1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName() + "\n Shields: " + LocalGameManager.get().getLocalPlayer().getShields());
-
-        // TODO: show last story card drawn in story discard
     }
 
     private void gameViewInit() {
