@@ -370,6 +370,7 @@ public class Game extends Thread implements ServerEventListener {
         System.out.println("player " + plyID + " asked to sponsor");
         System.out.println("quest's player id is " + quest.getTurnPlayerID());
         if(!declined){
+            int numCardsUsed = 0;
 
             Card[][] stageCards = new Card[questCards.length][];
             for(int i = 0; i < questCards.length; ++i){
@@ -377,9 +378,15 @@ public class Game extends Thread implements ServerEventListener {
 
                 for(int j = 0; j < questCards[i].length; ++j){
                     stage[j] = (Card.getCardByID(questCards[i][j]));
+                    numCardsUsed++;
                 }
                 stageCards[i] = stage;
             }
+
+            //sponsor draws n = (#cards used to sponsor) + (#stages in quest) cards
+            Card[] cards = deck.drawCardX(numCardsUsed + questCards.length);
+            ServerMessage msg = new ServerMessage(NetworkMsgType.CARD_DRAW_X, NetworkMessage.pack(plyID, Card.getCardIDsFromArray(cards)));
+            NetworkServer.get().sendNetMessageToAllPlayers(msg);
 
             //if sponsor card selection is valid, then go ahead, otherwise redo sponsoring
             //Todo fix this. It validates clientside for now, but theres something up when sending cards over
