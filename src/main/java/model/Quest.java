@@ -87,7 +87,7 @@ public class Quest {
     //players who opted in pick weapons to fight foes, etc
     public void battling() {
         System.out.println("in battling QUEST "  + turnPlayerID);
-        boolean passToNext = false;
+        //boolean passToNext = false;
 
         //the turn player is not the sponsor (not all players have fought)
         if(turnPlayerID != sponsorPID){
@@ -144,7 +144,7 @@ public class Quest {
 
                         winnerID = turnPlayerID;
 
-                        passToNext = true;
+                        //passToNext = true;
                     }
                 }
                 else{
@@ -159,32 +159,44 @@ public class Quest {
                             NetworkMessage.pack(questCard.id, false, Card.getStageCardIDsFromMDArray(stageCards)[currentStage], Card.getCardIDsFromArray(playerCards[turnPlayerID])));
                     NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
 
-                    passToNext = true;
+                    //passToNext = true;
                 }
             } else {
                 //player declined
-                passToNext = true;
+                //passToNext = true;
             }
         }
 
         // if the player declined to participate, lost this stage, or won the last stage,
         // query the next player for participation
-        if (passToNext) {
+        /*if (passToNext) {
             goToNextTurn();
             currentStage = 0;
         } else {
             currentStage++;
-        }
+        }*/
+        goToNextTurn();
 
         // if the next player to play is not the sponsor, query for participation
         if (turnPlayerID != sponsorPID)
-            participating();
-        else {    //turn has gone around table and back to player
-            ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.QUEST_FINAL_RESULT,NetworkMessage.pack(winnerID, Card.getStageCardIDsFromMDArray(stageCards)));
-            NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
+            participating();        //TODO: change to call func that differentiates battle from test by first instance of first card of stage
+        else {
+            // back around to sponsor, a stage has been completed
 
-            //Clear all Amours in play
-            NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(-1, -1)));
+            if(currentStage +1 < questCard.getStages()){
+                //more stages left to Quest
+                currentStage++;
+                goToNextTurn(); //don't want sponsor battling
+                participating();    //TODO: change to call func that differentiates battle from test by first instance of first card of stage
+            }
+            else{
+                //turn has gone around table and back to player
+                ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.QUEST_FINAL_RESULT,NetworkMessage.pack(winnerID, Card.getStageCardIDsFromMDArray(stageCards)));
+                NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
+
+                //Clear all Amours in play
+                NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(-1, -1)));
+            }
         }
     }
 
