@@ -24,7 +24,7 @@ public abstract class QuestCard extends Card{
         return stages;
     }
 
-    protected String[] getSpecialFoes(){
+    public String[] getSpecialFoes(){
         return specialFoes;
     }
 }

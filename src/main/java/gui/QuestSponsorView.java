@@ -1,14 +1,19 @@
 package gui;
 
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import network.*;
 import model.Card;
@@ -21,8 +26,6 @@ import java.util.ArrayList;
 public class QuestSponsorView {
 
     // Quest info
-    private final String name;
-    private final int numStages;
     private int foesSelected;
 
     // Window size
@@ -50,15 +53,13 @@ public class QuestSponsorView {
 
     public QuestSponsorView(QuestCard aQuestCard) {
         questCard = aQuestCard;
-        name = questCard.getName();
-        numStages = questCard.getStages();
         foesSelected = 0;
-        width = 1000;
-        height = 550 + 150 * numStages;
+        width = 960;
+        height = 350 + 115 * questCard.getStages();
 
         hand = new ArrayList<>(LocalGameManager.get().getLocalPlayer().hand);
         selectedCards = new ArrayList<>();
-        for (int i = 0; i < numStages; ++i) {
+        for (int i = 0; i < questCard.getStages(); ++i) {
             selectedCards.add(new ArrayList<>());
         }
         handViews = new ArrayList<>();
@@ -74,20 +75,20 @@ public class QuestSponsorView {
         selectionCardGroup.getChildren().clear();
 
         // Enable accept button if enough foes selected
-        yesBtn.setDisable(foesSelected != numStages);
+        yesBtn.setDisable(foesSelected != questCard.getStages());
 
 
         //Drawing all selected cards
         for(int i = 0; i < selectedCards.size(); i++){
             for (int j = 0; j < selectedCards.get(i).size(); j++) {
                 ImageView aCard = new ImageView();
-                aCard.setFitWidth(100);
-                aCard.setFitHeight(140);
+                aCard.setFitWidth(75);
+                aCard.setFitHeight(105);
                 aCard.setPreserveRatio(true);
-                aCard.setX(selectionRect.getX() + 10 + j*110);
-                aCard.setY(selectionRect.getY() + 10 + i*150);
+                aCard.setX(selectionRect.getX() + 10 + j*85);
+                aCard.setY(selectionRect.getY() + 10 + i*115);
                 aCard.setImage(View.get().getAdvCards());
-                aCard.setViewport(View.get().getAdvCard(selectedCards.get(i).get(j).getID()));
+                aCard.setViewport(View.getAdvCard(selectedCards.get(i).get(j).getID()));
                 selectionCardGroup.getChildren().add(aCard);
 
                 int finalI = i;
@@ -115,8 +116,10 @@ public class QuestSponsorView {
             aCard.setX(handRect.getX() + 10 + (i%8)*110);
             aCard.setY(handRect.getY() + 10 + Math.floorDiv(i,8)*150);
             aCard.setImage(View.get().getAdvCards());
-            aCard.setViewport(View.get().getAdvCard(hand.get(i).getID()));
+            aCard.setViewport(View.getAdvCard(hand.get(i).getID()));
             handCardGroup.getChildren().add(aCard);
+
+            //TODO: allow tests to be selected
 
             int finalI = i;
             aCard.setOnMouseClicked(mouseEvent -> {
@@ -127,7 +130,7 @@ public class QuestSponsorView {
                             selectedCards.get(foesSelected-1).add(hand.get(finalI));
                             hand.remove(finalI);
                         }
-                    } else if (hand.get(finalI).getID() <= 17 && foesSelected < numStages) {    // selected a foe and foes can still be selected
+                    } else if (hand.get(finalI).getID() <= 17 && foesSelected < questCard.getStages()) {    // selected a foe and foes can still be selected
                         selectedCards.get(foesSelected).add(hand.get(finalI));
                         hand.remove(finalI);
                         foesSelected++;
@@ -142,30 +145,52 @@ public class QuestSponsorView {
         Stage stage = new Stage();
         Group root = new Group();
 
-        //TODO: add info about alt BPs
-        Label lblMain = new Label("A quest is available! " + name + "\nWould you like to sponsor it? (select " + numStages + " foes)");
-        lblMain.relocate(20,20);
+        // Quest information
+        VBox labels = new VBox(10);
+        labels.setPrefSize(340, 190);
+        labels.relocate(0,20);
+        labels.setAlignment(Pos.CENTER);
 
+        Label lblMain = new Label("A new Quest is available!\n\n" + questCard.getName() + "\nWill you sponsor the " + questCard.getStages() + " Stages?");
+        lblMain.setFont(new Font("Arial", 20));
+        lblMain.setTextAlignment(TextAlignment.CENTER);
+
+        StringBuilder details = new StringBuilder("Select 1 foe or 1 test for each stage\nEach foe may have weapons");
+        if (questCard.getSpecialFoes().length != 0) {
+            details.append("\nAlt BPs: ");
+            details.append(questCard.getSpecialFoes()[0]);
+            for (int i = 1; i < questCard.getSpecialFoes().length; ++i)
+                details.append(", ").append(questCard.getSpecialFoes()[i]);
+        }
+
+        Label lblDetails = new Label(details.toString());
+        lblDetails.setTextAlignment(TextAlignment.CENTER);
+
+        Label lblError = new Label("Each stage must have more Battle Points than the last");
+        lblError.setTextFill(Color.RED);
+        lblError.setVisible(false);
+        lblError.setTextAlignment(TextAlignment.CENTER);
+
+        labels.getChildren().addAll(lblMain,lblDetails,lblError);
+
+        // yes and no buttons
         Button noBtn = new Button("Decline");
-        noBtn.relocate(20, 100);
+        noBtn.setPrefSize(110, 40);
+        noBtn.relocate(40, 210);
         noBtn.setOnAction(actionEvent -> {
             LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(true));
             NetworkManager.get().sendNetMessageToServer(msg);
             stage.close();
         });
 
-        Label lblError = new Label("The total BP of each stage must be greater than that of the previous stage");
-        lblError.setTextFill(Color.RED);
-        lblError.relocate(200, 100);
-        lblError.setVisible(false);
-
         yesBtn = new Button("Accept");
-        yesBtn.relocate(100,100);
+        yesBtn.setPrefSize(110, 40);
+        yesBtn.relocate(190,210);
         yesBtn.setDisable(true);
         yesBtn.setOnAction(actionEvent -> {
-            Card[][] valCards = new Card[numStages][];
-            int[][] sendCards = new int[numStages][];
-            for (int i = 0; i < numStages; i++){
+            Card[][] valCards = new Card[questCard.getStages()][];
+            int[][] sendCards = new int[questCard.getStages()][];
+            for (int i = 0; i < questCard.getStages(); i++){
                 sendCards[i] = new int[selectedCards.get(i).size()];
                 valCards[i] = new Card[selectedCards.get(i).size()];
                 for (int j = 0; j < selectedCards.get(i).size(); j++) {
@@ -199,9 +224,10 @@ public class QuestSponsorView {
             stage.close();
         });
 
+        // Area for selected cards
         Group selectionGroup = new Group();
 
-        selectionRect = new Rectangle(55, 200, 890, (150 * numStages) + 10);
+        selectionRect = new Rectangle(340, 10, 605, (115 * questCard.getStages()) + 10);
         selectionRect.setFill(Color.PALEVIOLETRED);
         selectionRect.setStroke(Color.SADDLEBROWN);
         selectionRect.setArcWidth(30);
@@ -211,9 +237,10 @@ public class QuestSponsorView {
 
         selectionGroup.getChildren().addAll(selectionRect,selectionCardGroup);
 
+        // Area cards in hand
         Group handGroup = new Group();
 
-        handRect = new Rectangle(55, height-310, 890, 310);
+        handRect = new Rectangle(35, height-320, 890, 310);
         handRect.setFill(Color.DARKGRAY);
         handRect.setStroke(Color.SADDLEBROWN);
         handRect.setArcWidth(30);
@@ -223,9 +250,9 @@ public class QuestSponsorView {
 
         handGroup.getChildren().addAll(handRect,handCardGroup);
 
-        updateCards();
+        updateCards();  // to initially show cards in hand
 
-        root.getChildren().addAll(lblMain,noBtn,yesBtn,lblError,selectionGroup,handGroup);
+        root.getChildren().addAll(labels,noBtn,yesBtn,selectionGroup,handGroup);
         Scene scene = new Scene(root,width,height);
         stage.setScene(scene);
         stage.setTitle(LocalGameManager.get().getLocalPlayer().getPlayerNum() + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
