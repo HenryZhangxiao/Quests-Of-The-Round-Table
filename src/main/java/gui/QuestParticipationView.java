@@ -6,6 +6,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -13,10 +14,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import model.*;
 import network.*;
-import model.Card;
-import model.FoeCard;
-import model.WeaponCard;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,10 +40,12 @@ public class QuestParticipationView {
     //Rectangles to show each area
     Rectangle selectArea;
     Rectangle handArea;
+    Rectangle amourArea;
 
     //Labels to show the total BP of the selection and for an error
     Label totalBPLabel;
     Label errorLabel;
+    Label amourLabel;
 
     //Groups of each ImageView that contains only the card ImageViews.
     Group selectionCardGroup = new Group();
@@ -53,8 +54,11 @@ public class QuestParticipationView {
     //Shows the decline button or not. It wont show the decline button if on a seperate stage of the quest.
     private boolean showDeclineButton = false;
 
+    private QuestCard questCard;
+    private Card[] stageCards;
+    private Button merlinButton;
 
-    public QuestParticipationView(boolean showDeclineButton){
+    public QuestParticipationView(boolean showDeclineButton, int questID, Card[] stageCards){
         //Gets the hand of the local player
         hand = new ArrayList<>(LocalGameManager.get().getLocalPlayer().hand);
         selectedCards = new ArrayList<>();
@@ -65,7 +69,8 @@ public class QuestParticipationView {
         advCards = new Image(new File("src/resources/advComposite.jpg").toURI().toString());
 
         this.showDeclineButton = showDeclineButton;
-
+        this.questCard = (QuestCard) Card.getCardByID(questID);
+        this.stageCards = stageCards;
 
         //To prevent JavaFX from yelling about threads.
         Platform.runLater(() -> setup());
@@ -89,7 +94,19 @@ public class QuestParticipationView {
                 bpVal += ((WeaponCard) c).getBP();
             }
         }
+
+        //Calculates all BP bonuses for any allies or amours the player has in play
+        bpVal += AllyCard.getBPForAllies(LocalGameManager.get().getLocalPlayer().getAllies(),questCard,LocalGameManager.get().getLocalPlayer().getAmour());
+
         totalBPLabel.setText("You have selected " + String.valueOf(selectedCards.size()) + " card(s) for a total BP value of " + String.valueOf(bpVal));
+
+        //Enables Merlin button if in allies
+        boolean enableMerlin = false;
+        for(Card c: LocalGameManager.get().getLocalPlayer().getAllies()){
+            if(c instanceof MerlinAlly)
+                enableMerlin = true;
+        }
+        merlinButton.setDisable(!enableMerlin);
 
         //Drawing the selected cards
         for(int i = 0; i < selectedCards.size(); i++){
@@ -115,6 +132,22 @@ public class QuestParticipationView {
             });
         }
 
+        //Drawing Amour Card if set.
+        if(LocalGameManager.get().getLocalPlayer().getAmour() != null){
+            ImageView amourCard = new ImageView();
+            amourCard.setFitWidth(100);
+            amourCard.setFitHeight(140);
+            amourCard.setPreserveRatio(true);
+            amourCard.setX(amourArea.getX() + 15);
+            amourCard.setY(amourArea.getY() + 10);
+            amourCard.setImage(advCards);
+            amourCard.setViewport(View.getAdvCard(LocalGameManager.get().getLocalPlayer().getAmour().getID()));
+            handCardGroup.getChildren().add(amourCard);
+            amourLabel.setVisible(false);
+        }
+        else
+            amourLabel.setVisible(true);
+
         //Drawing all cards in hand.
         for(int i = 0; i < hand.size(); i++){
             ImageView aCard = new ImageView();
@@ -130,6 +163,14 @@ public class QuestParticipationView {
             int finalI = i;
             aCard.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton() == MouseButton.PRIMARY) {
+                    if(hand.get(finalI) instanceof AmourCard){
+                        LocalGameManager.get().getLocalPlayer().setAmour((AmourCard) hand.get(finalI));
+                        hand.remove(finalI);
+                        updateCards();
+                        NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(hand.get(finalI).getID())));
+                        return;
+                    }
+
                     if(!validateCardSelection(hand.get(finalI))){
                         //Shows an error label because two of the same cards are selected.
                         errorLabel.setVisible(true);
@@ -142,20 +183,33 @@ public class QuestParticipationView {
                 }
             });
         }
-
     }
 
-    //Inital setup for the window.
+    //Initial setup for the window.
     private void setup(){
         Stage stage = new Stage();
         //Everything is added to this main group.
         Group mainGroup = new Group();
 
         //The areas for the selected cards and the cards in the hand
-        selectArea = new Rectangle(55,200,890,200);
+        selectArea = new Rectangle(55,200,720,180);
         handArea = new Rectangle(55,height-400,890,310);
+        amourArea = new Rectangle(800,200,130,180);
 
         Font largeFont = new Font("Arial", 20);
+
+        merlinButton = new Button("Use Merlin");
+        merlinButton.setTooltip(new Tooltip("Use Merlin to preview this stage's cards!"));
+        merlinButton.setLayoutX(amourArea.getX());
+        merlinButton.setLayoutY(100);
+        merlinButton.setMinWidth(100);
+        merlinButton.setMinHeight(40);
+        merlinButton.setOnAction(e -> {
+            PreviewStageView v = new PreviewStageView(Card.getCardListFromCardArray(stageCards),questCard);
+            LocalGameManager.get().setUsedMerlin(true);
+            merlinButton.setDisable(true);
+        });
+        mainGroup.getChildren().add(merlinButton);
 
         //Selected Cards subgroup
         Group selectionGroup = new Group();
@@ -191,6 +245,19 @@ public class QuestParticipationView {
         selectionGroup.getChildren().add(selectionCardGroup);
         mainGroup.getChildren().add(selectionGroup);
 
+        //Amour Card Area
+        amourArea.setFill(Color.YELLOW);
+        amourArea.setStroke(Color.SADDLEBROWN);
+        amourArea.setArcWidth(30);
+        amourArea.setArcHeight(20);
+        mainGroup.getChildren().add(amourArea);
+
+        amourLabel = new Label("No Amour\n Selected");
+        amourLabel.setLayoutX(amourArea.getX() + 20);
+        amourLabel.setLayoutY(amourArea.getY() + 10);
+        amourLabel.setFont(largeFont);
+        mainGroup.getChildren().add(amourLabel);
+
 
         //Hand Area
         Group handGroup = new Group();
@@ -206,8 +273,10 @@ public class QuestParticipationView {
         //Decline to participate button
         if(showDeclineButton) {
             Button declineButton = new Button();
-            declineButton.setLayoutX(10);
-            declineButton.setLayoutY(height - 450);
+            declineButton.setLayoutX(selectArea.getX());
+            declineButton.setLayoutY(height - 500);
+            declineButton.setMinWidth(100);
+            declineButton.setMinHeight(40);
             declineButton.setText("Decline");
 
             declineButton.setOnAction(e -> {
@@ -221,8 +290,10 @@ public class QuestParticipationView {
 
         //Accept button
         Button acceptButton = new Button();
-        acceptButton.setLayoutX(width - 55);
-        acceptButton.setLayoutY(height - 450);
+        acceptButton.setLayoutX(handArea.getX() + handArea.getWidth() - 100);
+        acceptButton.setLayoutY(height - 500);
+        acceptButton.setMinWidth(100);
+        acceptButton.setMinHeight(40);
         acceptButton.setText("Battle!");
 
         acceptButton.setOnAction(e -> {

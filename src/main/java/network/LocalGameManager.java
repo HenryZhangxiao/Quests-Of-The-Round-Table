@@ -27,6 +27,7 @@ public class LocalGameManager implements ClientEventListener{
     private boolean gameStarted = false;
     private int connectedPlayerCount = 0;
 
+    private boolean usedMerlin = false;
 
     private LocalGameManager(){
         _players = new ArrayList<>();
@@ -99,6 +100,9 @@ public class LocalGameManager implements ClientEventListener{
     public ArrayList<Card> getAdvPile() {return _adventurePile;}
 
     public ArrayList<Card> getStoryPile() {return _storyPile;}
+
+    public boolean getUsedMerlin() {return usedMerlin;}
+    public void setUsedMerlin(boolean used) {usedMerlin = used;}
 
     public void startGame(){
         if(!NetworkManager.get().isHost())
@@ -270,9 +274,10 @@ public class LocalGameManager implements ClientEventListener{
     }
 
     @Override
-    public void onQuestParticipateQuery(int sponsorPlyID, int questID) {
+    public void onQuestParticipateQuery(int sponsorPlyID, int questID, int[] stageCardIDs) {
         //Called when the sponsor has chosen their cards and is asking the local player if they would like to participate.
-        QuestParticipationView q = new QuestParticipationView(true);
+        Card[] cards = Card.getCardsFromIDArray(stageCardIDs);
+        QuestParticipationView q = new QuestParticipationView(true, questID,cards);
 
     }
 
@@ -294,6 +299,7 @@ public class LocalGameManager implements ClientEventListener{
         System.out.println("CLIENT: The Quest has ended.");
 
         QuestResultView q = new QuestResultView(winnerID);
+        usedMerlin = false;
     }
 
     @Override

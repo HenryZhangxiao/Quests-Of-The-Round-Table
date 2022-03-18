@@ -4,6 +4,7 @@ import network.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Formattable;
 
 public class Quest {
     private QuestCard questCard;
@@ -79,7 +80,7 @@ public class Quest {
     public void participating() {
         System.out.println("in participating QUEST " + turnPlayerID);
         //if(turnPlayerID != sponsorPID && !outPIDs.contains(turnPlayerID)) {
-        ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(sponsorPID, questCard.id));
+        ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(sponsorPID, questCard.id,Card.getCardIDsFromArray(stageCards[currentStage])));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
         //}
     }
@@ -233,6 +234,32 @@ public class Quest {
         return true; //If we got here there was no problem with the selection
     }
 
+    public static int getBPForStage(Card[] stageCards, QuestCard aQuestCard){
+        int bp = 0;
+
+        //The first card in any stage should be a foe or a test. If test return 0.
+        if(!(stageCards[0] instanceof FoeCard))
+            return 0;
+
+        FoeCard foe = (FoeCard) stageCards[0];
+
+        boolean specialbp = false;
+        for(String s: aQuestCard.specialFoes){
+            if(s == foe.name || s == "All"){
+                specialbp = true;
+            }
+        }
+        if(specialbp)
+            bp += foe.altBP;
+        else
+            bp = foe.bp;
+
+        for(int i = 1; i < stageCards.length; i++){
+            bp += ((WeaponCard)stageCards[i]).bp;
+        }
+
+        return bp;
+    }
 
     public void setStages(Card[][] _stageCards){
         stageCards = _stageCards;

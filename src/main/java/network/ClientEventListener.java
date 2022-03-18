@@ -22,7 +22,7 @@ public interface ClientEventListener {
 
     void onQuestBegin(int plyID, int questCardID);
     void onQuestSponsorQuery(int questCardID);
-    void onQuestParticipateQuery(int sponsorPlyID, int questID);
+    void onQuestParticipateQuery(int sponsorPlyID, int questID, int[] stageCardIDs);
     void onQuestStageResult(int questCardID, boolean wonStage, int[] stageCardsIDs, int[] playerCardsIDs);
     void onQuestFinalResult(int winnerID, int[][] sponsorCards);
 
