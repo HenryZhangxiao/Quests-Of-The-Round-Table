@@ -78,10 +78,13 @@ public class Quest {
     //once it gets to the sponsor, then everyone has opted in or out, sponsor picks cards for quest
     public void participating() {
         System.out.println("in participating QUEST " + turnPlayerID);
-        //if(turnPlayerID != sponsorPID && !outPIDs.contains(turnPlayerID)) {
-        ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(sponsorPID, questCard.id));
-        NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
-        //}
+        if(turnPlayerID != sponsorPID && !outPIDs.contains(turnPlayerID)) {
+            ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(sponsorPID, questCard.id));
+            NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
+        }
+        else{
+            battling();
+        }
     }
 
     //players who opted in pick weapons to fight foes, etc
@@ -93,7 +96,7 @@ public class Quest {
         if(turnPlayerID != sponsorPID){
 
             //current player is still in the quest
-            if(inPIDs.contains(turnPlayerID)){
+            if(inPIDs.contains(turnPlayerID)){  //maybe unnecessary b/c checked in participating now
 
                 //add up that player's battle points
                 int playerBP = Game.get().getPlayerByID(turnPlayerID).getBattlePoints();   //5 is points from being a squire
@@ -179,7 +182,7 @@ public class Quest {
 
         // if the next player to play is not the sponsor, query for participation
         if (turnPlayerID != sponsorPID)
-            participating();        //TODO: change to call func that differentiates battle from test by first instance of first card of stage
+            battleOrTest();
         else {
             // back around to sponsor, a stage has been completed
 
@@ -187,7 +190,7 @@ public class Quest {
                 //more stages left to Quest
                 currentStage++;
                 goToNextTurn(); //don't want sponsor battling
-                participating();    //TODO: change to call func that differentiates battle from test by first instance of first card of stage
+                battleOrTest();
             }
             else{
                 //turn has gone around table and back to player
@@ -197,6 +200,19 @@ public class Quest {
                 //Clear all Amours in play
                 NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(-1, -1)));
             }
+        }
+    }
+
+    //can't check inPIDs in battleOrTest, b/c won't be in there for first stage, so have to do that before for subsequent stages
+
+    public void battleOrTest(){
+        if(stageCards[currentStage][0] instanceof FoeCard){
+            //battle the foe
+            participating();
+        }
+        else{
+            //do the test
+            //TODO: Test class function call
         }
     }
 

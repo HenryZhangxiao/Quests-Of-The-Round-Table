@@ -406,7 +406,7 @@ public class Game extends Thread implements ServerEventListener {
                 System.out.println("valid selection, to next turn");
 
                 quest.goToNextTurn();
-                quest.participating();
+                quest.battleOrTest();   //previously participating
             //}
 
         }
