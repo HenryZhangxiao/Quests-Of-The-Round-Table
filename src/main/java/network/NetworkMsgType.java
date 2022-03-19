@@ -18,8 +18,8 @@ public enum NetworkMsgType {
     TURN_CHANGE, //To Server [] - To Client [ID of whos turn it now is.]
     CARD_DRAW, //To Client[ID of card drawn] - To Server []
     CARD_DRAW_X, //To Client [[] of cards drawn] - To Server[Amount of cards to draw]
-    CARD_DISCARD, //[ID of card discarded]
-    CARD_DISCARD_X, //To Server [IDs of cards discarded]
+    CARD_DISCARD, //[ID of card discarded] - To Client [PlyID, id of card discarded]
+    CARD_DISCARD_X, //To Server [IDs of cards discarded] - To Client[plyID, []cardIDs]
 
     STORY_CARD_DRAW, //[ID of card drawn]
 

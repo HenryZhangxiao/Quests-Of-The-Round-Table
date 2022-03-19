@@ -247,6 +247,16 @@ public class LocalGameManager implements ClientEventListener{
     }
 
     @Override
+    public void onCardDiscardX(int plyID, int[] cardIDs) {
+        //We dont worry about local player because the change is already done locally.
+        if(plyID == getLocalPlayer().getPlayerNum())
+            return;
+
+        getPlayerByID(plyID).discardCardsFromHand(cardIDs);
+        Platform.runLater(() -> View.get().update());
+    }
+
+    @Override
     public void onStoryDrawCard(int plyID, int cardID) {
         //Called when a player has drawn a story card.
         _storyPile.add(Card.getCardByID(cardID));

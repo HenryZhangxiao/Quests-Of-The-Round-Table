@@ -10,6 +10,7 @@ public interface ServerEventListener {
     void onTurnChange(int idOfPlayer);
 
     void onUpdateHand(int plyID, int[] cardIDs);
+    //void onUpdateHandDraw(int plyID, int[] cardIDs, int amountOfCardsToDraw);
 
     void onUpdateAllies(int plyID, int[] cardIDs);
     void onUpdateAmour(int plyID, int cardID);

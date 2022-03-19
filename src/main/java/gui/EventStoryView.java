@@ -285,8 +285,8 @@ public class EventStoryView {
             LocalGameManager.get().getLocalPlayer().hand = hand;
             View.get().update();
 
-            LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.UPDATE_HAND, NetworkMessage.pack(Card.getCardIDsFromArrayList(hand)));
-            NetworkManager.get().sendNetMessageToServer(msg);
+            //LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.UPDATE_HAND, NetworkMessage.pack(Card.getCardIDsFromArrayList(hand)));
+            //NetworkManager.get().sendNetMessageToServer(msg);
 
             LocalClientMessage msg2 = new LocalClientMessage(NetworkMsgType.CARD_DISCARD_X, NetworkMessage.pack(Card.getCardIDsFromArrayList(selectedCards)));
             NetworkManager.get().sendNetMessageToServer(msg2);
