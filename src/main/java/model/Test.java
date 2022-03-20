@@ -68,7 +68,7 @@ public class Test {
     public void participating() {
         System.out.println("in participating QUEST " + turnPlayerID);
         //if(turnPlayerID != sponsorPID && !outPIDs.contains(turnPlayerID)) {
-        ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(sponsorPID, questCard.id));
+        ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(inPIDs.get((0)), testCard.id));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
         //}
     }
