@@ -116,12 +116,9 @@ public class Tournament {
             if(inPIDs.size() >= 2){
                 //TODO: Network message to alert players that there was a tie amongst inPIDs
             }
-            // Otherwise, no tie so send winning messages to inPIDs
+            // Otherwise, no tie so send winning message to inPID
             else{
-                for(int i = 0; i < inPIDs.size(); i++){
-                    //TODO: Networking to send messages to each winner?
-                    //TODO: Also to send messages to draw
-                }
+                //TODO: Networking to send message to winner
             }
         }
     }
