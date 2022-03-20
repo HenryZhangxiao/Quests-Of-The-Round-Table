@@ -126,6 +126,30 @@ public class Tournament {
         }
     }
 
+    public boolean isValidSelection(Card[] stages){
+        ArrayList<Card> weapons = new ArrayList<>();
+        AmourCard amour = null;
+
+        for(int i = 0; i < stages.length; i++){
+            if(stages[i] instanceof WeaponCard){
+                WeaponCard currentCard = (WeaponCard) stages[i];
+                if(weapons.contains(currentCard)){
+                    return false;
+                }
+                weapons.add(currentCard);
+            }
+            else if(stages[i] instanceof AmourCard){
+                AmourCard currentCard = (AmourCard) stages[i];
+                if(amour != null){
+                    return false;
+                }
+                amour = currentCard;
+            }
+        }
+        // No duplicate weapons or more than one amour
+        return true;
+    }
+
     public void setPlayerCards(int pid, Card[] _playerCards){
         playerCards[pid] = _playerCards;
     }
