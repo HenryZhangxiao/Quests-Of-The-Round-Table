@@ -104,7 +104,7 @@ public class Test {
     }
 
     public boolean isValidBid(int bid){
-        return bid > currentBid;
+        return bid > currentBid && bid > testCard.getMinimumBid();
     }
 
     public void setCurrentBid(int bid) {
