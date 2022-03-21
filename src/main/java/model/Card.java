@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 public abstract class Card {
@@ -207,6 +208,21 @@ public abstract class Card {
             cards[i] = Card.getCardByID(cardIDs[i]);
         }
         return cards;
+    }
+
+    public static ArrayList<Card> getCardListFromCardArray(Card[] cards){
+        ArrayList<Card> list = new ArrayList<>();
+        for(int i = 0; i < cards.length; i++)
+            list.add(cards[i]);
+        return list;
+    }
+
+    public static Card[] getCardArrayFromCardList(ArrayList<Card> cards){
+        Card[] arry = new Card[cards.size()];
+        for(int i = 0; i < cards.size();i++){
+            arry[i] = cards.get(i);
+        }
+        return arry;
     }
 
     /*
