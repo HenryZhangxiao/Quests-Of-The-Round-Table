@@ -4,6 +4,7 @@ import network.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Formattable;
 
 public class Quest {
     private QuestCard questCard;
@@ -78,22 +79,26 @@ public class Quest {
     //once it gets to the sponsor, then everyone has opted in or out, sponsor picks cards for quest
     public void participating() {
         System.out.println("in participating QUEST " + turnPlayerID);
-        //if(turnPlayerID != sponsorPID && !outPIDs.contains(turnPlayerID)) {
-        ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(sponsorPID, questCard.id));
-        NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
-        //}
+
+        if(turnPlayerID != sponsorPID && !outPIDs.contains(turnPlayerID)) {
+            ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(sponsorPID, questCard.id,Card.getCardIDsFromArray(stageCards[currentStage])));
+            NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
+        }
+        else{
+            battling();
+        }
     }
 
     //players who opted in pick weapons to fight foes, etc
     public void battling() {
         System.out.println("in battling QUEST "  + turnPlayerID);
-        boolean passToNext = false;
+        //boolean passToNext = false;
 
         //the turn player is not the sponsor (not all players have fought)
         if(turnPlayerID != sponsorPID){
 
             //current player is still in the quest
-            if(inPIDs.contains(turnPlayerID)){
+            if(inPIDs.contains(turnPlayerID)){  //maybe unnecessary b/c checked in participating now
 
                 //add up that player's battle points
                 int playerBP = Game.get().getPlayerByID(turnPlayerID).getBattlePoints();   //5 is points from being a squire
@@ -144,7 +149,7 @@ public class Quest {
 
                         winnerID = turnPlayerID;
 
-                        passToNext = true;
+                        //passToNext = true;
                     }
                 }
                 else{
@@ -159,32 +164,57 @@ public class Quest {
                             NetworkMessage.pack(questCard.id, false, Card.getStageCardIDsFromMDArray(stageCards)[currentStage], Card.getCardIDsFromArray(playerCards[turnPlayerID])));
                     NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(stageResultMsg);
 
-                    passToNext = true;
+                    //passToNext = true;
                 }
             } else {
                 //player declined
-                passToNext = true;
+                //passToNext = true;
             }
         }
 
         // if the player declined to participate, lost this stage, or won the last stage,
         // query the next player for participation
-        if (passToNext) {
+        /*if (passToNext) {
             goToNextTurn();
             currentStage = 0;
         } else {
             currentStage++;
-        }
+        }*/
+        goToNextTurn();
 
         // if the next player to play is not the sponsor, query for participation
         if (turnPlayerID != sponsorPID)
-            participating();
-        else {    //turn has gone around table and back to player
-            ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.QUEST_FINAL_RESULT,NetworkMessage.pack(winnerID, Card.getStageCardIDsFromMDArray(stageCards)));
-            NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
+            battleOrTest();
+        else {
+            // back around to sponsor, a stage has been completed
 
-            //Clear all Amours in play
-            NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(-1, -1)));
+            if(currentStage +1 < questCard.getStages()){
+                //more stages left to Quest
+                currentStage++;
+                goToNextTurn(); //don't want sponsor battling
+                battleOrTest();
+            }
+            else{
+                //turn has gone around table and back to player
+                ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.QUEST_FINAL_RESULT,NetworkMessage.pack(winnerID, Card.getStageCardIDsFromMDArray(stageCards)));
+                NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
+
+                //Clear all Amours in play
+                NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(-1, -1)));
+            }
+        }
+    }
+
+    //can't check inPIDs in battleOrTest, b/c won't be in there for first stage, so have to do that before for subsequent stages
+
+    public void battleOrTest(){
+        if(stageCards[currentStage][0] instanceof FoeCard){
+            //battle the foe
+            participating();
+        }
+        else{
+            //do the test
+            //TODO: Test class function call
         }
     }
 
@@ -233,6 +263,32 @@ public class Quest {
         return true; //If we got here there was no problem with the selection
     }
 
+    public static int getBPForStage(Card[] stageCards, QuestCard aQuestCard){
+        int bp = 0;
+
+        //The first card in any stage should be a foe or a test. If test return 0.
+        if(!(stageCards[0] instanceof FoeCard))
+            return 0;
+
+        FoeCard foe = (FoeCard) stageCards[0];
+
+        boolean specialbp = false;
+        for(String s: aQuestCard.specialFoes){
+            if(s == foe.name || s == "All"){
+                specialbp = true;
+            }
+        }
+        if(specialbp)
+            bp += foe.altBP;
+        else
+            bp = foe.bp;
+
+        for(int i = 1; i < stageCards.length; i++){
+            bp += ((WeaponCard)stageCards[i]).bp;
+        }
+
+        return bp;
+    }
 
     public void setStages(Card[][] _stageCards){
         stageCards = _stageCards;

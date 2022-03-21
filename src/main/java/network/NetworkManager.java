@@ -150,6 +150,11 @@ public class NetworkManager extends Thread {
                     l.onCardDiscard((int)_objs.get(0),(int)_objs.get(1));
                 }
                 break;
+            case CARD_DISCARD_X:
+                for (ClientEventListener l: _listeners) {
+                    l.onCardDiscardX((int)_objs.get(0),(int[])_objs.get(1));
+                }
+                break;
             case STORY_CARD_DRAW:
                 for (ClientEventListener l: _listeners) {
                     l.onStoryDrawCard((int)_objs.get(0),(int)_objs.get(1));
@@ -174,7 +179,7 @@ public class NetworkManager extends Thread {
 
             case QUEST_PARTICIPATE_QUERY:
                 for (ClientEventListener l: _listeners) {
-                    l.onQuestParticipateQuery((int)_objs.get(0),(int)_objs.get(1));
+                    l.onQuestParticipateQuery((int)_objs.get(0),(int)_objs.get(1),(int[])_objs.get(2));
                 }
                 break;
             case QUEST_STAGE_RESULT:
@@ -190,6 +195,21 @@ public class NetworkManager extends Thread {
             case EVENT_BEGIN:
                 for (ClientEventListener l: _listeners) {
                     l.onEventStoryBegin((int)_objs.get(0),(int)_objs.get(1));
+                }
+                break;
+            case TOURNAMENT_BEGIN:
+                for (ClientEventListener l: _listeners) {
+                    l.onTournamentBegin((int)_objs.get(0),(int)_objs.get(1));
+                }
+                break;
+            case TOURNAMENT_PARTICIPATION_QUERY:
+                for (ClientEventListener l: _listeners) {
+                    l.onTournamentParticipationQuery((int)_objs.get(0));
+                }
+                break;
+            case TOURNAMENT_FINAL_RESULT:
+                for (ClientEventListener l: _listeners) {
+                    l.onTournamentFinalResult((int)_objs.get(0));
                 }
                 break;
             case TEST_MESSAGE:

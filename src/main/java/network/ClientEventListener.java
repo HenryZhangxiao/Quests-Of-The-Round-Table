@@ -17,15 +17,20 @@ public interface ClientEventListener {
     void onDrawCard(int plyID, int cardID);
     void onDrawCardX(int plyID, int[] cardIDs);
     void onCardDiscard(int plyID, int cardID);
+    void onCardDiscardX(int plyID, int[] cardIDs);
 
     void onStoryDrawCard(int plyID, int cardID);
 
     void onQuestBegin(int plyID, int questCardID);
     void onQuestSponsorQuery(int questCardID);
-    void onQuestParticipateQuery(int sponsorPlyID, int questID);
+    void onQuestParticipateQuery(int sponsorPlyID, int questID, int[] stageCardIDs);
     void onQuestStageResult(int questCardID, boolean wonStage, int[] stageCardsIDs, int[] playerCardsIDs);
     void onQuestFinalResult(int winnerID, int[][] sponsorCards);
 
-    void onEventStoryBegin(int plyID, int eventCardID);
+    void onEventStoryBegin(int drawerID, int eventCardID);
+
+    void onTournamentBegin(int drawerID, int tournamentCardID);
+    void onTournamentParticipationQuery(int tournamentCardID);
+    void onTournamentFinalResult(int winnerID);
 
 }

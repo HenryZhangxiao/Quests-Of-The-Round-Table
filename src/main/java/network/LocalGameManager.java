@@ -27,8 +27,7 @@ public class LocalGameManager implements ClientEventListener{
     private boolean gameStarted = false;
     private int connectedPlayerCount = 0;
 
-    private boolean canDrawStory = true;
-
+    private boolean usedMerlin = false;
 
     private LocalGameManager(){
         _players = new ArrayList<>();
@@ -102,6 +101,9 @@ public class LocalGameManager implements ClientEventListener{
     public ArrayList<Card> getAdvPile() {return _adventurePile;}
 
     public ArrayList<Card> getStoryPile() {return _storyPile;}
+
+    public boolean getUsedMerlin() {return usedMerlin;}
+    public void setUsedMerlin(boolean used) {usedMerlin = used;}
 
     public void startGame(){
         if(!NetworkManager.get().isHost())
@@ -251,6 +253,16 @@ public class LocalGameManager implements ClientEventListener{
     }
 
     @Override
+    public void onCardDiscardX(int plyID, int[] cardIDs) {
+        //We dont worry about local player because the change is already done locally.
+        if(plyID == getLocalPlayer().getPlayerNum())
+            return;
+
+        getPlayerByID(plyID).discardCardsFromHand(cardIDs);
+        Platform.runLater(() -> View.get().update());
+    }
+
+    @Override
     public void onStoryDrawCard(int plyID, int cardID) {
         //Called when a player has drawn a story card.
         _storyPile.add(Card.getCardByID(cardID));
@@ -274,9 +286,10 @@ public class LocalGameManager implements ClientEventListener{
     }
 
     @Override
-    public void onQuestParticipateQuery(int sponsorPlyID, int questID) {
+    public void onQuestParticipateQuery(int sponsorPlyID, int questID, int[] stageCardIDs) {
         //Called when the sponsor has chosen their cards and is asking the local player if they would like to participate.
-        QuestParticipationView q = new QuestParticipationView(true);
+        Card[] cards = Card.getCardsFromIDArray(stageCardIDs);
+        QuestParticipationView q = new QuestParticipationView(true, questID,cards);
 
     }
 
@@ -298,10 +311,26 @@ public class LocalGameManager implements ClientEventListener{
         System.out.println("CLIENT: The Quest has ended.");
 
         QuestResultView q = new QuestResultView(winnerID);
+        usedMerlin = false;
     }
 
     @Override
     public void onEventStoryBegin(int plyID, int eventCardID) {
         EventStoryView e = new EventStoryView(plyID,eventCardID);
+    }
+
+    @Override
+    public void onTournamentBegin(int drawerID, int tournamentCardID) {
+
+    }
+
+    @Override
+    public void onTournamentParticipationQuery(int tournamentCardID) {
+
+    }
+
+    @Override
+    public void onTournamentFinalResult(int winnerID) {
+
     }
 }

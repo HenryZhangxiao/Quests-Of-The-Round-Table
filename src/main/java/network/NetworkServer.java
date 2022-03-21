@@ -91,6 +91,7 @@ public class NetworkServer extends Thread{
                     l.onUpdateHand(c.getPlayerId(),(int[])_objs.get(0));
                 }
                 break;
+
             case UPDATE_ALLIES:
                 for(ServerEventListener l: _listeners){
                     l.onUpdateAllies(c.getPlayerId(),(int[])_objs.get(0));
@@ -152,6 +153,11 @@ public class NetworkServer extends Thread{
                         l.onQuestParticipateQuery(c.getPlayerId(),declinedParticipation,null);
                     else
                         l.onQuestParticipateQuery(c.getPlayerId(),declinedParticipation,(int[])_objs.get(1));
+                }
+                break;
+            case TOURNAMENT_PARTICIPATION_QUERY:
+                for(ServerEventListener l: _listeners){
+                    l.onTournamentParticipationQuery(c.getPlayerId(), (int[]) _objs.get(0));
                 }
                 break;
             default:
