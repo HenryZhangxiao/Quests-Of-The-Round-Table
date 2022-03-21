@@ -68,7 +68,7 @@ public class QuestParticipationView {
 
 
         //To prevent JavaFX from yelling about threads.
-        Platform.runLater(() -> setup());
+        Platform.runLater(this::setup);
 
     }
 
@@ -89,7 +89,7 @@ public class QuestParticipationView {
                 bpVal += ((WeaponCard) c).getBP();
             }
         }
-        totalBPLabel.setText("You have selected " + String.valueOf(selectedCards.size()) + " card(s) for a total BP value of " + String.valueOf(bpVal));
+        totalBPLabel.setText("You have selected " + selectedCards.size() + " card(s) for a total BP value of " + bpVal);
 
         //Drawing the selected cards
         for(int i = 0; i < selectedCards.size(); i++){
@@ -265,7 +265,7 @@ public class QuestParticipationView {
 
         //Opens the window and waits.
         stage.setScene(s1);
-        stage.setTitle(String.valueOf(LocalGameManager.get().getLocalPlayer().getPlayerNum()) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
+        stage.setTitle((LocalGameManager.get().getLocalPlayer().getPlayerNum() + 1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
         stage.showAndWait();
 
     }

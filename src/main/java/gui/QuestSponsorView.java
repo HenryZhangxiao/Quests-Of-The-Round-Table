@@ -255,7 +255,7 @@ public class QuestSponsorView {
         root.getChildren().addAll(labels,noBtn,yesBtn,selectionGroup,handGroup);
         Scene scene = new Scene(root,width,height);
         stage.setScene(scene);
-        stage.setTitle(LocalGameManager.get().getLocalPlayer().getPlayerNum() + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
+        stage.setTitle((LocalGameManager.get().getLocalPlayer().getPlayerNum() + 1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
         stage.showAndWait();
     }
 
