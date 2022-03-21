@@ -27,6 +27,8 @@ public class LocalGameManager implements ClientEventListener{
     private boolean gameStarted = false;
     private int connectedPlayerCount = 0;
 
+    private boolean canDrawStory = true;
+
 
     private LocalGameManager(){
         _players = new ArrayList<>();
@@ -73,11 +75,12 @@ public class LocalGameManager implements ClientEventListener{
     }
 
     public void finishTurn(){
-        if(!isMyTurn())
+        if(!isMyTurn() || localPlayer.hand.size() > 12)
             return;
 
         LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.TURN_CHANGE,null);
         NetworkManager.get().sendNetMessageToServer(msg);
+        canDrawStory = true;
     }
 
     public String[] getAllPlayerNames(){
@@ -126,10 +129,11 @@ public class LocalGameManager implements ClientEventListener{
     }
 
     public void drawStory() {
-        if(!isMyTurn())
+        if(!isMyTurn() || !canDrawStory)
             return;
         LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.STORY_CARD_DRAW, null);
         NetworkManager.get().sendNetMessageToServer(msg);
+        canDrawStory = false;
     }
 
     //endregion
