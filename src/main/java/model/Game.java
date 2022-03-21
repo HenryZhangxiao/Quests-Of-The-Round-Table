@@ -445,5 +445,10 @@ public class Game extends Thread implements ServerEventListener {
         quest.battling();   // no need to check for participants or if it's the last turn, all handled in Quest
     }
 
+    @Override
+    public void onTournamentParticipationQuery(int plyID, int[] cardIDs) {
+
+    }
+
 
 }

@@ -316,4 +316,19 @@ public class LocalGameManager implements ClientEventListener{
     public void onEventStoryBegin(int plyID, int eventCardID) {
         EventStoryView e = new EventStoryView(plyID,eventCardID);
     }
+
+    @Override
+    public void onTournamentBegin(int drawerID, int tournamentCardID) {
+
+    }
+
+    @Override
+    public void onTournamentParticipationQuery(int tournamentCardID) {
+
+    }
+
+    @Override
+    public void onTournamentFinalResult(int winnerID) {
+
+    }
 }

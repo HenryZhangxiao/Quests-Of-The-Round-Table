@@ -10,7 +10,6 @@ public interface ServerEventListener {
     void onTurnChange(int idOfPlayer);
 
     void onUpdateHand(int plyID, int[] cardIDs);
-    //void onUpdateHandDraw(int plyID, int[] cardIDs, int amountOfCardsToDraw);
 
     void onUpdateAllies(int plyID, int[] cardIDs);
     void onUpdateAmour(int plyID, int cardID);
@@ -25,6 +24,6 @@ public interface ServerEventListener {
     void onQuestSponsorQuery(int plyID, boolean declined, int[][] questCards);
     void onQuestParticipateQuery(int plyID, boolean declined, int[] cards);
 
-
+    void onTournamentParticipationQuery(int plyID, int[] cardIDs);
 
 }

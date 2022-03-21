@@ -197,6 +197,21 @@ public class NetworkManager extends Thread {
                     l.onEventStoryBegin((int)_objs.get(0),(int)_objs.get(1));
                 }
                 break;
+            case TOURNAMENT_BEGIN:
+                for (ClientEventListener l: _listeners) {
+                    l.onTournamentBegin((int)_objs.get(0),(int)_objs.get(1));
+                }
+                break;
+            case TOURNAMENT_PARTICIPATION_QUERY:
+                for (ClientEventListener l: _listeners) {
+                    l.onTournamentParticipationQuery((int)_objs.get(0));
+                }
+                break;
+            case TOURNAMENT_FINAL_RESULT:
+                for (ClientEventListener l: _listeners) {
+                    l.onTournamentFinalResult((int)_objs.get(0));
+                }
+                break;
             case TEST_MESSAGE:
                 System.out.println("Got a message from: " + String.valueOf(msg.playerID));
                 break;

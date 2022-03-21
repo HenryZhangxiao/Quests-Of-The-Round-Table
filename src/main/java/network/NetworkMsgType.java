@@ -1,37 +1,42 @@
 package network;
 
 public enum NetworkMsgType {
+
+    //For Network core/ Not directly game related.
     UNKNOWN, //Should never be this
-    HEARTBEAT, //Sends every few seconds to the server if no message was sent in the last x seconds
+    HEARTBEAT, //DEPRECATED
     CONNECT, //Initial Connection. Server Sends ID to be assigned. Client replies with Name to use.
-    DISCONNECT, //Sent on a disconnect
+    DISCONNECT, //Unimplemented
     UPDATE_PLAYERLIST, //Sent from server with ID,Name, and CardIDs
-    START_GAME, //Send by host to start game.
+    START_GAME, //Sent by host to start game.
     TEST_MESSAGE, //For Testing
 
-    UPDATE_HAND, //To Client[PlyID, Array of Card IDs in hand now] - To Server [Array of Card IDs in hand now]
-    UPDATE_SHIELDS, //To Client[PlyID, Shieldcount]
-    UPDATE_ALLIES, //To Client[PlyID, cardIDs] - To Server [cardIDs]
-    UPDATE_AMOUR, //To Client[PlyID, cardID] - To Server [cardID] | If ply == -1 then clear all players amours
-    CLEAR_ALLIES, //To Client[plyID] | If plyID == -1 then clear all players amours
 
-    TURN_CHANGE, //To Server [] - To Client [ID of whos turn it now is.]
-    CARD_DRAW, //To Client[ID of card drawn] - To Server []
-    CARD_DRAW_X, //To Client [[] of cards drawn] - To Server[Amount of cards to draw]
-    CARD_DISCARD, //[ID of card discarded] - To Client [PlyID, id of card discarded]
-    CARD_DISCARD_X, //To Server [IDs of cards discarded] - To Client[plyID, []cardIDs]
+    //Note that all messages received from clients include their playerID embedded in the message object. Plurals (eg cardIDs vs cardID) imply array.
+    UPDATE_HAND, //DEPRECATED
+    UPDATE_SHIELDS, //To Client[playerID, shieldCount] - To Server UNHANDLED
+    UPDATE_ALLIES, //To Client[playerID, cardIDs] - To Server [cardIDs]
+    UPDATE_AMOUR, //To Client[playerID, cardID] - To Server [cardID] | If ply == -1 then clear all players amours
+    CLEAR_ALLIES, //To Client[playerID] - To Server[UNHANDLED] | If plyID == -1 then clear all players amours
 
-    STORY_CARD_DRAW, //[ID of card drawn]
+    TURN_CHANGE, //To Client [playerID] - To Server [NULL]
+    CARD_DRAW, //To Client[playerID, cardID] - To Server [NULL]
+    CARD_DRAW_X, //To Client [playerID, cardIDs] - To Server[drawAmount]
+    CARD_DISCARD, //To Client [playerID, cardID] - To Server [cardID]
+    CARD_DISCARD_X, //To Client[playerID, cardIDs] - To Server [cardIDs]
 
-    QUEST_BEGIN, //To Client [PlayerID, ID of quest card]
-    QUEST_SPONSOR_QUERY, //To Client[ID of quest] - To Server [Declined boolean, Quest Data structure.]
-    QUEST_PARTICIPATE_QUERY, //To Client[ID of quest, ID of player who sponsored it.] - To Server [declined boolean, Card Array of cards in quest]
-    QUEST_STAGE_RESULT, //To Client[ID of the quest, []IDs of quest stage cards, []IDs of players cards]
-    QUEST_FINAL_RESULT, //The result of the quest. To client [The ID of the player who won, Sponsors cards, all participants cards]
+    STORY_CARD_DRAW, //To Client [playerID, drawnCardID] - To Server [playerID]
 
-    EVENT_BEGIN //To client[plyID, cardID] To Server | unhandled
+    QUEST_BEGIN, //To Client [playerID, questID] - To Server UNHANDLED
+    QUEST_SPONSOR_QUERY, //To Client[questID] - To Server [declinedBoolean, questSponsorCardIDs]
+    QUEST_PARTICIPATE_QUERY, //To Client[sponsorID, questID, stageCardIDs] - To Server [declineBoolean, cardIDs]
+    QUEST_STAGE_RESULT, //To Client[questID, wonBoolean, stageCardIDs, playerCardIDs] - To Server UNHANDLED
+    QUEST_FINAL_RESULT, //To Client [winnerID, sponsorCardIDs] - To Server UNHANDLED
 
-    //GAME_NEW_ROUND, Example message types
-    //GAME_PLAYER_CARDDRAW
+    EVENT_BEGIN, //To client[drawerID, cardID] - To Server UNHANDLED
+
+    TOURNAMENT_BEGIN, //To Client[drawerID, tournamentID] - To Server UNHANDLED
+    TOURNAMENT_PARTICIPATION_QUERY, //To Client[tournamentID] - To Server [cardIDs]
+    TOURNAMENT_FINAL_RESULT, //To Client[winnerID, scoreTable?] - To Server UNHANDLED
 
 }

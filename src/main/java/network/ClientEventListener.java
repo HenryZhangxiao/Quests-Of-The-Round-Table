@@ -27,6 +27,10 @@ public interface ClientEventListener {
     void onQuestStageResult(int questCardID, boolean wonStage, int[] stageCardsIDs, int[] playerCardsIDs);
     void onQuestFinalResult(int winnerID, int[][] sponsorCards);
 
-    void onEventStoryBegin(int plyID, int eventCardID);
+    void onEventStoryBegin(int drawerID, int eventCardID);
+
+    void onTournamentBegin(int drawerID, int tournamentCardID);
+    void onTournamentParticipationQuery(int tournamentCardID);
+    void onTournamentFinalResult(int winnerID);
 
 }
