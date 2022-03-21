@@ -29,6 +29,8 @@ public class LocalGameManager implements ClientEventListener{
 
     private boolean usedMerlin = false;
 
+    private boolean canDrawStory = true;
+
     private LocalGameManager(){
         _players = new ArrayList<>();
         _cardsOnBoard = new ArrayList<>();
