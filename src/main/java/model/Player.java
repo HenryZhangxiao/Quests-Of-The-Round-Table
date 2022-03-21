@@ -53,7 +53,7 @@ public class Player{
         hand.remove(card);
     }
 
-    public void discardCardsFromHand(Integer[] cardIDs){
+    public void discardCardsFromHand(int[] cardIDs){
         for(int i = 0; i < cardIDs.length; ++i){
             discardCardFromHand(cardIDs[i]);
         }

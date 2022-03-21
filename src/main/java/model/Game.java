@@ -199,10 +199,10 @@ public class Game extends Thread implements ServerEventListener {
 
     @Override
     public void onCardDiscard(int plyID, int cardID) {
-        if(plyID != turnPlayerID){
-            System.out.println("SERVER: Not Player " + String.valueOf(plyID) + " turn. Current TurnID is " + String.valueOf(turnPlayerID));
-            return;
-        }
+        //if(plyID != turnPlayerID){
+        //    System.out.println("SERVER: Not Player " + String.valueOf(plyID) + " turn. Current TurnID is " + String.valueOf(turnPlayerID));
+        //    return;
+        //}
 
         getPlayerByID(plyID).hand.remove(Card.getCardByID(cardID));
         deck.discards.add(Card.getCardByID(cardID));
@@ -213,7 +213,10 @@ public class Game extends Thread implements ServerEventListener {
 
     @Override
     public void onCardDiscardX(int plyID, int[] cardIDs) {
+        getPlayerByID(plyID).discardCardsFromHand(cardIDs);
         deck.discardCards(Card.getCardsFromIDArray(cardIDs));
+
+        NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.CARD_DISCARD_X,NetworkMessage.pack(plyID,cardIDs)));
     }
 
     @Override
@@ -403,7 +406,7 @@ public class Game extends Thread implements ServerEventListener {
                 System.out.println("valid selection, to next turn");
 
                 quest.goToNextTurn();
-                quest.participating();
+                quest.battleOrTest();   //previously participating
             //}
 
         }

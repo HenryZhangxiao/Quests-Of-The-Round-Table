@@ -240,8 +240,8 @@ public class QuestParticipationView {
                     cardIDs[i] = hand.get(i).getID();
                 }
 
-                LocalClientMessage msg2 = new LocalClientMessage(NetworkMsgType.UPDATE_HAND,NetworkMessage.pack(cardIDs));
-                NetworkManager.get().sendNetMessageToServer(msg2);
+                //LocalClientMessage msg2 = new LocalClientMessage(NetworkMsgType.UPDATE_HAND,NetworkMessage.pack(cardIDs));
+                //NetworkManager.get().sendNetMessageToServer(msg2);
 
                 //For discarding
                 LocalClientMessage msg3 = new LocalClientMessage(NetworkMsgType.CARD_DISCARD_X, NetworkMessage.pack(Card.getCardIDsFromArrayList(selectedCards)));
