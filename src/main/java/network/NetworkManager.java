@@ -150,6 +150,11 @@ public class NetworkManager extends Thread {
                     l.onCardDiscard((int)_objs.get(0),(int)_objs.get(1));
                 }
                 break;
+            case CARD_DISCARD_X:
+                for (ClientEventListener l: _listeners) {
+                    l.onCardDiscardX((int)_objs.get(0),(int[])_objs.get(1));
+                }
+                break;
             case STORY_CARD_DRAW:
                 for (ClientEventListener l: _listeners) {
                     l.onStoryDrawCard((int)_objs.get(0),(int)_objs.get(1));

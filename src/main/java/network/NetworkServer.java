@@ -91,6 +91,7 @@ public class NetworkServer extends Thread{
                     l.onUpdateHand(c.getPlayerId(),(int[])_objs.get(0));
                 }
                 break;
+
             case UPDATE_ALLIES:
                 for(ServerEventListener l: _listeners){
                     l.onUpdateAllies(c.getPlayerId(),(int[])_objs.get(0));

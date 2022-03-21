@@ -73,7 +73,7 @@ public class QuestParticipationView {
         this.stageCards = stageCards;
 
         //To prevent JavaFX from yelling about threads.
-        Platform.runLater(() -> setup());
+        Platform.runLater(this::setup);
 
     }
 
@@ -94,11 +94,11 @@ public class QuestParticipationView {
                 bpVal += ((WeaponCard) c).getBP();
             }
         }
-
         //Calculates all BP bonuses for any allies or amours the player has in play
         bpVal += AllyCard.getBPForAllies(LocalGameManager.get().getLocalPlayer().getAllies(),questCard,LocalGameManager.get().getLocalPlayer().getAmour());
 
         totalBPLabel.setText("You have selected " + String.valueOf(selectedCards.size()) + " card(s) for a total BP value of " + String.valueOf(bpVal));
+
 
         //Enables Merlin button if in allies
         boolean enableMerlin = false;
@@ -311,8 +311,8 @@ public class QuestParticipationView {
                     cardIDs[i] = hand.get(i).getID();
                 }
 
-                LocalClientMessage msg2 = new LocalClientMessage(NetworkMsgType.UPDATE_HAND,NetworkMessage.pack(cardIDs));
-                NetworkManager.get().sendNetMessageToServer(msg2);
+                //LocalClientMessage msg2 = new LocalClientMessage(NetworkMsgType.UPDATE_HAND,NetworkMessage.pack(cardIDs));
+                //NetworkManager.get().sendNetMessageToServer(msg2);
 
                 //For discarding
                 LocalClientMessage msg3 = new LocalClientMessage(NetworkMsgType.CARD_DISCARD_X, NetworkMessage.pack(Card.getCardIDsFromArrayList(selectedCards)));
@@ -336,7 +336,7 @@ public class QuestParticipationView {
 
         //Opens the window and waits.
         stage.setScene(s1);
-        stage.setTitle(String.valueOf(LocalGameManager.get().getLocalPlayer().getPlayerNum()) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
+        stage.setTitle((LocalGameManager.get().getLocalPlayer().getPlayerNum() + 1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
         stage.showAndWait();
 
     }

@@ -199,10 +199,10 @@ public class Game extends Thread implements ServerEventListener {
 
     @Override
     public void onCardDiscard(int plyID, int cardID) {
-        if(plyID != turnPlayerID){
-            System.out.println("SERVER: Not Player " + String.valueOf(plyID) + " turn. Current TurnID is " + String.valueOf(turnPlayerID));
-            return;
-        }
+        //if(plyID != turnPlayerID){
+        //    System.out.println("SERVER: Not Player " + String.valueOf(plyID) + " turn. Current TurnID is " + String.valueOf(turnPlayerID));
+        //    return;
+        //}
 
         getPlayerByID(plyID).hand.remove(Card.getCardByID(cardID));
         deck.discards.add(Card.getCardByID(cardID));
@@ -213,7 +213,10 @@ public class Game extends Thread implements ServerEventListener {
 
     @Override
     public void onCardDiscardX(int plyID, int[] cardIDs) {
+        getPlayerByID(plyID).discardCardsFromHand(cardIDs);
         deck.discardCards(Card.getCardsFromIDArray(cardIDs));
+
+        NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.CARD_DISCARD_X,NetworkMessage.pack(plyID,cardIDs)));
     }
 
     @Override
@@ -370,6 +373,7 @@ public class Game extends Thread implements ServerEventListener {
         System.out.println("player " + plyID + " asked to sponsor");
         System.out.println("quest's player id is " + quest.getTurnPlayerID());
         if(!declined){
+            int numCardsUsed = 0;
 
             Card[][] stageCards = new Card[questCards.length][];
             for(int i = 0; i < questCards.length; ++i){
@@ -377,9 +381,15 @@ public class Game extends Thread implements ServerEventListener {
 
                 for(int j = 0; j < questCards[i].length; ++j){
                     stage[j] = (Card.getCardByID(questCards[i][j]));
+                    numCardsUsed++;
                 }
                 stageCards[i] = stage;
             }
+
+            //sponsor draws n = (#cards used to sponsor) + (#stages in quest) cards
+            Card[] cards = deck.drawCardX(numCardsUsed + questCards.length);
+            ServerMessage msg = new ServerMessage(NetworkMsgType.CARD_DRAW_X, NetworkMessage.pack(plyID, Card.getCardIDsFromArray(cards)));
+            NetworkServer.get().sendNetMessageToAllPlayers(msg);
 
             //if sponsor card selection is valid, then go ahead, otherwise redo sponsoring
             //Todo fix this. It validates clientside for now, but theres something up when sending cards over
@@ -396,7 +406,7 @@ public class Game extends Thread implements ServerEventListener {
                 System.out.println("valid selection, to next turn");
 
                 quest.goToNextTurn();
-                quest.participating();
+                quest.battleOrTest();   //previously participating
             //}
 
         }

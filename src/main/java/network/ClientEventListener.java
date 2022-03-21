@@ -17,6 +17,7 @@ public interface ClientEventListener {
     void onDrawCard(int plyID, int cardID);
     void onDrawCardX(int plyID, int[] cardIDs);
     void onCardDiscard(int plyID, int cardID);
+    void onCardDiscardX(int plyID, int[] cardIDs);
 
     void onStoryDrawCard(int plyID, int cardID);
 

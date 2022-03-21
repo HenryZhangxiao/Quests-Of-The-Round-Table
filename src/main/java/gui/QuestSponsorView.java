@@ -190,12 +190,14 @@ public class QuestSponsorView {
         yesBtn.setOnAction(actionEvent -> {
             Card[][] valCards = new Card[questCard.getStages()][];
             int[][] sendCards = new int[questCard.getStages()][];
+            ArrayList<Card> discardedCards = new ArrayList<>();
             for (int i = 0; i < questCard.getStages(); i++){
                 sendCards[i] = new int[selectedCards.get(i).size()];
                 valCards[i] = new Card[selectedCards.get(i).size()];
                 for (int j = 0; j < selectedCards.get(i).size(); j++) {
                     sendCards[i][j] = selectedCards.get(i).get(j).getID();
                     valCards[i][j] = selectedCards.get(i).get(j);
+                    discardedCards.add(selectedCards.get(i).get(j));
                 }
             }
 
@@ -210,13 +212,8 @@ public class QuestSponsorView {
             LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(false,sendCards));
             NetworkManager.get().sendNetMessageToServer(msg);
 
-            int[] cardIDs = new int[hand.size()];
-            for(int i = 0; i < hand.size(); i++){
-                cardIDs[i] = hand.get(i).getID();
-            }
+            NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.CARD_DISCARD_X,NetworkMessage.pack(Card.getCardIDsFromArrayList(discardedCards))));
 
-            LocalClientMessage msg2 = new LocalClientMessage(NetworkMsgType.UPDATE_HAND, NetworkMessage.pack(cardIDs));
-            NetworkManager.get().sendNetMessageToServer(msg2);
 
             LocalGameManager.get().getLocalPlayer().hand = hand;
             View.get().update();
@@ -255,7 +252,7 @@ public class QuestSponsorView {
         root.getChildren().addAll(labels,noBtn,yesBtn,selectionGroup,handGroup);
         Scene scene = new Scene(root,width,height);
         stage.setScene(scene);
-        stage.setTitle(LocalGameManager.get().getLocalPlayer().getPlayerNum() + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
+        stage.setTitle((LocalGameManager.get().getLocalPlayer().getPlayerNum() + 1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
         stage.showAndWait();
     }
 
