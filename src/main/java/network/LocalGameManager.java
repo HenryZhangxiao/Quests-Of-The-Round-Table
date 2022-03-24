@@ -320,6 +320,7 @@ public class LocalGameManager implements ClientEventListener{
 
     @Override
     public void onTournamentBegin(int drawerID, int tournamentCardID) {
+        System.out.println("CLIENT: Tournament begins");
 
     }
 
@@ -328,6 +329,7 @@ public class LocalGameManager implements ClientEventListener{
         //called when asking the local player if they would like to participate in the tournament
         TournamentCard c = (TournamentCard) Card.getCardByID(tournamentCardID);
         // TODO: GUI for participation
+        TournamentParticipationView trnmtView = new TournamentParticipationView();
 
     }
 
@@ -339,7 +341,7 @@ public class LocalGameManager implements ClientEventListener{
     @Override
     public void onTournamentFinalResult(int winnerID) {
         //Called when the tournament is over and shows the winning results
-        System.out.println("CLIENT: The Tournament has ended.");
-        // TODO: GUI for results of tournament
+        System.out.println("CLIENT: The Tournament has ended. winner id: " + winnerID);
+        // TODO: GUI for results of tournament (maybe show shields won?)
     }
 }

@@ -158,7 +158,10 @@ public class NetworkServer extends Thread{
             case TOURNAMENT_PARTICIPATION_QUERY:
                 boolean declinedTournamentParticipation = (boolean) _objs.get(0);
                 for(ServerEventListener l: _listeners){
-                    l.onTournamentParticipationQuery(c.getPlayerId(), declinedTournamentParticipation, (int[]) _objs.get(0));
+                    if (declinedTournamentParticipation)
+                        l.onTournamentParticipationQuery(c.getPlayerId(), declinedTournamentParticipation, null);
+                    else
+                        l.onTournamentParticipationQuery(c.getPlayerId(), declinedTournamentParticipation, (int[]) _objs.get(1));
                 }
                 break;
             default:
