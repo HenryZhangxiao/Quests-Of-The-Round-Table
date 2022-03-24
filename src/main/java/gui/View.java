@@ -18,8 +18,10 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import network.LocalGameManager;
-import network.NetworkManager;
+import model.AllyCard;
+import model.AmourCard;
+import model.MordredFoe;
+import network.*;
 import model.Card;
 
 import java.io.File;
@@ -43,6 +45,7 @@ public class View extends Pane {
     private ImageView storyDiscard;
     private ImageView advDiscard;
     private ArrayList<ImageView> cards;
+    private ArrayList<ImageView> allies;
     private Button storyDeck;
     private Button advDeck;
     private Button endTurn;
@@ -155,6 +158,19 @@ public class View extends Pane {
             cards.get(index).setViewport(viewport);
         }
 
+        int[] allyIDs = LocalGameManager.get().getLocalPlayer().getAllyCardIDs();
+        for (int index = 0; index < 10; ++index) {
+            Rectangle2D viewport;
+            if (index < allyIDs.length) {
+                viewport = getAdvCard(allyIDs[index]);
+                allies.get(index).setVisible(true);
+            } else {
+                viewport = getAdvCard(0);
+                allies.get(index).setVisible(false);
+            }
+            allies.get(index).setViewport(viewport);
+        }
+
         ArrayList<Card> advPile = LocalGameManager.get().getAdvPile();
         if (!advPile.isEmpty())
             advDiscard.setViewport(getAdvCard(advPile.get(advPile.size()-1).getID()));
@@ -172,6 +188,7 @@ public class View extends Pane {
         Image storyCards = new Image(new File("src/resources/storyComposite.jpg").toURI().toString());
 
         Group hand = new Group();
+        Group allyGroup = new Group();
 
         Rectangle handArea = new Rectangle(getWidth()-900, getHeight()-320, 890, 310);
         handArea.setFill(Color.DARKGRAY);
@@ -181,6 +198,7 @@ public class View extends Pane {
         hand.getChildren().add(handArea);
 
         cards = new ArrayList<>();
+        allies = new ArrayList<>();
 
         for (int i = 0; i < 16; ++i) {
             ImageView card = new ImageView();
@@ -198,6 +216,61 @@ public class View extends Pane {
                 if (mouseEvent.getButton() == MouseButton.SECONDARY) {
                     //discard
                     LocalGameManager.get().discardCard(finalI);
+                } else if(mouseEvent.getButton() == MouseButton.PRIMARY) {
+                    if(LocalGameManager.get().getLocalPlayer().hand.get(finalI) instanceof AllyCard){
+                        LocalGameManager.get().getLocalPlayer().addAlly((AllyCard) LocalGameManager.get().getLocalPlayer().hand.get(finalI));
+                        LocalGameManager.get().getLocalPlayer().hand.remove(finalI);
+
+                        NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.UPDATE_ALLIES, NetworkMessage.pack(LocalGameManager.get().getLocalPlayer().getAllyCardIDs())));
+                    }
+                    else if(LocalGameManager.get().getLocalPlayer().hand.get(finalI) instanceof AmourCard){
+                        //Playing the amour card.
+                        LocalGameManager.get().getLocalPlayer().setAmour((AmourCard) LocalGameManager.get().getLocalPlayer().hand.get(finalI));
+                        LocalGameManager.get().getLocalPlayer().hand.remove(finalI);
+
+                        NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.UPDATE_AMOUR, NetworkMessage.pack(LocalGameManager.get().getLocalPlayer().hand.get(finalI).getID())));
+                    }
+                    else if(LocalGameManager.get().getLocalPlayer().hand.get(finalI) instanceof MordredFoe){
+                        //TODO For Mordred.
+                    }
+                }
+            });
+
+            card.setImage(advCards);
+            card.setViewport(getAdvCard(0));
+        }
+
+        getChildren().add(hand);
+
+        //Ally drawing area
+        Rectangle allyArea = new Rectangle(30, 30, 1110, 160);
+        allyArea.setFill(Color.LIGHTBLUE);
+        allyArea.setStroke(Color.SADDLEBROWN);
+        allyArea.setArcWidth(30);
+        allyArea.setArcHeight(20);
+        allyGroup.getChildren().add(allyArea);
+
+        Label allyLabel = new Label("Allies in play: ");
+        allyLabel.setLayoutX(allyArea.getX());
+        allyLabel.setLayoutY(allyArea.getY() - 20);
+        allyGroup.getChildren().add(allyLabel);
+
+        for(int i = 0; i < 10; i++){
+            ImageView card = new ImageView();
+            card.setFitWidth(100);
+            card.setFitHeight(140);
+            card.setPreserveRatio(true);
+            card.setX(allyArea.getX() + 10 + (i%10)*110);
+            card.setY(allyArea.getY() + 10 + Math.floorDiv(i,10)*150);
+            allies.add(card);
+            allyGroup.getChildren().add(card);
+
+            //add event handling for discarding
+            int finalI = i;
+            card.setOnMouseClicked(mouseEvent -> {
+                if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+                    //discard
+                    //LocalGameManager.get().discardCard(finalI);
                 } else {
                     //play card
                 }
@@ -207,7 +280,7 @@ public class View extends Pane {
             card.setViewport(getAdvCard(0));
         }
 
-        getChildren().add(hand);
+        getChildren().add(allyGroup);
 
         storyDeck = new Button("Draw story card");
         storyDeck.relocate(720, 240);

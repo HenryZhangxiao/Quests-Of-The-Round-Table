@@ -84,7 +84,7 @@ public class QuestParticipationView {
         handCardGroup.getChildren().clear();
 
         //Calculates the BP of all selected cards
-        int bpVal = LocalGameManager.get().getLocalPlayer().getBattlePoints();
+        int bpVal = 0;
         //todo clean this up
         for(Card c: selectedCards){
             if(c instanceof FoeCard){
@@ -95,9 +95,13 @@ public class QuestParticipationView {
             }
         }
         //Calculates all BP bonuses for any allies or amours the player has in play
-        bpVal += AllyCard.getBPForAllies(LocalGameManager.get().getLocalPlayer().getAllies(),questCard,LocalGameManager.get().getLocalPlayer().getAmour());
+        int allyBP = AllyCard.getBPForAllies(LocalGameManager.get().getLocalPlayer().getAllies(),questCard,LocalGameManager.get().getLocalPlayer().getAmour());
 
-        totalBPLabel.setText("You have selected " + String.valueOf(selectedCards.size()) + " card(s) for a total BP value of " + String.valueOf(bpVal));
+        //totalBPLabel.setText("You have selected " + String.valueOf(selectedCards.size()) + " card(s) for a total BP value of " + String.valueOf(bpVal));
+        totalBPLabel.setText("Rank BP: " + String.valueOf(LocalGameManager.get().getLocalPlayer().getBattlePoints()) +"\n" +
+                "Allies in play BP: " + String.valueOf(allyBP) + "\n" +
+                "Selected weapon(s) BP: " + String.valueOf(bpVal) +"\n" +
+                "Total BP: " + String.valueOf(LocalGameManager.get().getLocalPlayer().getBattlePoints() + bpVal + allyBP));
 
 
         //Enables Merlin button if in allies
@@ -165,9 +169,24 @@ public class QuestParticipationView {
                 if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                     if(hand.get(finalI) instanceof AmourCard){
                         LocalGameManager.get().getLocalPlayer().setAmour((AmourCard) hand.get(finalI));
+                        LocalGameManager.get().getLocalPlayer().hand.remove(hand.get(finalI));
                         hand.remove(finalI);
-                        updateCards();
+                        Platform.runLater(() -> {
+                            View.get().update();}
+                        );
                         NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(hand.get(finalI).getID())));
+                        updateCards();
+                        return;
+                    }
+                    else if(hand.get(finalI) instanceof AllyCard){
+                        LocalGameManager.get().getLocalPlayer().addAlly((AllyCard) hand.get(finalI));
+                        LocalGameManager.get().getLocalPlayer().hand.remove(hand.get(finalI));
+                        Platform.runLater(() -> {
+                            View.get().update();}
+                        );
+                        hand.remove(finalI);
+                        NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.UPDATE_ALLIES,NetworkMessage.pack(LocalGameManager.get().getLocalPlayer().getAllyCardIDs())));
+                        updateCards();
                         return;
                     }
 
@@ -222,7 +241,7 @@ public class QuestParticipationView {
 
         totalBPLabel = new Label("You have selected 0 card(s) for a total BP value of 0");
         totalBPLabel.setFont(largeFont);
-        totalBPLabel.setLayoutX(20);
+        totalBPLabel.setLayoutX(selectArea.getX());
         totalBPLabel.setLayoutY(100);
         selectionGroup.getChildren().add(totalBPLabel);
 
@@ -236,8 +255,8 @@ public class QuestParticipationView {
         //Error label to notify that two cards of the same type cant be added. Set to invisible by default
         errorLabel = new Label("You cannot add two cards of the same type or play any foe cards!");
         errorLabel.setFont(largeFont);
-        errorLabel.setLayoutX(20);
-        errorLabel.setLayoutY(150);
+        errorLabel.setLayoutX(selectArea.getX());
+        errorLabel.setLayoutY(selectArea.getY() + selectArea.getHeight() + 10);
         errorLabel.setTextFill(Color.RED);
         errorLabel.setVisible(false);
         selectionGroup.getChildren().add(errorLabel);
@@ -297,32 +316,33 @@ public class QuestParticipationView {
         acceptButton.setText("Battle!");
 
         acceptButton.setOnAction(e -> {
-            if(selectedCards.size() != 0){
-                int[] sendCards = new int[selectedCards.size()];
-                for (int i = 0; i < selectedCards.size(); i++){
-                    sendCards[i] = selectedCards.get(i).getID();
-                }
 
-                LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY,NetworkMessage.pack(false,sendCards));
-                NetworkManager.get().sendNetMessageToServer(msg);
+            int[] sendCards = new int[selectedCards.size()];
+            for (int i = 0; i < selectedCards.size(); i++){
+                sendCards[i] = selectedCards.get(i).getID();
+            }
 
-                int[] cardIDs = new int[hand.size()];
-                for(int i = 0; i < hand.size(); i++){
-                    cardIDs[i] = hand.get(i).getID();
-                }
+            LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY,NetworkMessage.pack(false,sendCards));
+            NetworkManager.get().sendNetMessageToServer(msg);
 
-                //LocalClientMessage msg2 = new LocalClientMessage(NetworkMsgType.UPDATE_HAND,NetworkMessage.pack(cardIDs));
-                //NetworkManager.get().sendNetMessageToServer(msg2);
+            int[] cardIDs = new int[hand.size()];
+            for(int i = 0; i < hand.size(); i++){
+                cardIDs[i] = hand.get(i).getID();
+            }
 
+            //LocalClientMessage msg2 = new LocalClientMessage(NetworkMsgType.UPDATE_HAND,NetworkMessage.pack(cardIDs));
+            //NetworkManager.get().sendNetMessageToServer(msg2);
+
+            if(selectedCards.size() != 0) {
                 //For discarding
                 LocalClientMessage msg3 = new LocalClientMessage(NetworkMsgType.CARD_DISCARD_X, NetworkMessage.pack(Card.getCardIDsFromArrayList(selectedCards)));
                 NetworkManager.get().sendNetMessageToServer(msg3);
-
-                LocalGameManager.get().getLocalPlayer().hand = hand;
-                View.get().update();
-                
-                stage.close();
             }
+
+            LocalGameManager.get().getLocalPlayer().hand = hand;
+            View.get().update();
+
+            stage.close();
         });
 
         mainGroup.getChildren().add(acceptButton);

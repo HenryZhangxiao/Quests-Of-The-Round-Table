@@ -1,7 +1,5 @@
 package model;
 
-import network.NetworkMessage;
-import network.NetworkMsgType;
 import network.NetworkServer;
 import network.ServerMessage;
 
@@ -24,6 +22,11 @@ public class Player{
         numShields = 0;
         battlePoints = 5;//Default for rank squire
         allies = new ArrayList<>();
+
+        //For testing allies
+        //for(int i = 0; i < 10; i++)
+        //    allies.add((AllyCard) Card.getCardByID(22 + (int)(Math.random() * ((31 - 22) + 1))));
+
     }
 
     public void addCard(Card c){
@@ -34,6 +37,14 @@ public class Player{
         int[] a = new int[hand.size()];
         for(int i = 0; i < hand.size(); i++){
             a[i] = hand.get(i).id;
+        }
+        return a;
+    }
+
+    public int[] getAllyCardIDs(){
+        int[] a = new int[allies.size()];
+        for(int i = 0; i < allies.size(); i++){
+            a[i] = allies.get(i).id;
         }
         return a;
     }
