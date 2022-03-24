@@ -208,11 +208,9 @@ public class NetworkManager extends Thread {
                 }
                 break;
             case TOURNAMENT_TIE:
-                /*
                 for (ClientEventListener l: _listeners) {
-                    l.onTournamentParticipationQuery((int)_objs.get(0));
+                    l.onTournamentTie((int)_objs.get(0));
                 }
-                */
                 break;
             case TOURNAMENT_FINAL_RESULT:
                 for (ClientEventListener l: _listeners) {

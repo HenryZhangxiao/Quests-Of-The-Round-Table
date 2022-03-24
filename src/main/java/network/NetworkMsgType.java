@@ -37,7 +37,7 @@ public enum NetworkMsgType {
 
     TOURNAMENT_BEGIN, //To Client[drawerID, tournamentID] - To Server UNHANDLED
     TOURNAMENT_PARTICIPATION_QUERY, //To Client[tournamentID] - To Server [cardIDs]
-    TOURNAMENT_TIE, //TODO: Add your description of this. Idk what it should do
+    TOURNAMENT_TIE, //To Client[tournamentID] - To Server UNHANDLED
     TOURNAMENT_FINAL_RESULT, //To Client[winnerID, scoreTable?] - To Server UNHANDLED
 
 }

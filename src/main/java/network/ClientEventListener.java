@@ -31,6 +31,7 @@ interface ClientEventListener {
 
     void onTournamentBegin(int drawerID, int tournamentCardID);
     void onTournamentParticipationQuery(int tournamentCardID);
+    void onTournamentTie(int tournamentCardID);
     void onTournamentFinalResult(int winnerID);
 
 }

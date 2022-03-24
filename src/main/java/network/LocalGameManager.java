@@ -332,6 +332,11 @@ public class LocalGameManager implements ClientEventListener{
     }
 
     @Override
+    public void onTournamentTie(int tournamentCardID) {
+
+    }
+
+    @Override
     public void onTournamentFinalResult(int winnerID) {
         //Called when the tournament is over and shows the winning results
         System.out.println("CLIENT: The Tournament has ended.");
