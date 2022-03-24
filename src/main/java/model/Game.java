@@ -28,6 +28,7 @@ public class Game extends Thread implements ServerEventListener {
     private boolean gameStarted = false;
     
     private Quest quest = null;
+    private Tournament tournament = null;
 
     private boolean kingsRecognition = false;
 
@@ -363,6 +364,12 @@ public class Game extends Thread implements ServerEventListener {
 
         }
 
+        else if(c instanceof TournamentCard){
+            tournament = new Tournament((TournamentCard) c, plyID, _players.size());
+            System.out.println("Player " + plyID + " has drawn a tournament");
+            tournament.drawn();
+        }
+
         //Adds it into the discard pile.
         storyDeck.discardCard(c);
     }
@@ -446,8 +453,39 @@ public class Game extends Thread implements ServerEventListener {
     }
 
     @Override
-    public void onTournamentParticipationQuery(int plyID, int[] cardIDs) {
+    public void onTournamentParticipationQuery(int plyID, boolean declined, int[] cardIDs) {
+        System.out.println("Player " + plyID + " asked to participate in tournament");
+        System.out.println("Tournament's player id is " + tournament.getTurnPlayerID());
+        // Player chose to enter the tournament with a provided hand cardIDs
+        if(!declined){
+            tournament.addInPID(plyID);
+            Card[] participantHand = new Card[cardIDs.length];
+            for(int i = 0; i < cardIDs.length; i++){
+                participantHand[i] = Card.getCardByID(cardIDs[i]);
+            }
+            tournament.setPlayerCards(plyID, participantHand);
+            System.out.println("Player " + plyID + " accepted participation in the tournament");
 
+            tournament.goToNextTurn();
+            tournament.participating();   //previously participating
+            //}
+
+        }
+        else{ // Player declined to enter the tournament
+            tournament.addOutPID(plyID);
+            System.out.println("Declined participation");
+            // If the next person to query is the drawer, we have gone full circle, and it's time to start the tournament
+            if(tournament.getNextPID(tournament.getTurnPlayerID()) == tournament.getTournamentDrawerPID()){
+                System.out.println("We are done querying for tournament participation. Onto the tournament.");
+                tournament.battling();
+            }
+            else{ // We still need to query the remaining players for participation
+                System.out.println("Still more to query for participation");
+                tournament.goToNextTurn();
+                tournament.participating();
+            }
+
+        }
     }
 
 

@@ -2,10 +2,7 @@ package network;
 
 import gui.*;
 import javafx.application.Platform;
-import model.AmourCard;
-import model.Card;
-import model.Player;
-import model.QuestCard;
+import model.*;
 
 import java.util.ArrayList;
 
@@ -328,11 +325,16 @@ public class LocalGameManager implements ClientEventListener{
 
     @Override
     public void onTournamentParticipationQuery(int tournamentCardID) {
+        //called when asking the local player if they would like to participate in the tournament
+        TournamentCard c = (TournamentCard) Card.getCardByID(tournamentCardID);
+        // TODO: GUI for participation
 
     }
 
     @Override
     public void onTournamentFinalResult(int winnerID) {
-
+        //Called when the tournament is over and shows the winning results
+        System.out.println("CLIENT: The Tournament has ended.");
+        // TODO: GUI for results of tournament
     }
 }

@@ -1,6 +1,6 @@
 package network;
 
-public interface ClientEventListener {
+interface ClientEventListener {
     void onPlayerConnect(int plyID, String playerName, int[] cardIDs);
     void onPlayerDisconnect(int plyID, String playerName);
 

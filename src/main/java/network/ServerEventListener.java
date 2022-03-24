@@ -24,6 +24,6 @@ public interface ServerEventListener {
     void onQuestSponsorQuery(int plyID, boolean declined, int[][] questCards);
     void onQuestParticipateQuery(int plyID, boolean declined, int[] cards);
 
-    void onTournamentParticipationQuery(int plyID, int[] cardIDs);
+    void onTournamentParticipationQuery(int plyID, boolean declined, int[] cardIDs);
 
 }
