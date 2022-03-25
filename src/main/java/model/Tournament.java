@@ -36,12 +36,11 @@ public class Tournament {
     }
 
     protected int getNextPID(int currentPID){
-        int index = inPIDs.indexOf(currentPID);
-        if(index == inPIDs.size() - 1){
-            return inPIDs.get(0);
+        if(currentPID == numPlayers - 1) {
+            return 0;
         }
-        else{
-            return inPIDs.get(index+1);
+        else {
+            return currentPID + 1;
         }
     }
 
