@@ -13,9 +13,12 @@ public class Test {
     private int testDrawerPID = -5;    //keep track of who drew the quest so looking for sponsor will only loop through players once
     protected ArrayList<Integer> outPIDs;  //those who have opted out or have been eliminated
     protected ArrayList<Integer> inPIDs;   //those who did not opt out and have not been eliminated
+
     private int currentStage;
     private int highestBid;
     private int currentBid;
+
+    private Card[][] playerCards;
 
 
     public Test(TestCard _testCard, int _testDrawerPID, int _numPlayers){
@@ -26,6 +29,7 @@ public class Test {
 
         outPIDs = new ArrayList<>();
         inPIDs = new ArrayList<>();
+        playerCards = new Card[numPlayers][];
 
         currentStage = 0;
         highestBid = testCard.getMinimumBid();
@@ -54,17 +58,17 @@ public class Test {
         NetworkServer.get().sendNetMessageToAllPlayers(testStartMsg);
 
         // Prompt current player for a bid
-        ServerMessage bidQuery = new ServerMessage(NetworkMsgType.TEST_BID_QUERY, NetworkMessage.pack(testCard.id, currentBid));
+        ServerMessage bidQuery = new ServerMessage(NetworkMsgType.TEST_BID_QUERY, NetworkMessage.pack(testCard.id, Game.get().getQuest().getQuestCard().getID(),currentBid));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(bidQuery);
     }
-
+/*
     //happens if player who drew quest doesn't sponsor it, goes around table
     public void sponsoring() {
         //ask current player if they want to sponsor
         ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(testCard.id));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
     }
-
+*/
     //players choose if they want to join the quest
     //once it gets to the sponsor, then everyone has opted in or out, sponsor picks cards for quest
     public void bidding() {
@@ -85,13 +89,11 @@ public class Test {
         int cardsToDiscard = highestBid - numFreeBids;
 
         // The winner needs to discard cards
-        // TODO: What is the discard x number of cards networking message?
-        ServerMessage discardMsg = new ServerMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(testCard.id));
+        ServerMessage discardMsg = new ServerMessage(NetworkMsgType.CARD_DISCARD_X,NetworkMessage.pack(inPIDs.get(0), playerCards[inPIDs.get(0)]));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(discardMsg);
 
 
         // Tell everyone that the quest has been won by inPIDs.get(0)
-        // TODO: Add a new networking msg here to notify everyone of the winner of the test
         ServerMessage testOverMsg = new ServerMessage(NetworkMsgType.TEST_FINAL_RESULT,NetworkMessage.pack(testCard.getID(),inPIDs.get(0), highestBid));
         NetworkServer.get().sendNetMessageToAllPlayers(testOverMsg);
 
@@ -107,6 +109,10 @@ public class Test {
 
     public void setCurrentBid(int bid) {
         this.currentBid = bid;
+    }
+
+    public void setPlayerCards(int pid, Card[] _playerCards){
+        playerCards[pid] = _playerCards;
     }
 
     public int getTestDrawerPID(){ return testDrawerPID;}

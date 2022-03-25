@@ -75,6 +75,9 @@ public class Game extends Thread implements ServerEventListener {
         test.drawn();
     }
 
+    public Quest getQuest(){
+       return quest;
+    }
 
     //endregion
 
@@ -521,7 +524,8 @@ public class Game extends Thread implements ServerEventListener {
                 test.testResolution();
             }
 
-        }}
+        }
+    }
 
     public void checkForWinner(){
         ArrayList<Player> winningPlayers = new ArrayList<>();
