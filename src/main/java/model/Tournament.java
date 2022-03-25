@@ -16,6 +16,7 @@ public class Tournament {
     private int tournamentDrawerPID;    //keep track of who drew the quest so looking for sponsor will only loop through players once
     protected ArrayList<Integer> outPIDs;  //those who have opted out or have been eliminated
     protected ArrayList<Integer> inPIDs;   //those who did not opt out and have not been eliminated
+    protected ArrayList<Integer> topBidderPIDs;
 
     private Card[][] playerCards;
 
@@ -29,6 +30,7 @@ public class Tournament {
 
         outPIDs = new ArrayList<>();
         inPIDs = new ArrayList<>();
+        topBidderPIDs = new ArrayList<>();
 
         round = 0;
 
@@ -128,31 +130,27 @@ public class Tournament {
                 // and add the current winner in
                 if(playerBP > highestPlayerBP){
                     System.out.println(playerBP + " is higher than " + highestPlayerBP);
-                    inPIDs.clear();
-                    addInPID(currentPIDToCheck);
+                    //addInPID(currentPIDToCheck);
+                    topBidderPIDs.clear();
+                    topBidderPIDs.add(currentPIDToCheck);
                     highestPlayerBP = playerBP;
-                    System.out.println("inPIDs:" + inPIDs);
-                    System.out.println("outPIDs:" + outPIDs);
                 }
                 // There is a current tie so add the tied 'winner'
                 else if(playerBP == highestPlayerBP){
                     System.out.println(playerBP + " is tied with " + highestPlayerBP);
-                    addInPID(currentPIDToCheck);
-                    System.out.println("inPIDs:" + inPIDs);
-                    System.out.println("outPIDs:" + outPIDs);
+                    //addInPID(currentPIDToCheck);
+                    topBidderPIDs.add(currentPIDToCheck);
                 }
                 // The current hand to check is lower than the current highest so add to outPIDs
                 else{
                     System.out.println(playerBP + " is lower than " + highestPlayerBP);
                     addOutPID(currentPIDToCheck);
-                    System.out.println("inPIDs:" + inPIDs);
-                    System.out.println("outPIDs:" + outPIDs);
                 }
             }
 
             // By here, we are done, and we should know who the winner(s) is/are
             // If it's the second go-around, and we have another tie, everybody wins
-            if(round == 2 && inPIDs.size() >= 2){
+            if(round == 2 && topBidderPIDs.size() >= 2){
                 System.out.println("tie in the second round");
                 numVictoryShields = numParticipants;
                 for(int i = 0; i < inPIDs.size(); i++){
@@ -164,9 +162,12 @@ public class Tournament {
                     ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(inPIDs.get(i),shields));
                     NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
                 }
+
+                ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(topBidderPIDs));
+                NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
             }
             // If there is a tie, and it's not the second round, we need to repeat the tournament
-            if(inPIDs.size() >= 2){
+            if(topBidderPIDs.size() >= 2){
                 System.out.println("tie in the first round");
 
                 ServerMessage tieMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_TIE,NetworkMessage.pack(tournamentCard.getID()));
@@ -179,13 +180,13 @@ public class Tournament {
                 numVictoryShields = numParticipants + tournamentCard.getBonusShields();
                 System.out.println("winner, with " + numVictoryShields + " Victory Shields");
 
-                int shields = Game.get().getPlayerByID(inPIDs.get(0)).getShields();
+                int shields = Game.get().getPlayerByID(topBidderPIDs.get(0)).getShields();
                 shields += numVictoryShields;
-                Game.get().getPlayerByID(inPIDs.get(0)).setShields(shields);
-                ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(inPIDs.get(0),shields));
+                Game.get().getPlayerByID(topBidderPIDs.get(0)).setShields(shields);
+                ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(topBidderPIDs.get(0),shields));
                 NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
 
-                ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(inPIDs));
+                ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(topBidderPIDs));
                 NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
 
                 //Clear all Amours in play

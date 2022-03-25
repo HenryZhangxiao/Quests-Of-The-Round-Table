@@ -29,7 +29,6 @@ public class Game extends Thread implements ServerEventListener {
     
     private Quest quest = null;
     private Tournament tournament = null;
-    private Test test = null;
 
     private boolean kingsRecognition = false;
 
@@ -68,11 +67,6 @@ public class Game extends Thread implements ServerEventListener {
 
     public Card drawStoryCard(){
         return storyDeck.drawCard();
-    }
-
-    public void setTestCard(Test _test){
-        test = _test;
-        test.drawn();
     }
 
     public Quest getQuest(){
@@ -237,9 +231,9 @@ public class Game extends Thread implements ServerEventListener {
         }
 
         //Start a quest/event/tournament here
-        Card c = storyDeck.drawCard();
+        //Card c = storyDeck.drawCard();
         //For Testing. CardIDs are in Card
-        //Card c = Card.getCardByID(51);
+        Card c = Card.getCardByID(51);
 
         ServerMessage msg = new ServerMessage(NetworkMsgType.STORY_CARD_DRAW,NetworkMessage.pack(plyID,c.id));
         NetworkServer.get().sendNetMessageToAllPlayers(msg);
@@ -502,34 +496,41 @@ public class Game extends Thread implements ServerEventListener {
         System.out.println("Player " + plyID + " asked for a bid");
         // Player chose to enter the tournament with a provided hand cardIDs
         if(!declined){
-            test.addInPID(plyID);
-            test.setCurrentBid(bid);
-            test.setPlayerCards(plyID, cardIDs);
+            quest.getTest().addInPID(plyID);
+            quest.getTest().setCurrentBid(bid);
+            quest.getTest().setPlayerCards(plyID, cardIDs);
 
             System.out.println("Player " + plyID + " placed bid " + bid + " for the test");
 
-            if(test.getInPIDs().size() > 1){
+            if(quest.getTest().getInPIDs().size() > 1){
                 System.out.println("Still more eager bidders. Keep querying");
-                test.goToNextTurn();
-                test.bidding();   //previously participating
+                quest.getTest().goToNextTurn();
+                quest.getTest().bidding();   //previously participating
             }
             else{ // We have a bid winner.
                 System.out.println("We have a bid winner.");
-                test.testResolution();
+                quest.getTest().testResolution();
             }
+            quest.getTest().addInPID(plyID);
+            quest.getTest().setCurrentBid(bid);
+
+            System.out.println("Player " + plyID + " placed bid " + bid + " for the test");
+
+            quest.getTest().goToNextTurn();
+            quest.getTest().bidding();   //previously participating
         }
         else{ // Player declined to bid
-            test.addOutPID(plyID);
+            quest.getTest().addOutPID(plyID);
             System.out.println(plyID + " declined test participation");
             // If there are still more than 1 bidders, keep querying
-            if(test.getInPIDs().size() > 1){
+            if(quest.getTest().getInPIDs().size() > 1){
                 System.out.println("Still more eager bidders. Keep querying");
-                test.goToNextTurn();
-                test.bidding();   //previously participating
+                quest.getTest().goToNextTurn();
+                quest.getTest().bidding();   //previously participating
             }
             else{ // We have a bid winner.
                 System.out.println("We have a bid winner.");
-                test.testResolution();
+                quest.getTest().testResolution();
             }
 
         }

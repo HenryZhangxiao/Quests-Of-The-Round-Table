@@ -23,6 +23,9 @@ public class Quest {
     private Card[][] stageCards;
     private Card[][] playerCards;
 
+    // Test logic object in case stages contain a test
+    private Test test;
+
     public Quest(QuestCard _questCard, int _questDrawerPID, int _numPlayers, boolean _kingsRecognition){
         questCard = _questCard;
         questDrawerPID = _questDrawerPID;
@@ -43,6 +46,10 @@ public class Quest {
         if(_kingsRecognition){
             numVictoryShields += 2;
         }
+    }
+
+    public Test getTest() {
+        return test;
     }
 
     protected int getNextPID(int currentPID){
@@ -215,7 +222,7 @@ public class Quest {
         else{
             //do the test
             //TODO: Test class function call
-            Test test = new Test((TestCard) stageCards[currentStage][0], turnPlayerID, numPlayers);
+            test = new Test((TestCard) stageCards[currentStage][0], turnPlayerID, numPlayers);
             test.drawn();
         }
     }

@@ -19,7 +19,7 @@ public abstract class TestCard extends Card{
         minimumBid = _min;
     }
 
-    protected byte getMinimumBid() {
+    public byte getMinimumBid() {
         return minimumBid;
     }
 }
