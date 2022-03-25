@@ -2,6 +2,7 @@ package network;
 
 import gui.*;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import model.*;
 
 import java.util.ArrayList;
@@ -316,6 +317,18 @@ public class LocalGameManager implements ClientEventListener{
     @Override
     public void onEventStoryBegin(int plyID, int eventCardID) {
         EventStoryView e = new EventStoryView(plyID,eventCardID);
+    }
+
+    @Override
+    public void onMordredDiscard(int cardUserID, int removedCardPlayerID, int allyCardID) {
+        //Simple popup to notify players that Mordred has been used.
+        Platform.runLater(() -> {
+            Alert a = new Alert(Alert.AlertType.INFORMATION);
+            a.setTitle("Mordred Attacks!");
+            a.setHeaderText("Mordred has removed an Ally from play!");
+            a.setContentText(getPlayerByID(cardUserID).getPlayerName() + " used Mordred to remove " + getPlayerByID(removedCardPlayerID).getPlayerName() + "'s " + Card.getCardByID(allyCardID).getName() + " from play!");
+            a.showAndWait();
+        });
     }
 
     @Override

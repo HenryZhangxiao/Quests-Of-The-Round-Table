@@ -231,7 +231,8 @@ public class View extends Pane {
                         NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.UPDATE_AMOUR, NetworkMessage.pack(LocalGameManager.get().getLocalPlayer().hand.get(finalI).getID())));
                     }
                     else if(LocalGameManager.get().getLocalPlayer().hand.get(finalI) instanceof MordredFoe){
-                        //TODO For Mordred.
+                        //Mordred's selection view
+                        MordredView m = new MordredView(finalI);
                     }
                 }
             });

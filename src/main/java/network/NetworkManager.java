@@ -240,6 +240,11 @@ public class NetworkManager extends Thread {
                     l.onGameFinalResult((int[])_objs.get(0));
                 }
                 break;
+            case MORDRED_DISCARD:
+                for (ClientEventListener l: _listeners) {
+                    l.onMordredDiscard((int)_objs.get(0),(int)_objs.get(1),(int)_objs.get(2));
+                }
+                break;
             default:
                 System.out.println("Default Message Received.");
                 break;

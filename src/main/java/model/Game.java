@@ -85,9 +85,14 @@ public class Game extends Thread implements ServerEventListener {
     public void onPlayerConnect(int plyID, String playerName) {
         Player p = new Player(plyID,playerName);
 
-        for(int i = 0; i < 8; i++) {
+        for(int i = 0; i < 12; i++) {
             p.addCard(deck.drawCard());
         }
+
+        //For testing certain cards
+        //p.addCard(Card.getCardByID(9));
+        //for(int i = 0; i < 10; i++)
+        //    p.addCard(Card.getCardByID(22 + i));
 
         _players.add(p);
 
@@ -221,6 +226,16 @@ public class Game extends Thread implements ServerEventListener {
         deck.discardCards(Card.getCardsFromIDArray(cardIDs));
 
         NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.CARD_DISCARD_X,NetworkMessage.pack(plyID,cardIDs)));
+    }
+
+    @Override
+    public void onMordredDiscard(int plyID, int removedCardPlayerID, int allyCardID) {
+        NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.CARD_DISCARD,NetworkMessage.pack(plyID,9)));
+
+        getPlayerByID(removedCardPlayerID).getAllies().remove(Card.getCardByID(allyCardID));
+        NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.UPDATE_ALLIES,NetworkMessage.pack(removedCardPlayerID,getPlayerByID(removedCardPlayerID).getAllyCardIDs())));
+
+        NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.MORDRED_DISCARD,NetworkMessage.pack(plyID,removedCardPlayerID,allyCardID)));
     }
 
     @Override
@@ -540,6 +555,9 @@ public class Game extends Thread implements ServerEventListener {
                 winningPlayers.add(p.getPlayerNum());
             }
         }
+        int[] winArry = new int[winningPlayers.size()];
+        for(int i = 0; i < winArry.length;i++)
+            winArry[i] = winningPlayers.get(i);
 
         System.out.println("winningPlayers:" + winningPlayers);
         if(winningPlayers.size() == 0){
@@ -547,7 +565,7 @@ public class Game extends Thread implements ServerEventListener {
         }
         else if(winningPlayers.size() == 1){
             //only one winner
-            ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.GAME_FINAL_RESULT,NetworkMessage.pack(winningPlayers));
+            ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.GAME_FINAL_RESULT,NetworkMessage.pack(winArry));
             NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
         }
         else{

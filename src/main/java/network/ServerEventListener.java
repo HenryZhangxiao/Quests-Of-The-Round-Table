@@ -19,6 +19,8 @@ public interface ServerEventListener {
     void onCardDiscard(int plyID, int cardID);
     void onCardDiscardX(int plyID, int[] cardIDs);
 
+    void onMordredDiscard(int plyID, int removedCardPlayerID, int allyCardID);
+
     void onStoryDrawCard(int plyID);
 
     void onQuestSponsorQuery(int plyID, boolean declined, int[][] questCards);

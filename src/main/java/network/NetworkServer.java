@@ -173,6 +173,11 @@ public class NetworkServer extends Thread{
                         l.onTestBidQuery(c.getPlayerId(), declinedTest, (int) _objs.get(1), (int[])_objs.get(2));
                 }
                 break;
+            case MORDRED_DISCARD:
+                for(ServerEventListener l: _listeners){
+                    l.onMordredDiscard(c.getPlayerId(),(int)_objs.get(0),(int)_objs.get(1));
+                }
+                break;
             default:
                 System.out.println("SERVER: Unhandled Message Received.");
                 break;

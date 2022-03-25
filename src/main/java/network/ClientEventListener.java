@@ -28,6 +28,7 @@ interface ClientEventListener {
     void onQuestFinalResult(int winnerID, int[][] sponsorCards);
 
     void onEventStoryBegin(int drawerID, int eventCardID);
+    void onMordredDiscard(int cardUserID, int removedCardPlayerID, int allyCardID);
 
     void onTournamentBegin(int drawerID, int tournamentCardID);
     void onTournamentParticipationQuery(int tournamentCardID);
