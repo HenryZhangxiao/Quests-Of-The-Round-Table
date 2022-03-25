@@ -29,6 +29,7 @@ public class Game extends Thread implements ServerEventListener {
     
     private Quest quest = null;
     private Tournament tournament = null;
+    private Test test = null;
 
     private boolean kingsRecognition = false;
 
@@ -67,6 +68,11 @@ public class Game extends Thread implements ServerEventListener {
 
     public Card drawStoryCard(){
         return storyDeck.drawCard();
+    }
+
+    public void setTestCard(Test _test){
+        test = _test;
+        test.drawn();
     }
 
 
@@ -488,6 +494,34 @@ public class Game extends Thread implements ServerEventListener {
 
         }
     }
+
+    public void onTestBidQuery(int plyID, boolean declined, int bid) {
+        System.out.println("Player " + plyID + " asked for a bid");
+        // Player chose to enter the tournament with a provided hand cardIDs
+        if(!declined){
+            test.addInPID(plyID);
+            test.setCurrentBid(bid);
+
+            System.out.println("Player " + plyID + " placed bid " + bid + " for the test");
+
+            test.goToNextTurn();
+            test.bidding();   //previously participating
+        }
+        else{ // Player declined to bid
+            test.addOutPID(plyID);
+            System.out.println(plyID + " declined test participation");
+            // If there are still more than 1 bidders, keep querying
+            if(test.getInPIDs().size() > 1){
+                System.out.println("Still more eager bidders. Keep querying");
+                test.goToNextTurn();
+                test.bidding();   //previously participating
+            }
+            else{ // We have a bid winner.
+                System.out.println("We have a bid winner.");
+                test.testResolution();
+            }
+
+        }}
 
 
 }

@@ -48,12 +48,14 @@ public class Test {
     }
 
     public void drawn() {
-        ServerMessage questStartMsg = new ServerMessage(NetworkMsgType.QUEST_BEGIN, NetworkMessage.pack(testDrawerPID, testCard.id));
-        NetworkServer.get().sendNetMessageToAllPlayers(questStartMsg);
+        /*** TODO: Implement this for network
+        ServerMessage testStartMsg = new ServerMessage(NetworkMsgType.TEST_BEGIN, NetworkMessage.pack(testDrawerPID, testCard.id));
+        NetworkServer.get().sendNetMessageToAllPlayers(testStartMsg);
 
-        //ask current player if they want to sponsor
-        ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_SPONSOR_QUERY, NetworkMessage.pack(testCard.id));
-        NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
+        // Prompt current player for a bid
+        ServerMessage bidQuery = new ServerMessage(NetworkMsgType.TEST_BID_QUERY, NetworkMessage.pack(testCard.id, currentBid));
+        NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(bidQuery);
+         ***/
     }
 
     //happens if player who drew quest doesn't sponsor it, goes around table
@@ -65,39 +67,37 @@ public class Test {
 
     //players choose if they want to join the quest
     //once it gets to the sponsor, then everyone has opted in or out, sponsor picks cards for quest
-    public void participating() {
-        System.out.println("in participating QUEST " + turnPlayerID);
+    public void bidding() {
+        /*** TODO: Implement this for network
+        System.out.println("in bidding TEST " + turnPlayerID);
         //if(turnPlayerID != sponsorPID && !outPIDs.contains(turnPlayerID)) {
-        ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_PARTICIPATE_QUERY, NetworkMessage.pack(inPIDs.get((0)), testCard.id));
-        NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
-        //}
+        ServerMessage bidQuery = new ServerMessage(NetworkMsgType.TEST_BID_QUERY, NetworkMessage.pack(testCard.id, currentBid));
+        NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(bidQuery);
+        ***/
     }
 
     // Players who still need to provide a higher bid
-    public void battling() {
-        System.out.println("in battling TEST "  + turnPlayerID);
-
-        //current player is still in the quest
-        if(inPIDs.contains(turnPlayerID)){
-            // We already performed a check using isValidBid, so we can just set highestBid
-            highestBid = currentBid;
+    public void testResolution() {
+        System.out.println("in Test Resolution");
+        ArrayList<AllyCard> allies = Game.get().getPlayerByID(inPIDs.get(0)).getAllies();
+        int numFreeBids = 0;
+        for(AllyCard ally: allies){
+            numFreeBids += ally.getFreeBids();
         }
+        int cardsToDiscard = highestBid - numFreeBids;
 
-        // If there are more than one bidder remaining, query for participation
-        if (inPIDs.size() >= 2)
-            //TODO: Query for participation
-            //TODO: Querying for participation may have to be reworked (idk yet)
-            participating();
-        else {    // There is only one bidder remaining, so we have a winner
-            //TODO: Network message to alert of winner.
-            //ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.QUEST_FINAL_RESULT,NetworkMessage.pack(winnerID, Card.getStageCardIDsFromMDArray(stageCards)));
-            //NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
+        // The winner needs to discard cards
+        // TODO: What is the discard x number of cards networking message?
+        ServerMessage discardMsg = new ServerMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(testCard.id));
+        NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(discardMsg);
 
-            //Clear all Amours in play
-            NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(-1, -1)));
-        }
+
+        // Tell everyone that the quest has been won by inPIDs.get(0)
+        // TODO: Add a new networking msg here to notify everyone of the winner of the test
+        //ServerMessage testOverMsg = new ServerMessage(NetworkMsgType.[INSERT NAME HERE],NetworkMessage.pack(inPIDs.get(0) ,testCard.getID()));
+        //NetworkServer.get().sendNetMessageToAllPlayers(testOverMsg);
+
     }
-
 
     public boolean isBiddingDone(){
         return inPIDs.size() == 1;
