@@ -239,8 +239,9 @@ public class Quest {
                         cardBP = currentCard.getBP();
                     }
                 }
-                else{
-                    //TODO: Add the rest of the card types later
+                else{   // this stage is a test, no other cards should be grouped with it
+                    // Make stageBP -1 to signal during incremental order check
+                    cardBP = -1;
                 }
 
                 currentStageBPTotal += cardBP;
@@ -252,7 +253,9 @@ public class Quest {
         // Check to see if the stage BPs are in incremental order
         int lastStageBP = 0;
         for(int i=0; i < stageBPTotals.length; i++) {
-            if(stageBPTotals[i] > lastStageBP){ //This is good. Valid selection. At least for this stage
+            if (stageBPTotals[i] == -1) {   // Stage is a test, don't check for BP
+                continue;
+            } else if(stageBPTotals[i] > lastStageBP){ //This is good. Valid selection. At least for this stage
                 lastStageBP = stageBPTotals[i];
                 continue;
             }

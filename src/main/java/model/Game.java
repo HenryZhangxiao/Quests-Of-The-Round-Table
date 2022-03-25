@@ -272,6 +272,7 @@ public class Game extends Thread implements ServerEventListener {
 
                 case "Pox":
                     //all players but drawer lose a shield
+                    // TODO: fix bug where drawer loses shields
                     for(Player p : _players) {
                         int shields = 0;
                         if(p.getPlayerNum() != plyID) {

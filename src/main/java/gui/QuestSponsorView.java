@@ -15,18 +15,15 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import model.*;
 import network.*;
-import model.Card;
-import model.FoeCard;
-import model.Quest;
-import model.QuestCard;
 
 import java.util.ArrayList;
 
 public class QuestSponsorView {
 
     // Quest info
-    private int foesSelected;
+    private int stagesSelected;
 
     // Window size
     private final int width;
@@ -53,7 +50,7 @@ public class QuestSponsorView {
 
     public QuestSponsorView(QuestCard aQuestCard) {
         questCard = aQuestCard;
-        foesSelected = 0;
+        stagesSelected = 0;
         width = 960;
         height = 350 + 115 * questCard.getStages();
 
@@ -75,7 +72,7 @@ public class QuestSponsorView {
         selectionCardGroup.getChildren().clear();
 
         // Enable accept button if enough foes selected
-        yesBtn.setDisable(foesSelected != questCard.getStages());
+        yesBtn.setDisable(stagesSelected != questCard.getStages());
 
 
         //Drawing all selected cards
@@ -97,14 +94,14 @@ public class QuestSponsorView {
                     if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                         // If unselecting a foe, remove that foe and all weapons it had + all foes and weapons after it
                         if (selectedCards.get(finalI).get(finalJ) instanceof FoeCard) {
-                            while (foesSelected > finalI) {
+                            while (stagesSelected > finalI) {
                                 int counter = 0;
                                 // removes all cards from the last stage
-                                while (counter < selectedCards.get(foesSelected-1).size()) {
-                                    hand.add(selectedCards.get(foesSelected-1).get(counter));
-                                    selectedCards.get(foesSelected-1).remove(counter);
+                                while (counter < selectedCards.get(stagesSelected-1).size()) {
+                                    hand.add(selectedCards.get(stagesSelected-1).get(counter));
+                                    selectedCards.get(stagesSelected-1).remove(counter);
                                 }
-                                foesSelected--;
+                                stagesSelected--;
                             }
                         }
                         // If unselecting a weapon, only remove that weapon
@@ -137,17 +134,27 @@ public class QuestSponsorView {
             int finalI = i;
             aCard.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                    System.out.println(foesSelected);
+                    System.out.println(stagesSelected);
                     if(hand.get(finalI).getID() <= 6){      // selected a weapon
                         if (validateWeapon(hand.get(finalI))) {     // ensures no duplicates and foes are always picked first
-                            selectedCards.get(foesSelected-1).add(hand.get(finalI));
+                            selectedCards.get(stagesSelected-1).add(hand.get(finalI));
                             hand.remove(finalI);
                         }
-                    } else if (hand.get(finalI).getID() <= 17 && foesSelected < questCard.getStages()) {    // selected a foe and foes can still be selected
-                        selectedCards.get(foesSelected).add(hand.get(finalI));
+                    } else if (hand.get(finalI).getID() <= 21 && stagesSelected < questCard.getStages()) {    // selected a foe or test and stages are not full
+                        if (hand.get(finalI).getID() > 17) {    // selected a test
+                            for (int j = 0; j < stagesSelected; ++j) {
+                                int prevCardID = selectedCards.get(j).get(0).getID();
+                                // If a test was already selected, don't allow this new test
+                                if (prevCardID > 17 && prevCardID < 22)
+                                    return;
+                            }
+                        }
+
+                        selectedCards.get(stagesSelected).add(hand.get(finalI));
                         hand.remove(finalI);
-                        foesSelected++;
+                        stagesSelected++;
                     }
+
                     updateCards();
                 }
             });
@@ -270,8 +277,9 @@ public class QuestSponsorView {
     }
 
     private boolean validateWeapon(Card c) {
-        if (foesSelected < 1) return false;
-        for (Card x : selectedCards.get(foesSelected-1)) {
+        if (stagesSelected < 1) return false;
+        if (selectedCards.get(stagesSelected-1).get(0) instanceof TestCard) return false;
+        for (Card x : selectedCards.get(stagesSelected-1)) {
             if (c.getID() == x.getID()) {
                 return false;
             }
