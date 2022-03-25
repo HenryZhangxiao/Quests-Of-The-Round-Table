@@ -504,11 +504,19 @@ public class Game extends Thread implements ServerEventListener {
         if(!declined){
             test.addInPID(plyID);
             test.setCurrentBid(bid);
+            test.setPlayerCards(plyID, cardIDs);
 
             System.out.println("Player " + plyID + " placed bid " + bid + " for the test");
 
-            test.goToNextTurn();
-            test.bidding();   //previously participating
+            if(test.getInPIDs().size() > 1){
+                System.out.println("Still more eager bidders. Keep querying");
+                test.goToNextTurn();
+                test.bidding();   //previously participating
+            }
+            else{ // We have a bid winner.
+                System.out.println("We have a bid winner.");
+                test.testResolution();
+            }
         }
         else{ // Player declined to bid
             test.addOutPID(plyID);

@@ -18,7 +18,7 @@ public class Test {
     private int highestBid;
     private int currentBid;
 
-    private Card[][] playerCards;
+    private int[][] playerCards;
 
 
     public Test(TestCard _testCard, int _testDrawerPID, int _numPlayers){
@@ -29,7 +29,7 @@ public class Test {
 
         outPIDs = new ArrayList<>();
         inPIDs = new ArrayList<>();
-        playerCards = new Card[numPlayers][];
+        playerCards = new int[numPlayers][];
 
         currentStage = 0;
         highestBid = testCard.getMinimumBid();
@@ -81,12 +81,11 @@ public class Test {
     // Players who still need to provide a higher bid
     public void testResolution() {
         System.out.println("in Test Resolution");
-        ArrayList<AllyCard> allies = Game.get().getPlayerByID(inPIDs.get(0)).getAllies();
-        int numFreeBids = 0;
+        /*
         for(AllyCard ally: allies){
-            numFreeBids += ally.getFreeBids();
+            numFreeBids += ally.getBidsForAllies(ally, Game.get().getQuest().getQuestCard().getID(), Game.get().getPlayerByID(inPIDs.get(0)).getAmour());
         }
-        int cardsToDiscard = highestBid - numFreeBids;
+        */
 
         // The winner needs to discard cards
         ServerMessage discardMsg = new ServerMessage(NetworkMsgType.CARD_DISCARD_X,NetworkMessage.pack(inPIDs.get(0), playerCards[inPIDs.get(0)]));
@@ -103,15 +102,18 @@ public class Test {
         return inPIDs.size() == 1;
     }
 
-    public boolean isValidBid(int bid){
-        return bid > currentBid && bid > testCard.getMinimumBid();
+    public boolean isValidBid(int plyID, int bid){
+        ArrayList<AllyCard> allies = Game.get().getPlayerByID(plyID).getAllies();
+        int numFreeBids = AllyCard.getBidsForAllies(allies, Game.get().getQuest().getQuestCard(), Game.get().getPlayerByID(plyID).getAmour());
+
+        return bid + numFreeBids > currentBid && bid + numFreeBids > testCard.getMinimumBid();
     }
 
     public void setCurrentBid(int bid) {
         this.currentBid = bid;
     }
 
-    public void setPlayerCards(int pid, Card[] _playerCards){
+    public void setPlayerCards(int pid, int[] _playerCards){
         playerCards[pid] = _playerCards;
     }
 
