@@ -232,7 +232,7 @@ public class NetworkManager extends Thread {
                 break;
             case TEST_FINAL_RESULT:
                 for (ClientEventListener l: _listeners) {
-                    l.onTestFinalResult((int)_objs.get(0),(int) _objs.get(1),(int) _objs.get(2));
+                    l.onTestFinalResult((int)_objs.get(0),(int[]) _objs.get(1),(int) _objs.get(2));
                 }
                 break;
             default:
