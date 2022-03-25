@@ -95,10 +95,23 @@ public class QuestSponsorView {
                 int finalJ = j;
                 aCard.setOnMouseClicked(mouseEvent -> {
                     if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                        if (selectedCards.get(finalI).get(finalJ) instanceof FoeCard)
-                            foesSelected--;
-                        hand.add(selectedCards.get(finalI).get(finalJ));
-                        selectedCards.get(finalI).remove(finalJ);
+                        // If unselecting a foe, remove that foe and all weapons it had + all foes and weapons after it
+                        if (selectedCards.get(finalI).get(finalJ) instanceof FoeCard) {
+                            while (foesSelected > finalI) {
+                                int counter = 0;
+                                // removes all cards from the last stage
+                                while (counter < selectedCards.get(foesSelected-1).size()) {
+                                    hand.add(selectedCards.get(foesSelected-1).get(counter));
+                                    selectedCards.get(foesSelected-1).remove(counter);
+                                }
+                                foesSelected--;
+                            }
+                        }
+                        // If unselecting a weapon, only remove that weapon
+                        else {
+                            hand.add(selectedCards.get(finalI).get(finalJ));
+                            selectedCards.get(finalI).remove(finalJ);
+                        }
 
                         //Once moving a card, reupdate all the cards.
                         updateCards();
