@@ -80,8 +80,13 @@ public class Tournament {
         }
         int highestPlayerBP = 0;
 
+        // NO PARTICIPANTS, END TOURNAMENT
+        if (inPIDs.isEmpty()) {
+            ServerMessage noWinMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(-1));
+            NetworkServer.get().sendNetMessageToAllPlayers(noWinMsg);
+        }
         // ONLY ONE PERSON SO THAT PERSON WON
-        if(inPIDs.size() == 1){
+        else if(inPIDs.size() == 1){
             int shields = Game.get().getPlayerByID(inPIDs.get(0)).getShields();
             numVictoryShields = numParticipants + tournamentCard.getBonusShields();
             shields += numVictoryShields;
