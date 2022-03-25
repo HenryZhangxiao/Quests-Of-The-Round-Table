@@ -215,6 +215,8 @@ public class Quest {
         else{
             //do the test
             //TODO: Test class function call
+            Test test = new Test((TestCard) stageCards[currentStage][0], turnPlayerID, numPlayers);
+            test.drawn();
         }
     }
 

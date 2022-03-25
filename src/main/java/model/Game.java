@@ -234,9 +234,9 @@ public class Game extends Thread implements ServerEventListener {
         }
 
         //Start a quest/event/tournament here
-        //Card c = storyDeck.drawCard();
+        Card c = storyDeck.drawCard();
         //For Testing. CardIDs are in Card
-        Card c = Card.getCardByID(51);
+        //Card c = Card.getCardByID(51);
 
         ServerMessage msg = new ServerMessage(NetworkMsgType.STORY_CARD_DRAW,NetworkMessage.pack(plyID,c.id));
         NetworkServer.get().sendNetMessageToAllPlayers(msg);
@@ -523,5 +523,18 @@ public class Game extends Thread implements ServerEventListener {
 
         }}
 
+    public void checkForWinner(){
+        ArrayList<Player> winningPlayers = new ArrayList<>();
+        for(Player p: _players){
+            if(p.getShields() >= 5){ // 5 is amount to win
+                winningPlayers.add(p);
+            }
+        }
 
+        //Tournament tournament = new Tournament(null, null, winningPlayers.size()); //TODO: need to add tweaks to Tournament class
+        //TODO: so that it'll work with no TournamentCard, have to immediately opt out non winningPlayers, and display winner at the end
+        //tournament.drawn();
+
+        //TODO: will have to be called after every successful Quest, and every Event that gives Shields
+    }
 }
