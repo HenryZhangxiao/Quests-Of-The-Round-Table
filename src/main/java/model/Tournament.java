@@ -169,6 +169,13 @@ public class Tournament {
             else{
                 numVictoryShields = numParticipants + tournamentCard.getBonusShields();
                 System.out.println("winner, with " + numVictoryShields + " Victory Shields");
+
+                int shields = Game.get().getPlayerByID(inPIDs.get(0)).getShields();
+                shields += numVictoryShields;
+                Game.get().getPlayerByID(inPIDs.get(0)).setShields(shields);
+                ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(inPIDs.get(0),shields));
+                NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
+
                 ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(inPIDs.get(0)));
                 NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
 

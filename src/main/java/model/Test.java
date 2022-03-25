@@ -94,7 +94,7 @@ public class Test {
 
         // Tell everyone that the quest has been won by inPIDs.get(0)
         // TODO: Add a new networking msg here to notify everyone of the winner of the test
-        //ServerMessage testOverMsg = new ServerMessage(NetworkMsgType.[INSERT NAME HERE],NetworkMessage.pack(inPIDs.get(0) ,testCard.getID()));
+        //ServerMessage testOverMsg = new ServerMessage(NetworkMsgType.[INSERT NAME HERE],NetworkMessage.pack(inPIDs.get(0) ,testCard.getID(), highestBid));
         //NetworkServer.get().sendNetMessageToAllPlayers(testOverMsg);
 
     }
