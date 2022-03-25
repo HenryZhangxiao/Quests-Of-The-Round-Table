@@ -271,6 +271,8 @@ public class Game extends Thread implements ServerEventListener {
                         ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(p.getPlayerNum(),shields));
                         NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
                     }
+
+                    checkForWinner();
                     return;
 
                 case "Pox":
@@ -369,7 +371,7 @@ public class Game extends Thread implements ServerEventListener {
         }
 
         else if(c instanceof TournamentCard){
-            tournament = new Tournament((TournamentCard) c, plyID, _players.size());
+            tournament = new Tournament((TournamentCard) c, plyID, _players.size(), false);
             System.out.println("Player " + plyID + " has drawn a tournament");
             tournament.drawn();
         }
@@ -530,17 +532,37 @@ public class Game extends Thread implements ServerEventListener {
     }
 
     public void checkForWinner(){
-        ArrayList<Player> winningPlayers = new ArrayList<>();
+        System.out.println("in checkforWinner()");
+
+        ArrayList<Integer> winningPlayers = new ArrayList<>();
         for(Player p: _players){
             if(p.getShields() >= 5){ // 5 is amount to win
-                winningPlayers.add(p);
+                winningPlayers.add(p.getPlayerNum());
             }
         }
 
-        //Tournament tournament = new Tournament(null, null, winningPlayers.size()); //TODO: need to add tweaks to Tournament class
-        //TODO: so that it'll work with no TournamentCard, have to immediately opt out non winningPlayers, and display winner at the end
-        //tournament.drawn();
+        System.out.println("winningPlayers:" + winningPlayers);
+        if(winningPlayers.size() == 0){
+            System.out.println("no winners yet");
+        }
+        else if(winningPlayers.size() == 1){
+            //only one winner
+            ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.GAME_FINAL_RESULT,NetworkMessage.pack(winningPlayers));
+            NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
+        }
+        else{
+            //multiple winners, tie-breaker Tournament
+            ArrayList<Integer> outPIDs = new ArrayList<>();
+            for(int i =0 ; i < _players.size(); i++){
+                if(!winningPlayers.contains(i)){
+                    outPIDs.add(i);
+                }
+            }
+            System.out.println("outPIDs:" + outPIDs);
+            tournament = new Tournament(new CamelotTournament(), 0, winningPlayers.size(), true);
+            tournament.setOutPIDs(outPIDs);
+            tournament.drawn();
+        }
 
-        //TODO: will have to be called after every successful Quest, and every Event that gives Shields
     }
 }

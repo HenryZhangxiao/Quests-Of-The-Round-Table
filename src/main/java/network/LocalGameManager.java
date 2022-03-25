@@ -362,6 +362,11 @@ public class LocalGameManager implements ClientEventListener{
 
     @Override
     public void onGameFinalResult(int[] winnerIDs) {
+        //TODO some kind of pop up to display winner(s)
 
+        System.out.println("CLIENT: the winner(s) are: ");
+        for(int i = 0; i < winnerIDs.length; ++i){
+            System.out.println(winnerIDs[i]);
+        }
     }
 }

@@ -208,6 +208,8 @@ public class Quest {
 
                 //Clear all Amours in play
                 NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(-1, -1)));
+
+                Game.get().checkForWinner();
             }
         }
     }

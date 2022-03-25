@@ -20,7 +20,9 @@ public class Tournament {
 
     private Card[][] playerCards;
 
-    public Tournament(TournamentCard _tournamentCard, int _tournamentDrawerPID, int _numPlayers){
+    protected boolean isTiebreaker;
+
+    public Tournament(TournamentCard _tournamentCard, int _tournamentDrawerPID, int _numPlayers, boolean _isTiebreaker){
         tournamentCard = _tournamentCard;
         tournamentDrawerPID = _tournamentDrawerPID;
         turnPlayerID = _tournamentDrawerPID;
@@ -34,7 +36,15 @@ public class Tournament {
 
         round = 0;
 
-        numVictoryShields = tournamentCard.getBonusShields() + numPlayers;
+        if(!_isTiebreaker){
+            numVictoryShields = tournamentCard.getBonusShields() + numPlayers;
+        }
+        else{
+            numVictoryShields = 0;
+        }
+
+        isTiebreaker = _isTiebreaker;
+        System.out.println("isTiebreaker ctor: " + isTiebreaker);
     }
 
     protected int getNextPID(int currentPID){
@@ -66,13 +76,16 @@ public class Tournament {
 
         // If we haven't gone full circle yet, otherwise go to battling()
         if(turnPlayerID == tournamentDrawerPID){
+            System.out.println("to battle!");
             battling();
         }
         else if(!outPIDs.contains(turnPlayerID)) {
+            System.out.println("a winner");
             ServerMessage participationQuery = new ServerMessage(NetworkMsgType.TOURNAMENT_PARTICIPATION_QUERY, NetworkMessage.pack(tournamentCard.id));
             NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(participationQuery);
         }
         else{
+            System.out.println("not a winner, skip");
             goToNextTurn();
             participating();
         }
@@ -80,6 +93,7 @@ public class Tournament {
 
     public void battling() {
         System.out.println("in battling TOURNAMENT "  + turnPlayerID);
+
         round++;
         if(round == 1){ //First round, assign numParticipants to opt in size
             numParticipants = inPIDs.size();;
@@ -156,46 +170,70 @@ public class Tournament {
             // If it's the second go-around, and we have another tie, everybody wins
             if(round == 2 && topBidderPIDs.size() >= 2){
                 System.out.println("tie in the second round");
-                numVictoryShields = numParticipants;
-                for(int i = 0; i < inPIDs.size(); i++){
-                    int shields = Game.get().getPlayerByID(inPIDs.get(i)).getShields();
-                    shields += numVictoryShields;
 
-                    Game.get().getPlayerByID(inPIDs.get(i)).setShields(shields);
+                if(!isTiebreaker){
+                    System.out.println("normal tournament ending");
+                    //is a normal Tournament from a Card
+                    numVictoryShields = numParticipants;
+                    for(int i = 0; i < inPIDs.size(); i++){
+                        int shields = Game.get().getPlayerByID(inPIDs.get(i)).getShields();
+                        shields += numVictoryShields;
 
-                    ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(inPIDs.get(i),shields));
-                    NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
+                        Game.get().getPlayerByID(inPIDs.get(i)).setShields(shields);
+
+                        ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(inPIDs.get(i),shields));
+                        NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
+                    }
+
+                    ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(topBidderPIDsToArray()));
+                    NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
+
+                    Game.get().checkForWinner();
                 }
-
-                ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(topBidderPIDsToArray()));
-                NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
+                else{
+                    System.out.println("tiebreaker tournament ending");
+                    //is final tiebreaker Tournament
+                    ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.GAME_FINAL_RESULT,NetworkMessage.pack(topBidderPIDsToArray()));
+                    NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
+                }
             }
             // If there is a tie, and it's not the second round, we need to repeat the tournament
             else if(topBidderPIDs.size() >= 2){
                 System.out.println("tie in the first round");
-
                 ServerMessage tieMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_TIE,NetworkMessage.pack(tournamentCard.getID()));
                 NetworkServer.get().sendNetMessageToAllPlayers(tieMsg);
 
                 restartTournament();
+
             }
             // Otherwise, no tie so send winning message to inPID
             else{
-                numVictoryShields = numParticipants + tournamentCard.getBonusShields();
-                System.out.println("winner, with " + numVictoryShields + " Victory Shields");
+                if(!isTiebreaker){
+                    System.out.println("normal tournament ending");
+                    //is a normal Tournament from a Card
+                    numVictoryShields = numParticipants + tournamentCard.getBonusShields();
+                    System.out.println("winner, with " + numVictoryShields + " Victory Shields");
 
-                int shields = Game.get().getPlayerByID(topBidderPIDs.get(0)).getShields();
-                shields += numVictoryShields;
-                Game.get().getPlayerByID(topBidderPIDs.get(0)).setShields(shields);
-                ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(topBidderPIDs.get(0),shields));
-                NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
+                    int shields = Game.get().getPlayerByID(topBidderPIDs.get(0)).getShields();
+                    shields += numVictoryShields;
+                    Game.get().getPlayerByID(topBidderPIDs.get(0)).setShields(shields);
+                    ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(topBidderPIDs.get(0),shields));
+                    NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
 
-                ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(topBidderPIDsToArray()));
-                NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
+                    ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(topBidderPIDsToArray()));
+                    NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
 
-                //Clear all Amours in play
-                NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(-1, -1)));
+                    //Clear all Amours in play
+                    NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(-1, -1)));
 
+                    Game.get().checkForWinner();
+                }
+                else{
+                    System.out.println("tiebreaker tournament ending");
+                    //is final tiebreaker Tournament
+                    ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.GAME_FINAL_RESULT,NetworkMessage.pack(topBidderPIDsToArray()));
+                    NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
+                }
             }
 
 
@@ -269,5 +307,9 @@ public class Tournament {
 
         System.out.println("a:" + a);
         return a;
+    }
+
+    public void setOutPIDs(ArrayList<Integer> _outPIDs){
+        outPIDs = _outPIDs;
     }
 }
