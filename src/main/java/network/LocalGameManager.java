@@ -352,7 +352,7 @@ public class LocalGameManager implements ClientEventListener{
 
     @Override
     public void onTestBidQuery(int testID, int questID, int currentBid) {
-
+        TestBiddingView testView = new TestBiddingView(questID, testID, currentBid+1);
     }
 
     @Override

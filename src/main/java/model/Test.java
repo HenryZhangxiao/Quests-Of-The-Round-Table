@@ -32,8 +32,9 @@ public class Test {
         playerCards = new Card[numPlayers][];
 
         currentStage = 0;
-        highestBid = testCard.getMinimumBid();
-        currentBid = testCard.getMinimumBid();
+        // Init current/highest bid to min-1 to allow min bid on first query (only bids higher than current bid are accepted locally)
+        highestBid = testCard.getMinimumBid() - 1;
+        currentBid = testCard.getMinimumBid() - 1;
     }
 
 
@@ -74,7 +75,7 @@ public class Test {
     public void bidding() {
         System.out.println("in bidding TEST " + turnPlayerID);
         //if(turnPlayerID != sponsorPID && !outPIDs.contains(turnPlayerID)) {
-        ServerMessage bidQuery = new ServerMessage(NetworkMsgType.TEST_BID_QUERY, NetworkMessage.pack(testCard.id, currentBid));
+        ServerMessage bidQuery = new ServerMessage(NetworkMsgType.TEST_BID_QUERY, NetworkMessage.pack(testCard.id, Game.get().getQuest().getQuestCard().getID(), currentBid));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(bidQuery);
     }
 

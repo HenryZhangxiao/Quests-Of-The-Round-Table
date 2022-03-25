@@ -38,7 +38,6 @@ public class TournamentParticipationView {
     //Rectangles to show each area
     Rectangle selectArea;
     Rectangle handArea;
-    Rectangle amourArea;
 
     //Labels to show the total BP of the selection and for an error
     Label totalBPLabel;
@@ -69,7 +68,6 @@ public class TournamentParticipationView {
         //The areas for the selected cards and the cards in the hand
         selectArea = new Rectangle(55,200,720,180);
         handArea = new Rectangle(55,height-400,890,310);
-        amourArea = new Rectangle(800,200,130,180);
 
         Font largeFont = new Font("Arial", 20);
 
