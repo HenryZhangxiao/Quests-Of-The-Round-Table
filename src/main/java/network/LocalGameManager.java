@@ -339,9 +339,9 @@ public class LocalGameManager implements ClientEventListener{
     }
 
     @Override
-    public void onTournamentFinalResult(int winnerID) {
+    public void onTournamentFinalResult(int[] winnerIDs) {
         //Called when the tournament is over and shows the winning results (winnerID is -1 for no winner)
-        System.out.println("CLIENT: The Tournament has ended. winner id: " + winnerID);
+        System.out.println("CLIENT: The Tournament has ended. winner ids are: " + winnerIDs);
         // TODO: GUI for results of tournament (maybe show shields won?)
     }
 
@@ -356,7 +356,7 @@ public class LocalGameManager implements ClientEventListener{
     }
 
     @Override
-    public void onTestFinalResult(int testID, int[] winnerIDs, int currentBid) {
+    public void onTestFinalResult(int testID, int winnerID, int currentBid) {
 
     }
 

@@ -32,11 +32,11 @@ interface ClientEventListener {
     void onTournamentBegin(int drawerID, int tournamentCardID);
     void onTournamentParticipationQuery(int tournamentCardID);
     void onTournamentTie(int tournamentCardID);
-    void onTournamentFinalResult(int winnerID);
+    void onTournamentFinalResult(int[] winnerIDs);
 
     void onTestBegin(int drawerID, int testID);
     void onTestBidQuery(int testID, int questID, int currentBid);
-    void onTestFinalResult(int testID, int[] winnerIDs, int currentBid);
+    void onTestFinalResult(int testID, int winnerID, int currentBid);
 
     void onGameFinalResult(int[] winnerIDs);
 
