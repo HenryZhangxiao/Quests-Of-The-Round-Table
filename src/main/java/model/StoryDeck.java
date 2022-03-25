@@ -22,6 +22,11 @@ public class StoryDeck extends Deck{
     private static final int NUM_PROSPERITY = 1;
     private static final int NUM_KINGS_CALL_TO_ARMS = 1;
 
+    private static final int NUM_CAMELOT = 1;
+    private static final int NUM_ORNKEY = 1;
+    private static final int NUM_TINTAGEL = 1;
+    private static final int NUM_YORK = 1;
+
     protected void initializeCards() {
         // Quests
         for(int i = 0; i < NUM_HOLY_GRAIL; ++i){
@@ -78,6 +83,19 @@ public class StoryDeck extends Deck{
         }
         for(int i = 0; i < NUM_KINGS_CALL_TO_ARMS; ++i){
             cards.add(new KingsCallToArmsEvent());
+        }
+
+        for(int i = 0; i < NUM_CAMELOT; ++i){
+            cards.add(new CamelotTournament());
+        }
+        for(int i = 0; i < NUM_ORNKEY; ++i){
+            cards.add(new OrkneyTournament());
+        }
+        for(int i = 0; i < NUM_TINTAGEL; ++i){
+            cards.add(new TintagelTournament());
+        }
+        for(int i = 0; i < NUM_YORK; ++i){
+            cards.add(new YorkTournament());
         }
 
         shuffle();

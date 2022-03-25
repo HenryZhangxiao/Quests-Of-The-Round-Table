@@ -140,9 +140,12 @@ public class Tournament {
                 }
             }
 
+            System.out.println("inPIDs:" + inPIDs);
+
             // By here, we are done, and we should know who the winner(s) is/are
             // If it's the second go-around, and we have another tie, everybody wins
             if(round == 2 && inPIDs.size() >= 2){
+                System.out.println("tie in the second round");
                 numVictoryShields = numParticipants;
                 for(int i = 0; i < inPIDs.size(); i++){
                     int shields = Game.get().getPlayerByID(inPIDs.get(i)).getShields();
@@ -156,6 +159,7 @@ public class Tournament {
             }
             // If there is a tie, and it's not the second round, we need to repeat the tournament
             if(inPIDs.size() >= 2){
+                System.out.println("tie in the first round");
                 ServerMessage tieMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_TIE,NetworkMessage.pack(tournamentCard.getID()));
                 NetworkServer.get().sendNetMessageToAllPlayers(tieMsg);
 
@@ -164,6 +168,7 @@ public class Tournament {
             // Otherwise, no tie so send winning message to inPID
             else{
                 numVictoryShields = numParticipants + tournamentCard.getBonusShields();
+                System.out.println("winner, with " + numVictoryShields + " Victory Shields");
                 ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(inPIDs.get(0)));
                 NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
 

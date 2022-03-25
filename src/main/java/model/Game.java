@@ -234,9 +234,9 @@ public class Game extends Thread implements ServerEventListener {
         }
 
         //Start a quest/event/tournament here
-        Card c = storyDeck.drawCard();
+        //Card c = storyDeck.drawCard();
         //For Testing. CardIDs are in Card
-        //Card c = Card.getCardByID(48);
+        Card c = Card.getCardByID(51);
 
         ServerMessage msg = new ServerMessage(NetworkMsgType.STORY_CARD_DRAW,NetworkMessage.pack(plyID,c.id));
         NetworkServer.get().sendNetMessageToAllPlayers(msg);
