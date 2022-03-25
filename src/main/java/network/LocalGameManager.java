@@ -344,4 +344,19 @@ public class LocalGameManager implements ClientEventListener{
         System.out.println("CLIENT: The Tournament has ended. winner id: " + winnerID);
         // TODO: GUI for results of tournament (maybe show shields won?)
     }
+
+    @Override
+    public void onTestBegin(int drawerID, int testID) {
+
+    }
+
+    @Override
+    public void onTestBidQuery(int testID, int questID, int currentBid) {
+
+    }
+
+    @Override
+    public void onTestFinalResult(int testID, int winnerID, int currentBid) {
+
+    }
 }

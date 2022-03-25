@@ -164,6 +164,15 @@ public class NetworkServer extends Thread{
                         l.onTournamentParticipationQuery(c.getPlayerId(), declinedTournamentParticipation, (int[]) _objs.get(1));
                 }
                 break;
+            case TEST_BID_QUERY:
+                boolean declinedTest = (boolean) _objs.get(0);
+                for(ServerEventListener l: _listeners){
+                    if (declinedTest)
+                        l.onTestBidQuery(c.getPlayerId(), declinedTest, -1);
+                    else
+                        l.onTestBidQuery(c.getPlayerId(), declinedTest, (int) _objs.get(1));
+                }
+                break;
             default:
                 System.out.println("SERVER: Unhandled Message Received.");
                 break;

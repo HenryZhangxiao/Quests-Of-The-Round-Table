@@ -36,8 +36,13 @@ public enum NetworkMsgType {
     EVENT_BEGIN, //To client[drawerID, cardID] - To Server UNHANDLED
 
     TOURNAMENT_BEGIN, //To Client[drawerID, tournamentID] - To Server UNHANDLED
-    TOURNAMENT_PARTICIPATION_QUERY, //To Client[tournamentID] - To Server [cardIDs]
+    TOURNAMENT_PARTICIPATION_QUERY, //To Client[tournamentID] - To Server [declineBoolean, cardIDs]
     TOURNAMENT_TIE, //To Client[tournamentID] - To Server UNHANDLED
     TOURNAMENT_FINAL_RESULT, //To Client[winnerID, scoreTable?] - To Server UNHANDLED
+
+    TEST_BEGIN, //To Client [drawerID, testID] - To Server UNHANDLED
+    TEST_BID_QUERY, //To Client[testID, questID, currentBid] - To Server [declineBoolean, currentBid]
+    TEST_FINAL_RESULT, //To Client[testID, winnerID, currentBid] - To Server UNHANDLED
+
 
 }

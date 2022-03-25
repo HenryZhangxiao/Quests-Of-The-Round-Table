@@ -220,7 +220,21 @@ public class NetworkManager extends Thread {
             case TEST_MESSAGE:
                 System.out.println("Got a message from: " + String.valueOf(msg.playerID));
                 break;
-
+            case TEST_BEGIN:
+                for (ClientEventListener l: _listeners) {
+                    l.onTestBegin((int)_objs.get(0),(int) _objs.get(1));
+                }
+                break;
+            case TEST_BID_QUERY:
+                for (ClientEventListener l: _listeners) {
+                    l.onTestBidQuery((int)_objs.get(0),(int) _objs.get(1),(int) _objs.get(2));
+                }
+                break;
+            case TEST_FINAL_RESULT:
+                for (ClientEventListener l: _listeners) {
+                    l.onTestFinalResult((int)_objs.get(0),(int) _objs.get(1),(int) _objs.get(2));
+                }
+                break;
             default:
                 System.out.println("Default Message Received.");
                 break;
