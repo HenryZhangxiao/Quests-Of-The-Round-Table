@@ -34,11 +34,13 @@ public class Test {
 
 
     protected int getNextPID(int currentPID){
-        if(currentPID == numPlayers - 1){
-            return 0;
+        int index = inPIDs.indexOf(currentPID);
+
+        if(index == inPIDs.size() - 1){
+            return inPIDs.get(0);
         }
         else{
-            return currentPID + 1;
+            return inPIDs.get(index+1);
         }
     }
 
@@ -48,14 +50,12 @@ public class Test {
     }
 
     public void drawn() {
-        /*** TODO: Implement this for network
         ServerMessage testStartMsg = new ServerMessage(NetworkMsgType.TEST_BEGIN, NetworkMessage.pack(testDrawerPID, testCard.id));
         NetworkServer.get().sendNetMessageToAllPlayers(testStartMsg);
 
         // Prompt current player for a bid
         ServerMessage bidQuery = new ServerMessage(NetworkMsgType.TEST_BID_QUERY, NetworkMessage.pack(testCard.id, currentBid));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(bidQuery);
-         ***/
     }
 
     //happens if player who drew quest doesn't sponsor it, goes around table
@@ -68,12 +68,10 @@ public class Test {
     //players choose if they want to join the quest
     //once it gets to the sponsor, then everyone has opted in or out, sponsor picks cards for quest
     public void bidding() {
-        /*** TODO: Implement this for network
         System.out.println("in bidding TEST " + turnPlayerID);
         //if(turnPlayerID != sponsorPID && !outPIDs.contains(turnPlayerID)) {
         ServerMessage bidQuery = new ServerMessage(NetworkMsgType.TEST_BID_QUERY, NetworkMessage.pack(testCard.id, currentBid));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(bidQuery);
-        ***/
     }
 
     // Players who still need to provide a higher bid
@@ -94,8 +92,8 @@ public class Test {
 
         // Tell everyone that the quest has been won by inPIDs.get(0)
         // TODO: Add a new networking msg here to notify everyone of the winner of the test
-        //ServerMessage testOverMsg = new ServerMessage(NetworkMsgType.[INSERT NAME HERE],NetworkMessage.pack(inPIDs.get(0) ,testCard.getID(), highestBid));
-        //NetworkServer.get().sendNetMessageToAllPlayers(testOverMsg);
+        ServerMessage testOverMsg = new ServerMessage(NetworkMsgType.TEST_FINAL_RESULT,NetworkMessage.pack(testCard.getID(),inPIDs.get(0), highestBid));
+        NetworkServer.get().sendNetMessageToAllPlayers(testOverMsg);
 
     }
 
