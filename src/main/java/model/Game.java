@@ -524,7 +524,8 @@ public class Game extends Thread implements ServerEventListener {
                 test.testResolution();
             }
 
-        }}
+        }
+    }
 
     public void checkForWinner(){
         ArrayList<Player> winningPlayers = new ArrayList<>();

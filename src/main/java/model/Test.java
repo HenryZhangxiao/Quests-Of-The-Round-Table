@@ -13,9 +13,12 @@ public class Test {
     private int testDrawerPID = -5;    //keep track of who drew the quest so looking for sponsor will only loop through players once
     protected ArrayList<Integer> outPIDs;  //those who have opted out or have been eliminated
     protected ArrayList<Integer> inPIDs;   //those who did not opt out and have not been eliminated
+
     private int currentStage;
     private int highestBid;
     private int currentBid;
+
+    private Card[][] playerCards;
 
 
     public Test(TestCard _testCard, int _testDrawerPID, int _numPlayers){
@@ -26,6 +29,7 @@ public class Test {
 
         outPIDs = new ArrayList<>();
         inPIDs = new ArrayList<>();
+        playerCards = new Card[numPlayers][];
 
         currentStage = 0;
         highestBid = testCard.getMinimumBid();
@@ -85,13 +89,11 @@ public class Test {
         int cardsToDiscard = highestBid - numFreeBids;
 
         // The winner needs to discard cards
-        // TODO: What is the discard x number of cards networking message?
-        ServerMessage discardMsg = new ServerMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(testCard.id));
+        ServerMessage discardMsg = new ServerMessage(NetworkMsgType.CARD_DISCARD_X,NetworkMessage.pack(inPIDs.get(0), playerCards[inPIDs.get(0)]));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(discardMsg);
 
 
         // Tell everyone that the quest has been won by inPIDs.get(0)
-        // TODO: Add a new networking msg here to notify everyone of the winner of the test
         ServerMessage testOverMsg = new ServerMessage(NetworkMsgType.TEST_FINAL_RESULT,NetworkMessage.pack(testCard.getID(),inPIDs.get(0), highestBid));
         NetworkServer.get().sendNetMessageToAllPlayers(testOverMsg);
 
@@ -107,6 +109,10 @@ public class Test {
 
     public void setCurrentBid(int bid) {
         this.currentBid = bid;
+    }
+
+    public void setPlayerCards(int pid, Card[] _playerCards){
+        playerCards[pid] = _playerCards;
     }
 
     public int getTestDrawerPID(){ return testDrawerPID;}
