@@ -26,6 +26,6 @@ public interface ServerEventListener {
 
     void onTournamentParticipationQuery(int plyID, boolean declined, int[] cardIDs);
 
-    void onTestBidQuery(int plyID, boolean declined, int currentBid);
+    void onTestBidQuery(int plyID, boolean declined, int currentBid, int[] cardIDs);
 
 }

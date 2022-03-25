@@ -495,7 +495,7 @@ public class Game extends Thread implements ServerEventListener {
         }
     }
 
-    public void onTestBidQuery(int plyID, boolean declined, int bid) {
+    public void onTestBidQuery(int plyID, boolean declined, int bid, int[] cardIDs) {
         System.out.println("Player " + plyID + " asked for a bid");
         // Player chose to enter the tournament with a provided hand cardIDs
         if(!declined){

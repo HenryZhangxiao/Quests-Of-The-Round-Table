@@ -168,9 +168,9 @@ public class NetworkServer extends Thread{
                 boolean declinedTest = (boolean) _objs.get(0);
                 for(ServerEventListener l: _listeners){
                     if (declinedTest)
-                        l.onTestBidQuery(c.getPlayerId(), declinedTest, -1);
+                        l.onTestBidQuery(c.getPlayerId(), declinedTest, -1, null);
                     else
-                        l.onTestBidQuery(c.getPlayerId(), declinedTest, (int) _objs.get(1));
+                        l.onTestBidQuery(c.getPlayerId(), declinedTest, (int) _objs.get(1), (int[])_objs.get(2));
                 }
                 break;
             default:
