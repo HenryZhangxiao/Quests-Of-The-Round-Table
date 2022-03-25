@@ -203,11 +203,22 @@ public class Tournament {
     }
 
     private void restartTournament() {
+        // Move all participants who lost to outPIDs so only winners move on the next round
+        for (Integer pid : inPIDs) {
+            if (!topBidderPIDs.contains(pid))
+                addOutPID(pid);
+        }
         inPIDs.clear();
         topBidderPIDs.clear();
 
-        ServerMessage participationQuery = new ServerMessage(NetworkMsgType.TOURNAMENT_PARTICIPATION_QUERY, NetworkMessage.pack(tournamentCard.id));
-        NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(participationQuery);
+        if(!outPIDs.contains(turnPlayerID)) {
+            ServerMessage participationQuery = new ServerMessage(NetworkMsgType.TOURNAMENT_PARTICIPATION_QUERY, NetworkMessage.pack(tournamentCard.id));
+            NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(participationQuery);
+        }
+        else{
+            goToNextTurn();
+            participating();
+        }
     }
 
     public void setPlayerCards(int pid, Card[] _playerCards){
