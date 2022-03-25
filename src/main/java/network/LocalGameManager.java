@@ -340,7 +340,7 @@ public class LocalGameManager implements ClientEventListener{
 
     @Override
     public void onTournamentFinalResult(int[] winnerIDs) {
-        //Called when the tournament is over and shows the winning results (winnerID is -1 for no winner)
+        //Called when the tournament is over and shows the winning results (winnerID is [-1] for no winner)
         System.out.println("CLIENT: The Tournament has ended. winner ids are: " + winnerIDs);
         // TODO: GUI for results of tournament (maybe show shields won?)
     }

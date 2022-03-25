@@ -65,12 +65,16 @@ public class Tournament {
         System.out.println("in participating TOURNAMENT " + turnPlayerID);
 
         // If we haven't gone full circle yet, otherwise go to battling()
-        if(turnPlayerID != tournamentDrawerPID && !outPIDs.contains(turnPlayerID)) {
+        if(turnPlayerID == tournamentDrawerPID){
+            battling();
+        }
+        else if(!outPIDs.contains(turnPlayerID)) {
             ServerMessage participationQuery = new ServerMessage(NetworkMsgType.TOURNAMENT_PARTICIPATION_QUERY, NetworkMessage.pack(tournamentCard.id));
             NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(participationQuery);
         }
         else{
-            battling();
+            goToNextTurn();
+            participating();
         }
     }
 
@@ -84,7 +88,7 @@ public class Tournament {
 
         // NO PARTICIPANTS, END TOURNAMENT
         if (inPIDs.isEmpty()) {
-            ServerMessage noWinMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(-1));
+            ServerMessage noWinMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(new int[] {-1}));
             NetworkServer.get().sendNetMessageToAllPlayers(noWinMsg);
         }
         // ONLY ONE PERSON SO THAT PERSON WON
@@ -163,11 +167,11 @@ public class Tournament {
                     NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
                 }
 
-                ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(topBidderPIDs));
+                ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(topBidderPIDsToArray()));
                 NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
             }
             // If there is a tie, and it's not the second round, we need to repeat the tournament
-            if(topBidderPIDs.size() >= 2){
+            else if(topBidderPIDs.size() >= 2){
                 System.out.println("tie in the first round");
 
                 ServerMessage tieMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_TIE,NetworkMessage.pack(tournamentCard.getID()));
@@ -186,7 +190,7 @@ public class Tournament {
                 ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(topBidderPIDs.get(0),shields));
                 NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
 
-                ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(topBidderPIDs));
+                ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(topBidderPIDsToArray()));
                 NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
 
                 //Clear all Amours in play
@@ -199,8 +203,11 @@ public class Tournament {
     }
 
     private void restartTournament() {
-        goToNextTurn();
-        participating();
+        inPIDs.clear();
+        topBidderPIDs.clear();
+
+        ServerMessage participationQuery = new ServerMessage(NetworkMsgType.TOURNAMENT_PARTICIPATION_QUERY, NetworkMessage.pack(tournamentCard.id));
+        NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(participationQuery);
     }
 
     public void setPlayerCards(int pid, Card[] _playerCards){
@@ -237,5 +244,19 @@ public class Tournament {
 
     public void setNumParticipants(int _numParticipants){
         numParticipants = _numParticipants;
+    }
+
+    public int[] topBidderPIDsToArray(){
+        int[] a = new int[topBidderPIDs.size()];
+        int i = 0;
+        for(Integer pid : topBidderPIDs){
+            a[i] = pid;
+            System.out.println("a[i]:" + a[i]);
+            i++;
+
+        }
+
+        System.out.println("a:" + a);
+        return a;
     }
 }
