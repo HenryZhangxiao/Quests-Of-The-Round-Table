@@ -127,20 +127,28 @@ public class Tournament {
                 // If this is the highest BP selection we have so far, we need to clear the arraylist
                 // and add the current winner in
                 if(playerBP > highestPlayerBP){
+                    System.out.println(playerBP + " is higher than " + highestPlayerBP);
+                    inPIDs.clear();
                     addInPID(currentPIDToCheck);
                     highestPlayerBP = playerBP;
+                    System.out.println("inPIDs:" + inPIDs);
+                    System.out.println("outPIDs:" + outPIDs);
                 }
                 // There is a current tie so add the tied 'winner'
                 else if(playerBP == highestPlayerBP){
+                    System.out.println(playerBP + " is tied with " + highestPlayerBP);
                     addInPID(currentPIDToCheck);
+                    System.out.println("inPIDs:" + inPIDs);
+                    System.out.println("outPIDs:" + outPIDs);
                 }
                 // The current hand to check is lower than the current highest so add to outPIDs
                 else{
+                    System.out.println(playerBP + " is lower than " + highestPlayerBP);
                     addOutPID(currentPIDToCheck);
+                    System.out.println("inPIDs:" + inPIDs);
+                    System.out.println("outPIDs:" + outPIDs);
                 }
             }
-
-            System.out.println("inPIDs:" + inPIDs);
 
             // By here, we are done, and we should know who the winner(s) is/are
             // If it's the second go-around, and we have another tie, everybody wins
