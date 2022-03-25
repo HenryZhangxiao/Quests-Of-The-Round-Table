@@ -189,7 +189,8 @@ public class Tournament {
     }
 
     private void restartTournament() {
-        battling();
+        goToNextTurn();
+        participating();
     }
 
     public void setPlayerCards(int pid, Card[] _playerCards){
