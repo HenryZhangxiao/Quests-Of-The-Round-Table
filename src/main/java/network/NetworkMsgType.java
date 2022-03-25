@@ -42,7 +42,7 @@ public enum NetworkMsgType {
 
     TEST_BEGIN, //To Client [drawerID, testID] - To Server UNHANDLED
     TEST_BID_QUERY, //To Client[testID, questID, currentBid] - To Server [declineBoolean, currentBid]
-    TEST_FINAL_RESULT, //To Client[testID, winnerID, currentBid] - To Server UNHANDLED
+    TEST_FINAL_RESULT, //To Client[testID, winnerIDs, currentBid] - To Server UNHANDLED
 
 
 }

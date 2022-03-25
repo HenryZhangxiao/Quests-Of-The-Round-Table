@@ -36,6 +36,6 @@ interface ClientEventListener {
 
     void onTestBegin(int drawerID, int testID);
     void onTestBidQuery(int testID, int questID, int currentBid);
-    void onTestFinalResult(int testID, int winnerID, int currentBid);
+    void onTestFinalResult(int testID, int[] winnerIDs, int currentBid);
 
 }
