@@ -511,13 +511,6 @@ public class Game extends Thread implements ServerEventListener {
                 System.out.println("We have a bid winner.");
                 quest.getTest().testResolution();
             }
-            quest.getTest().addInPID(plyID);
-            quest.getTest().setCurrentBid(bid);
-
-            System.out.println("Player " + plyID + " placed bid " + bid + " for the test");
-
-            quest.getTest().goToNextTurn();
-            quest.getTest().bidding();   //previously participating
         }
         else{ // Player declined to bid
             quest.getTest().addOutPID(plyID);
