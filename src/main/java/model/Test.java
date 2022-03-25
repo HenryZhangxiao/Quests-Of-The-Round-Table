@@ -54,17 +54,17 @@ public class Test {
         NetworkServer.get().sendNetMessageToAllPlayers(testStartMsg);
 
         // Prompt current player for a bid
-        ServerMessage bidQuery = new ServerMessage(NetworkMsgType.TEST_BID_QUERY, NetworkMessage.pack(testCard.id, currentBid));
+        ServerMessage bidQuery = new ServerMessage(NetworkMsgType.TEST_BID_QUERY, NetworkMessage.pack(testCard.id, Game.get().getQuest().getQuestCard().getID(),currentBid));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(bidQuery);
     }
-
+/*
     //happens if player who drew quest doesn't sponsor it, goes around table
     public void sponsoring() {
         //ask current player if they want to sponsor
         ServerMessage sponsorQuery = new ServerMessage(NetworkMsgType.QUEST_SPONSOR_QUERY,NetworkMessage.pack(testCard.id));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
     }
-
+*/
     //players choose if they want to join the quest
     //once it gets to the sponsor, then everyone has opted in or out, sponsor picks cards for quest
     public void bidding() {

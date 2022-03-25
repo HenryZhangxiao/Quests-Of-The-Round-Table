@@ -75,6 +75,9 @@ public class Game extends Thread implements ServerEventListener {
         test.drawn();
     }
 
+    public Quest getQuest(){
+       return quest;
+    }
 
     //endregion
 
