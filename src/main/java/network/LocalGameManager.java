@@ -359,4 +359,9 @@ public class LocalGameManager implements ClientEventListener{
     public void onTestFinalResult(int testID, int[] winnerIDs, int currentBid) {
 
     }
+
+    @Override
+    public void onGameFinalResult(int[] winnerIDs) {
+
+    }
 }

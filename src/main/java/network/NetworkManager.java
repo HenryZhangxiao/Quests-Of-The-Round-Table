@@ -235,6 +235,11 @@ public class NetworkManager extends Thread {
                     l.onTestFinalResult((int)_objs.get(0),(int[]) _objs.get(1),(int) _objs.get(2));
                 }
                 break;
+            case GAME_FINAL_RESULT:
+                for (ClientEventListener l: _listeners) {
+                    l.onGameFinalResult((int[])_objs.get(0));
+                }
+                break;
             default:
                 System.out.println("Default Message Received.");
                 break;

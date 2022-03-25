@@ -38,4 +38,6 @@ interface ClientEventListener {
     void onTestBidQuery(int testID, int questID, int currentBid);
     void onTestFinalResult(int testID, int[] winnerIDs, int currentBid);
 
+    void onGameFinalResult(int[] winnerIDs);
+
 }
