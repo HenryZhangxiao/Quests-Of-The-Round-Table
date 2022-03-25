@@ -156,7 +156,9 @@ public class Tournament {
             }
             // If there is a tie, and it's not the second round, we need to repeat the tournament
             if(inPIDs.size() >= 2){
-                //TODO: Network message to alert players that there was a tie amongst inPIDs
+                ServerMessage tieMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_TIE,NetworkMessage.pack(tournamentCard.getID()));
+                NetworkServer.get().sendNetMessageToAllPlayers(tieMsg);
+
                 restartTournament();
             }
             // Otherwise, no tie so send winning message to inPID
