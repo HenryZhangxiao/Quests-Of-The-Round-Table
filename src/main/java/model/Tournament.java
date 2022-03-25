@@ -168,6 +168,7 @@ public class Tournament {
             // If there is a tie, and it's not the second round, we need to repeat the tournament
             if(inPIDs.size() >= 2){
                 System.out.println("tie in the first round");
+
                 ServerMessage tieMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_TIE,NetworkMessage.pack(tournamentCard.getID()));
                 NetworkServer.get().sendNetMessageToAllPlayers(tieMsg);
 
@@ -184,7 +185,7 @@ public class Tournament {
                 ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(inPIDs.get(0),shields));
                 NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
 
-                ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(inPIDs.get(0)));
+                ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(inPIDs));
                 NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
 
                 //Clear all Amours in play
