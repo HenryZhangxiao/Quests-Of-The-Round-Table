@@ -1,6 +1,7 @@
 package gui;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -29,6 +30,7 @@ public class App extends Application {
         var scene = new Scene(View.get(), View.get().getWidth(), View.get().getHeight());
 
         stage.setScene(scene);
+        stage.setResizable(false);
 
         //Join/Create Game popup.
         doJoinPopup();
@@ -45,6 +47,11 @@ public class App extends Application {
 
         stage.setTitle("Quests of the Round Table");
         stage.show();
+
+        stage.setOnCloseRequest(e -> {
+            stop();
+            Platform.exit();
+        });
     }
 
     public static void main(String[] args) {

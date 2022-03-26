@@ -11,6 +11,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.*;
 import network.*;
@@ -64,6 +65,11 @@ public class TournamentParticipationView {
     private void setup() {
         Stage stage = new Stage();
         Group root = new Group();
+
+        stage.setOnCloseRequest(e -> e.consume());
+        stage.setResizable(false);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(View.get().getScene().getWindow());
 
         //The areas for the selected cards and the cards in the hand
         selectArea = new Rectangle(55,200,720,180);

@@ -11,6 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import model.*;
@@ -72,8 +73,12 @@ public class PreviewStageView {
 
         Scene scene = new Scene(root, cardArea.getWidth() + 40, 220);
         stage.setScene(scene);
-        stage.initStyle(StageStyle.UNDECORATED);
+
+        stage.setOnCloseRequest(e -> e.consume());
         stage.setResizable(false);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(View.get().getScene().getWindow());
+
         stage.showAndWait();
 
     }

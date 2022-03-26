@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import network.LocalGameManager;
 
@@ -49,6 +50,12 @@ public class QuestResultView {
 
         Scene scene = new Scene(root, 200, 100);
         stage.setScene(scene);
+
+        stage.setOnCloseRequest(e -> e.consume());
+        stage.setResizable(false);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(View.get().getScene().getWindow());
+
         stage.showAndWait();
     }
 }

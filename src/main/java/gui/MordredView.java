@@ -11,6 +11,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.Card;
 import model.MordredFoe;
@@ -158,6 +159,11 @@ public class MordredView {
 
         //Draws all the cards
         update();
+
+        stage.setOnCloseRequest(e -> e.consume());
+        stage.setResizable(false);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(View.get().getScene().getWindow());
 
         //Opens the window and waits.
         stage.setScene(s1);

@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.*;
 import network.*;
@@ -271,6 +272,12 @@ public class QuestSponsorView {
 
         root.getChildren().addAll(labels,noBtn,yesBtn,selectionGroup,handGroup);
         Scene scene = new Scene(root,width,height);
+
+        stage.setOnCloseRequest(e -> e.consume());
+        stage.setResizable(false);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(View.get().getScene().getWindow());
+
         stage.setScene(scene);
         stage.setTitle((LocalGameManager.get().getLocalPlayer().getPlayerNum() + 1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
         stage.showAndWait();

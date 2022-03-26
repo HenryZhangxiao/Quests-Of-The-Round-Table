@@ -12,6 +12,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import model.*;
@@ -302,8 +303,12 @@ public class EventStoryView {
         //Opens the window and waits.
         stage.setScene(s1);
         stage.setTitle(String.valueOf(LocalGameManager.get().getLocalPlayer().getPlayerNum()) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
+
+        stage.setOnCloseRequest(e -> e.consume());
         stage.setResizable(false);
-        stage.initStyle(StageStyle.UNDECORATED);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(View.get().getScene().getWindow());
+
         stage.showAndWait();
     }
 

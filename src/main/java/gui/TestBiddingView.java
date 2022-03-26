@@ -12,6 +12,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.*;
 import network.*;
@@ -184,6 +185,11 @@ public class TestBiddingView {
 
         //Puts everything together
         Scene scene = new Scene(root,width,height);
+
+        stage.setOnCloseRequest(e -> e.consume());
+        stage.setResizable(false);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(View.get().getScene().getWindow());
 
         //Opens the window and waits.
         stage.setScene(scene);
