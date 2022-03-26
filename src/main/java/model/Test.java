@@ -89,7 +89,7 @@ public class Test {
         */
 
         // The winner needs to discard cards
-        ServerMessage discardMsg = new ServerMessage(NetworkMsgType.CARD_DISCARD_X,NetworkMessage.pack(inPIDs.get(0), playerCards[inPIDs.get(0)]));
+        ServerMessage discardMsg = new ServerMessage(NetworkMsgType.CARD_DISCARD_X,NetworkMessage.pack(inPIDs.get(0), playerCards[inPIDs.get(0)],true));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(discardMsg);
 
 

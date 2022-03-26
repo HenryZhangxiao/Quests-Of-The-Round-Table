@@ -253,9 +253,9 @@ public class LocalGameManager implements ClientEventListener{
     }
 
     @Override
-    public void onCardDiscardX(int plyID, int[] cardIDs) {
-        //We dont worry about local player because the change is already done locally.
-        if(plyID == getLocalPlayer().getPlayerNum())
+    public void onCardDiscardX(int plyID, int[] cardIDs, boolean runForPlyID) {
+        //If we aren't running it for the plyID, then ignore. Useful if local player already discarded cards.
+        if(!runForPlyID && plyID == getLocalPlayer().getPlayerNum())
             return;
 
         getPlayerByID(plyID).discardCardsFromHand(cardIDs);

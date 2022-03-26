@@ -225,7 +225,7 @@ public class Game extends Thread implements ServerEventListener {
         getPlayerByID(plyID).discardCardsFromHand(cardIDs);
         deck.discardCards(Card.getCardsFromIDArray(cardIDs));
 
-        NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.CARD_DISCARD_X,NetworkMessage.pack(plyID,cardIDs)));
+        NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.CARD_DISCARD_X,NetworkMessage.pack(plyID,cardIDs,false)));
     }
 
     @Override

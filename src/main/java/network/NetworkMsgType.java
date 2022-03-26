@@ -23,7 +23,7 @@ public enum NetworkMsgType {
     CARD_DRAW, //To Client[playerID, cardID] - To Server [NULL]
     CARD_DRAW_X, //To Client [playerID, cardIDs] - To Server[drawAmount]
     CARD_DISCARD, //To Client [playerID, cardID] - To Server [cardID]
-    CARD_DISCARD_X, //To Client[playerID, cardIDs] - To Server [cardIDs]
+    CARD_DISCARD_X, //To Client[playerID, cardIDs, runForPlyID] - To Server [cardIDs] *set runForPlyID to true if originating from the server*
 
     STORY_CARD_DRAW, //To Client [playerID, drawnCardID] - To Server [playerID]
 
