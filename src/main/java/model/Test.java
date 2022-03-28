@@ -98,7 +98,10 @@ public class Test {
         ServerMessage testOverMsg = new ServerMessage(NetworkMsgType.TEST_FINAL_RESULT,NetworkMessage.pack(testCard.getID(),inPIDs.get(0), highestBid));
         NetworkServer.get().sendNetMessageToAllPlayers(testOverMsg);
 
-        //TODO: check if inPIDs get synced
+        // syncs outPIDs with Quest
+        for (int pid : outPIDs) {
+            Game.get().getQuest().addOutPID(pid);
+        }
 
         // set turn to last player before sponsor so the call to finishTurn() ends the stage
         while (Game.get().getQuest().getNextPID(Game.get().getQuest().getTurnPlayerID()) != Game.get().getQuest().getSponsorPID())
