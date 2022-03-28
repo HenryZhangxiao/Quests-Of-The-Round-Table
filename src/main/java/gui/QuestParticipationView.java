@@ -169,13 +169,16 @@ public class QuestParticipationView {
             aCard.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                     if(hand.get(finalI) instanceof AmourCard){
+                        if(LocalGameManager.get().getLocalPlayer().getAmour() != null)
+                            return;
+
                         LocalGameManager.get().getLocalPlayer().setAmour((AmourCard) hand.get(finalI));
                         LocalGameManager.get().getLocalPlayer().hand.remove(hand.get(finalI));
                         hand.remove(finalI);
                         Platform.runLater(() -> {
                             View.get().update();}
                         );
-                        NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(hand.get(finalI).getID())));
+                        NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(LocalGameManager.get().getLocalPlayer().getAmour().getID())));
                         updateCards();
                         return;
                     }
