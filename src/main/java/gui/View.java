@@ -7,6 +7,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.skin.LabeledSkinBase;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -14,6 +15,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -50,6 +52,9 @@ public class View extends Pane {
     private Button advDeck;
     private Button endTurn;
     private Label localPly;
+    private Label errorLabel;
+    private Label turnLabel;
+    private Font errorFont;
 
     public static View get() {
         if (view == null)
@@ -145,6 +150,12 @@ public class View extends Pane {
 
     public void update() {
         endTurn.setDisable(!LocalGameManager.get().isMyTurn());
+        storyDeck.setDisable(!LocalGameManager.get().isMyTurn());
+        advDeck.setDisable(!LocalGameManager.get().isMyTurn());
+        if(LocalGameManager.get().isMyTurn())
+            turnLabel.setText("It is your turn.");
+        else
+            turnLabel.setText("It is currently " + LocalGameManager.get().getPlayerByID(LocalGameManager.get().getTurnID()).getPlayerName() + "'s turn.");
 
         int[] cardIDs = LocalGameManager.get().getLocalPlayer().getHandCardIDs();
         // index for ImageView in local arraylist cards
@@ -320,12 +331,30 @@ public class View extends Pane {
         endTurn.relocate(storyDeck.getLayoutX() + 440, storyDeck.getLayoutY() + 110);
         endTurn.setPrefSize(100,30);
         endTurn.setDisable(true);
-        endTurn.setOnAction(e -> LocalGameManager.get().finishTurn());
+        endTurn.setOnAction(e -> {
+            if(LocalGameManager.get().getLocalPlayer().hand.size() > 12){
+                errorLabel.setVisible(true);
+                return;
+            }
+
+            errorLabel.setVisible(false);
+            LocalGameManager.get().finishTurn();
+        });
         getChildren().add(endTurn);
 
         localPly = new Label((LocalGameManager.get().getLocalPlayer().getPlayerNum()+1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName() + "\n Shields: " + LocalGameManager.get().getLocalPlayer().getShields());
         localPly.relocate(20, getHeight()-50);
         getChildren().add(localPly);
+
+        turnLabel = new Label();
+        turnLabel.relocate(allyArea.getX(),allyArea.getY() + allyArea.getHeight() + 10);
+        getChildren().add(turnLabel);
+
+        errorLabel = new Label("You have too many cards in your hand. Use RMB to discard some.");
+        errorLabel.relocate(allyArea.getX(), allyArea.getY() + allyArea.getHeight() + 30);
+        errorLabel.setTextFill(Color.RED);
+        errorLabel.setVisible(false);
+        getChildren().add(errorLabel);
     }
 
     public static Rectangle2D getAdvCard(int id) {

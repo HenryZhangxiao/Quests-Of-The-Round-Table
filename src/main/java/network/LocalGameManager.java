@@ -73,6 +73,10 @@ public class LocalGameManager implements ClientEventListener{
             return false;
     }
 
+    public int getTurnID(){
+        return turnID;
+    }
+
     public void finishTurn(){
         if(!isMyTurn() || localPlayer.hand.size() > 12)
             return;
