@@ -113,6 +113,9 @@ public class Quest {
                     playerBP += ((WeaponCard)playerCards[turnPlayerID][i]).getBP();
                 }
 
+                //Adds the BP for the players allies and amour currently in play
+                playerBP += AllyCard.getBPForAllies(Game.get().getPlayerByID(turnPlayerID).getAllies(),questCard,Game.get().getPlayerByID(turnPlayerID).getAmour());
+
                 //add up current foe's battle points
                 //assumes the first card in a stage will be the foe
                 int foeBP;
