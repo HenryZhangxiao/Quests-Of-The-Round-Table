@@ -306,11 +306,11 @@ public class LocalGameManager implements ClientEventListener{
     }
 
     @Override
-    public void onQuestFinalResult(int winnerID, int[][] sponsorCards) {
+    public void onQuestFinalResult(int[] winnerIDs, int[][] sponsorCards) {
         //Called when the quest is over and shows the winning results. sponsorCards is separated by stage. eg: sponsorCards[0] will get stage 1's cards.
         System.out.println("CLIENT: The Quest has ended.");
 
-        QuestResultView q = new QuestResultView(winnerID);
+        QuestResultView q = new QuestResultView(winnerIDs);
         usedMerlin = false;
     }
 

@@ -25,7 +25,7 @@ interface ClientEventListener {
     void onQuestSponsorQuery(int questCardID);
     void onQuestParticipateQuery(int sponsorPlyID, int questID, int[] stageCardIDs);
     void onQuestStageResult(int questCardID, boolean wonStage, int[] stageCardsIDs, int[] playerCardsIDs);
-    void onQuestFinalResult(int winnerID, int[][] sponsorCards);
+    void onQuestFinalResult(int[] winnerIDs, int[][] sponsorCards);
 
     void onEventStoryBegin(int drawerID, int eventCardID);
     void onMordredDiscard(int cardUserID, int removedCardPlayerID, int allyCardID);

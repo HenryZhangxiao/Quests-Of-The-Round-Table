@@ -203,7 +203,12 @@ public class Quest {
             }
             else{
                 //turn has gone around table and back to player
-                ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.QUEST_FINAL_RESULT,NetworkMessage.pack(winnerID, Card.getStageCardIDsFromMDArray(stageCards)));
+
+                int[] winnerIDs = new int[inPIDs.size()];
+                for(int i = 0; i < winnerIDs.length; i++)
+                    winnerIDs[i] = inPIDs.get(i);
+
+                ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.QUEST_FINAL_RESULT,NetworkMessage.pack(winnerIDs, Card.getStageCardIDsFromMDArray(stageCards)));
                 NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
 
                 //Clear all Amours in play
