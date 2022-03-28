@@ -517,11 +517,12 @@ public class Game extends Thread implements ServerEventListener {
         if(!declined){
             //quest.getTest().addInPID(plyID);
             quest.getTest().setCurrentBid(bid);
+            quest.getTest().setBiddedOn(true);
             quest.getTest().setPlayerCards(plyID, cardIDs);
 
             System.out.println("Player " + plyID + " placed bid " + bid + " for the test");
 
-            if(quest.getTest().getInPIDs().size() > 1){
+            if(quest.getTest().getInPIDs().size() > 1 || !quest.getTest().getBiddedOn()){
                 System.out.println("Still more eager bidders. Keep querying");
                 quest.getTest().goToNextTurn();
                 quest.getTest().bidding();   //previously participating
@@ -535,7 +536,7 @@ public class Game extends Thread implements ServerEventListener {
             quest.getTest().addOutPID(plyID);
             System.out.println(plyID + " declined test participation");
             // If there are still more than 1 bidders, keep querying
-            if(quest.getTest().getInPIDs().size() > 1){
+            if(quest.getTest().getInPIDs().size() > 1 || !quest.getTest().getBiddedOn()){
                 System.out.println("Still more eager bidders. Keep querying");
                 quest.getTest().goToNextTurn();
                 quest.getTest().bidding();   //previously participating

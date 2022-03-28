@@ -17,6 +17,7 @@ public class Test {
     private int currentStage;
     private int highestBid;
     private int currentBid;
+    private boolean biddedOn;
 
     private int[][] playerCards;
 
@@ -32,6 +33,7 @@ public class Test {
         inPIDs = new ArrayList<>(Game.get().getQuest().getInPIDs());
         playerCards = new int[numPlayers][];
 
+        biddedOn = false;
         currentStage = 0;
         // Init current/highest bid to min-1 to allow min bid on first query (only bids higher than current bid are accepted locally)
         highestBid = testCard.getMinimumBid() - 1;
@@ -130,6 +132,11 @@ public class Test {
         playerCards[pid] = _playerCards;
     }
 
+    public void setBiddedOn(boolean bidded){
+        biddedOn = bidded;
+    }
+
+
     public int getTestDrawerPID(){ return testDrawerPID;}
 
     public ArrayList<Integer> getInPIDs() {
@@ -150,6 +157,10 @@ public class Test {
 
     public int getHighestBid() {
         return highestBid;
+    }
+
+    public boolean getBiddedOn() {
+        return biddedOn;
     }
 
     public int getTurnPlayerID() {
