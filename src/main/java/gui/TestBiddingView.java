@@ -49,6 +49,9 @@ public class TestBiddingView {
     Label errorLabel;
     Label amourLabel;
 
+    // Button to bid
+    Button acceptButton;
+
     //Groups of each ImageView that contains only the card ImageViews.
     Group bidCardGroup = new Group();
     Group handCardGroup = new Group();
@@ -156,7 +159,7 @@ public class TestBiddingView {
         });
 
         //Accept button
-        Button acceptButton = new Button();
+        acceptButton = new Button();
         acceptButton.setLayoutX(handArea.getX() + handArea.getWidth() - 100);
         acceptButton.setLayoutY(height - 500);
         acceptButton.setMinWidth(100);
@@ -164,13 +167,14 @@ public class TestBiddingView {
         acceptButton.setText("Bid!");
 
         acceptButton.setOnAction(e -> {
-            if (bidCards.size() >= minBid) {
+            int freeBids = AllyCard.getBidsForAllies(LocalGameManager.get().getLocalPlayer().getAllies(),questCard,LocalGameManager.get().getLocalPlayer().getAmour());
+            if (bidCards.size() + freeBids >= minBid) {
                 int[] sendCards = new int[bidCards.size()];
                 for (int i = 0; i < bidCards.size(); i++){
                     sendCards[i] = bidCards.get(i).getID();
                 }
 
-                LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.TEST_BID_QUERY,NetworkMessage.pack(false,bidCards.size(),sendCards));
+                LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.TEST_BID_QUERY,NetworkMessage.pack(false,bidCards.size() + freeBids,sendCards));
                 NetworkManager.get().sendNetMessageToServer(msg);
 
                 stage.close();
@@ -209,6 +213,9 @@ public class TestBiddingView {
 
         totalBidLabel.setText("You have " + freeBids + " from allies and amours in play\nYou have discarded " +
                 numCardsBid + " card(s) for a total bid of " + (freeBids + numCardsBid));
+
+        // only set bid button to visible if bid is legal
+        acceptButton.setDisable(freeBids + numCardsBid < minBid);
 
         //Drawing the selected cards
         for(int i = 0; i < bidCards.size(); i++){
