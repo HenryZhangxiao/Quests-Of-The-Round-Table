@@ -12,11 +12,11 @@ import network.LocalGameManager;
 
 public class QuestResultView {
 
-    private final int winnerID;
+    private final int[] winnerIDs;
 
-    public QuestResultView(int winner) {
+    public QuestResultView(int[] winners) {
 
-        winnerID = winner;
+        winnerIDs = winners;
 
         Platform.runLater(this::setup);
     }
@@ -26,12 +26,13 @@ public class QuestResultView {
         VBox root = new VBox();
 
         Label result = new Label();
-        if (winnerID == -1) {
+        if (winnerIDs.length == 0) {
             result.setText("Sorry, no one won this quest");
-        } else if (LocalGameManager.get().getLocalPlayer().getPlayerNum() == winnerID) {
-            result.setText("Congratulations! You won the quest");
         } else {
-            result.setText(LocalGameManager.get().getPlayerByID(winnerID).getPlayerName() + " won this quest");
+            String str = "";
+            for(int i = 0; i < winnerIDs.length; i++)
+                str += LocalGameManager.get().getPlayerByID(winnerIDs[i]).getPlayerName() + "\n";
+            result.setText("The winner(s) of the quest are: \n" + str);
         }
 
         Button btn = new Button("OK");
