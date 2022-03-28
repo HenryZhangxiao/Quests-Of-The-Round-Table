@@ -27,6 +27,8 @@ public class StoryDeck extends Deck{
     private static final int NUM_TINTAGEL = 1;
     private static final int NUM_YORK = 1;
 
+    private static final int NUM_AMOURS = 8;
+
     protected void initializeCards() {
         // Quests
         for(int i = 0; i < NUM_HOLY_GRAIL; ++i){
@@ -97,6 +99,20 @@ public class StoryDeck extends Deck{
         for(int i = 0; i < NUM_YORK; ++i){
             cards.add(new YorkTournament());
         }
+
+        cards.add(new SirGalahadAlly());
+        cards.add(new SirLancelotAlly());
+        cards.add(new KingArthurAlly());
+        cards.add(new SirTristanAlly());
+        cards.add(new KingPellinoreAlly());
+        cards.add(new SirGawainAlly());
+        cards.add(new SirPercivalAlly());
+        cards.add(new QueenGuinevereAlly());
+        cards.add(new QueenIseultAlly());
+        cards.add(new MerlinAlly());
+
+        cards.add(new AmourCard());
+
 
         shuffle();
     }
