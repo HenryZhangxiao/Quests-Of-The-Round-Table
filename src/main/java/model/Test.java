@@ -28,7 +28,8 @@ public class Test {
         numPlayers = _numPlayers;
 
         outPIDs = new ArrayList<>();
-        inPIDs = new ArrayList<>();
+        //Init all players to being in until they fold
+        inPIDs = new ArrayList<>(Game.get().getQuest().getInPIDs());
         playerCards = new int[numPlayers][];
 
         currentStage = 0;
@@ -96,6 +97,14 @@ public class Test {
         // Tell everyone that the quest has been won by inPIDs.get(0)
         ServerMessage testOverMsg = new ServerMessage(NetworkMsgType.TEST_FINAL_RESULT,NetworkMessage.pack(testCard.getID(),inPIDs.get(0), highestBid));
         NetworkServer.get().sendNetMessageToAllPlayers(testOverMsg);
+
+        //TODO: check if inPIDs get synced
+
+        // set turn to last player before sponsor so the call to finishTurn() ends the stage
+        while (Game.get().getQuest().getNextPID(Game.get().getQuest().getTurnPlayerID()) != Game.get().getQuest().getSponsorPID())
+            Game.get().getQuest().goToNextTurn();
+
+        Game.get().getQuest().finishTurn();
 
     }
 

@@ -82,6 +82,20 @@ public class Quest {
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(sponsorQuery);
     }
 
+    public void startQuest(int _sponsorPID, Card[][] _stageCards) {
+        if (sponsorPID == -5) {
+            setSponsorPID(_sponsorPID);
+            setStages(_stageCards);
+            // initialize inPIDs in case of a test being the first stage
+            for (int pid = 0; pid < numPlayers; ++pid) {
+                if (pid != sponsorPID)
+                    addInPID(pid);
+            }
+            goToNextTurn(); // go to first player after sponsor
+            battleOrTest(); // depending on stage type, call participating() or create test
+        }
+    }
+
     //players choose if they want to join the quest
     //once it gets to the sponsor, then everyone has opted in or out, sponsor picks cards for quest
     public void participating() {
@@ -190,6 +204,26 @@ public class Quest {
         } else {
             currentStage++;
         }*/
+        finishTurn();
+    }
+
+    //can't check inPIDs in battleOrTest, b/c won't be in there for first stage, so have to do that before for subsequent stages
+
+    public void battleOrTest(){
+        if(stageCards[currentStage][0] instanceof FoeCard){
+            //battle the foe
+            participating();
+        }
+        else{
+            //do the test
+            //TODO: Test class function call
+            test = new Test((TestCard) stageCards[currentStage][0], turnPlayerID, numPlayers);
+            test.drawn();
+        }
+    }
+
+    // After a single player's turn is completed, go to next turn, finish stage if necessary, finish quest if necessary
+    public void finishTurn() {
         goToNextTurn();
 
         // if the next player to play is not the sponsor, query for participation
@@ -219,21 +253,6 @@ public class Quest {
 
                 Game.get().checkForWinner();
             }
-        }
-    }
-
-    //can't check inPIDs in battleOrTest, b/c won't be in there for first stage, so have to do that before for subsequent stages
-
-    public void battleOrTest(){
-        if(stageCards[currentStage][0] instanceof FoeCard){
-            //battle the foe
-            participating();
-        }
-        else{
-            //do the test
-            //TODO: Test class function call
-            test = new Test((TestCard) stageCards[currentStage][0], turnPlayerID, numPlayers);
-            test.drawn();
         }
     }
 

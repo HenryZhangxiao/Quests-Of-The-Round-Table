@@ -248,7 +248,7 @@ public class Game extends Thread implements ServerEventListener {
         //Start a quest/event/tournament here
         //Card c = storyDeck.drawCard();
         //For Testing. CardIDs are in Card
-        Card c = Card.getCardByID(51);
+        Card c = Card.getCardByID(36);
 
         ServerMessage msg = new ServerMessage(NetworkMsgType.STORY_CARD_DRAW,NetworkMessage.pack(plyID,c.id));
         NetworkServer.get().sendNetMessageToAllPlayers(msg);
@@ -428,14 +428,16 @@ public class Game extends Thread implements ServerEventListener {
             //}
             //else{
                 //valid selection
-                quest.setSponsorPID(plyID);
-                quest.setStages(stageCards);
+                //quest.setSponsorPID(plyID);
+                //quest.setStages(stageCards);
 
-                System.out.println("valid selection, to next turn");
 
-                quest.goToNextTurn();
-                quest.battleOrTest();   //previously participating
+            //quest.goToNextTurn();
+            //quest.battleOrTest();   //previously participating
             //}
+            System.out.println("valid selection, to next turn");
+
+            quest.startQuest(plyID, stageCards);
 
         }
         //next player is the one who drew the quest, meaning no one sponsored
@@ -513,7 +515,7 @@ public class Game extends Thread implements ServerEventListener {
         System.out.println("Player " + plyID + " asked for a bid");
         // Player chose to enter the tournament with a provided hand cardIDs
         if(!declined){
-            quest.getTest().addInPID(plyID);
+            //quest.getTest().addInPID(plyID);
             quest.getTest().setCurrentBid(bid);
             quest.getTest().setPlayerCards(plyID, cardIDs);
 
