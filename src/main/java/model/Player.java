@@ -65,6 +65,11 @@ public class Player{
     }
 
     public void discardCardsFromHand(int[] cardIDs){
+        if(cardIDs == null){
+            System.out.println("CLIENT: DiscardX Card IDs was null");
+            return;
+        }
+
         for(int i = 0; i < cardIDs.length; ++i){
             discardCardFromHand(cardIDs[i]);
         }
