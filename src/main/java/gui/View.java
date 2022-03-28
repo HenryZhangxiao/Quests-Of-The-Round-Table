@@ -239,7 +239,7 @@ public class View extends Pane {
                         LocalGameManager.get().getLocalPlayer().setAmour((AmourCard) LocalGameManager.get().getLocalPlayer().hand.get(finalI));
                         LocalGameManager.get().getLocalPlayer().hand.remove(finalI);
 
-                        NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.UPDATE_AMOUR, NetworkMessage.pack(LocalGameManager.get().getLocalPlayer().hand.get(finalI).getID())));
+                        NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.UPDATE_AMOUR, NetworkMessage.pack(LocalGameManager.get().getLocalPlayer().getAmour())));
                     }
                     else if(LocalGameManager.get().getLocalPlayer().hand.get(finalI) instanceof MordredFoe){
                         //Mordred's selection view
