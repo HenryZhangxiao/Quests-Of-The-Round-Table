@@ -273,7 +273,7 @@ public class TestBiddingView {
                             //Update LGM, Server, and main view
                             LocalGameManager.get().getLocalPlayer().setAmour((AmourCard) hand.get(finalI));
                             LocalGameManager.get().getLocalPlayer().hand.remove(hand.get(finalI));
-                            NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(hand.get(finalI).getID())));
+                            NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(LocalGameManager.get().getLocalPlayer().getAmour().getID())));
                             View.get().update();
 
                             hand.remove(finalI);
