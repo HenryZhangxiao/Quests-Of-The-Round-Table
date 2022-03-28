@@ -22,6 +22,9 @@ public class AdventureDeck extends Deck{
     private static final int NUM_BOAR = 4;
     private static final int NUM_THIEVES = 8;
 
+    private static final int NUM_TESTS = 2;
+
+    private static final int NUM_AMOURS = 8;
 
     protected void initializeCards(){
 
@@ -81,10 +84,29 @@ public class AdventureDeck extends Deck{
         }
 
         //allies
+        cards.add(new SirGalahadAlly());
+        cards.add(new SirLancelotAlly());
+        cards.add(new KingArthurAlly());
+        cards.add(new SirTristanAlly());
+        cards.add(new KingPellinoreAlly());
+        cards.add(new SirGawainAlly());
+        cards.add(new SirPercivalAlly());
+        cards.add(new QueenGuinevereAlly());
+        cards.add(new QueenIseultAlly());
+        cards.add(new MerlinAlly());
 
         //tests
+        for(int i = 0; i < NUM_TESTS; ++i){
+            cards.add(new TestOfMorganLeFeyTest());
+            cards.add(new TestOfTemptationTest());
+            cards.add(new TestOfValorTest());
+            cards.add(new TestOfTheQuestingBeastTest());
+        }
 
         //amours
+        for(int i = 0; i < NUM_AMOURS; ++i){
+            cards.add(new AmourCard());
+        }
 
         shuffle();
     }
