@@ -109,10 +109,10 @@ public class LocalGameManager implements ClientEventListener{
     public boolean getUsedMerlin() {return usedMerlin;}
     public void setUsedMerlin(boolean used) {usedMerlin = used;}
 
-    public void startGame(){
+    public void startGame(boolean riggedGame){
         if(!NetworkManager.get().isHost())
             return;
-        LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.START_GAME, null);
+        LocalClientMessage msg = new LocalClientMessage(NetworkMsgType.START_GAME, NetworkMessage.pack(riggedGame));
         NetworkManager.get().sendNetMessageToServer(msg);
     }
 
@@ -184,7 +184,11 @@ public class LocalGameManager implements ClientEventListener{
     @Override
     public void onTurnChange(int idOfPlayer) {
         turnID = idOfPlayer;
-        Platform.runLater(() -> View.get().update());
+        Platform.runLater(() -> {
+            View.get().enableTurnButtons();
+            View.get().update();
+        });
+
     }
 
     @Override
@@ -316,11 +320,13 @@ public class LocalGameManager implements ClientEventListener{
 
         QuestResultView q = new QuestResultView(winnerIDs);
         usedMerlin = false;
+        View.get().enableEndTurnButton();
     }
 
     @Override
     public void onEventStoryBegin(int plyID, int eventCardID) {
         EventStoryView e = new EventStoryView(plyID,eventCardID);
+        View.get().enableEndTurnButton();
     }
 
     @Override
@@ -360,6 +366,8 @@ public class LocalGameManager implements ClientEventListener{
         //Called when the tournament is over and shows the winning results (winnerID is [-1] for no winner)
         System.out.println("CLIENT: The Tournament has ended. winner ids are: " + winnerIDs);
         // TODO: GUI for results of tournament (maybe show shields won?)
+
+        View.get().enableEndTurnButton();
     }
 
     @Override
@@ -379,11 +387,37 @@ public class LocalGameManager implements ClientEventListener{
 
     @Override
     public void onGameFinalResult(int[] winnerIDs) {
-        //TODO some kind of pop up to display winner(s)
+        if(winnerIDs == null || winnerIDs.length == 0)
+            return;
 
         System.out.println("CLIENT: the winner(s) are: ");
         for(int i = 0; i < winnerIDs.length; ++i){
             System.out.println(winnerIDs[i]);
         }
+
+        Platform.runLater(() -> {
+            Alert a = new Alert(Alert.AlertType.INFORMATION);
+            a.setTitle("Victory!!");
+            if(winnerIDs.length == 1) {
+                a.setHeaderText("A victor has been decided!");
+                a.setContentText(getPlayerByID(winnerIDs[0]).getPlayerName() + " has won the game! Congratulations");
+            }
+            else{
+                a.setHeaderText( String.valueOf(winnerIDs.length) + " victors has been decided!");
+                String s = "";
+                for(int i = 0; i < winnerIDs.length;i++){
+                    if(i == winnerIDs.length - 1)
+                        s += "and " + getPlayerByID(winnerIDs[i]).getPlayerName();
+                    else {
+                        if(winnerIDs.length == 2)
+                            s += getPlayerByID(winnerIDs[i]).getPlayerName() + " ";
+                        else
+                            s += getPlayerByID(winnerIDs[i]).getPlayerName() + ", ";
+                    }
+                }
+                a.setContentText("Congratulations to " + s + " for winning the game!");
+            }
+            a.showAndWait();
+        });
     }
 }

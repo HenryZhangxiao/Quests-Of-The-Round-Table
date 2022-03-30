@@ -80,7 +80,7 @@ public class NetworkServer extends Thread{
                 break;
             case START_GAME:
                 for(ServerEventListener l: _listeners){
-                    l.onGameStart();
+                    l.onGameStart((boolean) _objs.get(0));
                 }
 
             case TEST_MESSAGE:

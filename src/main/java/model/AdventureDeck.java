@@ -111,6 +111,14 @@ public class AdventureDeck extends Deck{
         shuffle();
     }
 
+    @Override
+    protected void rigCards() {
+        //Todo rig cards?
+        cards.clear();
+
+        initializeCards();
+    }
+
     private void dealCardsToPlayers(ArrayList<Player> players){
         for(int i = 0; i < players.size(); ++i){
             for(int j = 0; j < 12; ++j){    //dealt 12 Cards at start of game

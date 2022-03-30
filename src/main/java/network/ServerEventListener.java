@@ -5,7 +5,7 @@ public interface ServerEventListener {
     void onPlayerConnect(int plyID, String playerName);
     void onPlayerDisconnect(int plyID, String playerName);
 
-    void onGameStart();
+    void onGameStart(boolean rigGame);
 
     void onTurnChange(int idOfPlayer);
 

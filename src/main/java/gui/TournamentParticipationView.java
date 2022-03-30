@@ -72,7 +72,7 @@ public class TournamentParticipationView {
         stage.initOwner(View.get().getScene().getWindow());
 
         //The areas for the selected cards and the cards in the hand
-        selectArea = new Rectangle(55,200,720,180);
+        selectArea = new Rectangle(55,220,890,180);
         handArea = new Rectangle(55,height-400,890,310);
 
         Font largeFont = new Font("Arial", 20);
@@ -91,17 +91,17 @@ public class TournamentParticipationView {
         selectionGroup.getChildren().add(totalBPLabel);
 
 
-        selectArea.setFill(Color.DARKBLUE);
+        selectArea.setFill(Color.SKYBLUE);
         selectArea.setStroke(Color.SADDLEBROWN);
         selectArea.setArcWidth(30);
         selectArea.setArcHeight(20);
         selectionGroup.getChildren().add(selectArea);
 
         //Error label to notify that two cards of the same type cant be added. Set to invisible by default
-        errorLabel = new Label("You cannot add two cards of the same type or play any foe cards!");
+        errorLabel = new Label("You cannot add two cards of the same type, play any foe cards, or play any test cards!");
         errorLabel.setFont(largeFont);
-        errorLabel.setLayoutX(20);
-        errorLabel.setLayoutY(150);
+        errorLabel.setLayoutX(selectArea.getX());
+        errorLabel.setLayoutY(selectArea.getY() + selectArea.getHeight() + 20);
         errorLabel.setTextFill(Color.RED);
         errorLabel.setVisible(false);
         selectionGroup.getChildren().add(errorLabel);
@@ -170,7 +170,7 @@ public class TournamentParticipationView {
 
         Scene scene = new Scene(root,width,height);
         stage.setScene(scene);
-        stage.setTitle((LocalGameManager.get().getLocalPlayer().getPlayerNum() + 1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
+        stage.setTitle("(" + (LocalGameManager.get().getLocalPlayer().getPlayerNum() + 1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName() + ") A Tournament begins!");
         stage.showAndWait();
     }
 
@@ -180,7 +180,7 @@ public class TournamentParticipationView {
         handCardGroup.getChildren().clear();
 
         //Calculates the BP of all selected cards
-        int bpVal = LocalGameManager.get().getLocalPlayer().getBattlePoints();
+        int bpVal = 0;
         //todo clean this up
         for(Card c: selectedCards){
             if(c instanceof FoeCard){
@@ -189,11 +189,18 @@ public class TournamentParticipationView {
             else if(c instanceof WeaponCard){
                 bpVal += ((WeaponCard) c).getBP();
             }
+            else if(c instanceof AllyCard){
+                bpVal += ((AllyCard) c).getBP();
+            }
+            else if(c instanceof AmourCard){
+                bpVal += ((AmourCard) c).getBP();
+            }
         }
-        //Calculates all BP bonuses for any allies or amours the player has in play
-        bpVal += AllyCard.getBPForAllies(LocalGameManager.get().getLocalPlayer().getAllies(),null,LocalGameManager.get().getLocalPlayer().getAmour());
 
-        totalBPLabel.setText("You have selected " + selectedCards.size() + " card(s) for a total BP value of " + bpVal);
+        //totalBPLabel.setText("You have selected " + selectedCards.size() + " card(s) for a total BP value of " + bpVal);
+        totalBPLabel.setText("Rank BP: " + String.valueOf(LocalGameManager.get().getLocalPlayer().getBattlePoints()) +"\n" +
+                "Selected weapon(s), Amour, and Allies BP: " + String.valueOf(bpVal) +"\n" +
+                "Total BP: " + String.valueOf(LocalGameManager.get().getLocalPlayer().getBattlePoints() + bpVal));
 
         //Drawing the selected cards
         for(int i = 0; i < selectedCards.size(); i++){
@@ -234,13 +241,13 @@ public class TournamentParticipationView {
             int finalI = i;
             aCard.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                    if(hand.get(finalI) instanceof AmourCard){
-                        LocalGameManager.get().getLocalPlayer().setAmour((AmourCard) hand.get(finalI));
-                        hand.remove(finalI);
-                        updateCards();
-                        NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(hand.get(finalI).getID())));
-                        return;
-                    }
+                    //if(hand.get(finalI) instanceof AmourCard){
+                    //    LocalGameManager.get().getLocalPlayer().setAmour((AmourCard) hand.get(finalI));
+                    //    hand.remove(finalI);
+                    //    updateCards();
+                    //    NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.UPDATE_AMOUR,NetworkMessage.pack(hand.get(finalI).getID())));
+                    //    return;
+                    //}
 
                     if(!validateCardSelection(hand.get(finalI))){
                         //Shows an error label because two of the same cards are selected.
@@ -258,7 +265,7 @@ public class TournamentParticipationView {
 
     public boolean validateCardSelection(Card c){
         //Simply checks to see if card is already in selection or is a foe card.
-        if(c instanceof FoeCard)
+        if(c instanceof FoeCard || c instanceof TestCard)
             return false;
 
         for (Card x: selectedCards) {

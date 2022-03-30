@@ -34,6 +34,9 @@ public class Game extends Thread implements ServerEventListener {
 
     private volatile boolean stopThread = false;
 
+    //Only for demo
+    public boolean riggedGame = false;
+
     private Game(){
         _players = new ArrayList<Player>();
         deck = new AdventureDeck();
@@ -50,6 +53,12 @@ public class Game extends Thread implements ServerEventListener {
         /*while (!stopThread){
 
         }*/
+    }
+
+    public void rigGames(){
+        riggedGame = true;
+        deck.rigCards();
+        storyDeck.rigCards();
     }
 
     //region Helpers
@@ -129,7 +138,10 @@ public class Game extends Thread implements ServerEventListener {
     }
 
     @Override
-    public void onGameStart() {
+    public void onGameStart(boolean riggedGame) {
+        if(riggedGame)
+            rigGames();
+
         gameStarted = true;
 
         ServerMessage msg = new ServerMessage(NetworkMsgType.START_GAME,null);
@@ -246,9 +258,9 @@ public class Game extends Thread implements ServerEventListener {
         }
 
         //Start a quest/event/tournament here
-        //Card c = storyDeck.drawCard();
-        //For Testing. CardIDs are in Card
-        Card c = Card.getCardByID(36);
+        Card c = storyDeck.drawCard();
+        //For Testing. CardIDs are in Card. Overrides demo rig
+        //Card c = Card.getCardByID(36);
 
         ServerMessage msg = new ServerMessage(NetworkMsgType.STORY_CARD_DRAW,NetworkMessage.pack(plyID,c.id));
         NetworkServer.get().sendNetMessageToAllPlayers(msg);

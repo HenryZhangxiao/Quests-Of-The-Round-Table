@@ -20,11 +20,11 @@ public abstract class AllyCard extends Card{
         freeBids = _freeBids;
     }
 
-    protected byte getBP(){
+    public byte getBP(){
         return bp;
     }
 
-    protected byte getFreeBids(){
+    public byte getFreeBids(){
         return freeBids;
     }
 

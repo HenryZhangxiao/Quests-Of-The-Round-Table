@@ -8,7 +8,7 @@ public enum NetworkMsgType {
     CONNECT, //Initial Connection. Server Sends ID to be assigned. Client replies with Name to use.
     DISCONNECT, //Unimplemented
     UPDATE_PLAYERLIST, //Sent from server with ID,Name, and CardIDs
-    START_GAME, //Sent by host to start game.
+    START_GAME, //Sent by host to start game. Argument boolean is true if game is rigged for demo
     TEST_MESSAGE, //For Testing
 
 

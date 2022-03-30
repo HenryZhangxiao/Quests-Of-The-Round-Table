@@ -7,7 +7,6 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.skin.LabeledSkinBase;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -28,6 +27,7 @@ import model.Card;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 public class View extends Pane {
 
@@ -55,6 +55,7 @@ public class View extends Pane {
     private Label errorLabel;
     private Label turnLabel;
     private Font errorFont;
+
 
     public static View get() {
         if (view == null)
@@ -94,10 +95,16 @@ public class View extends Pane {
 
         Button startBtn = new Button("Start Game");
         startBtn.setVisible(false);
-        startBtn.setOnAction(e -> LocalGameManager.get().startGame());
+        startBtn.setOnAction(e -> LocalGameManager.get().startGame(false));
+
+        Button rigBtn = new Button("Start Demo Game");
+        rigBtn.setVisible(false);
+        rigBtn.setOnAction(e -> {
+            LocalGameManager.get().startGame(true);
+        });
 
         VBox layout = new VBox(10);
-        layout.getChildren().addAll(lbl,startBtn);
+        layout.getChildren().addAll(lbl,startBtn,rigBtn);
         layout.setAlignment(Pos.CENTER);
         Scene waitScene = new Scene(layout, 300, 250);
         waitPopup.setScene(waitScene);
@@ -127,8 +134,10 @@ public class View extends Pane {
         };
 
         sleeper1.setOnSucceeded(workerStateEvent -> {
-            if (NetworkManager.get().isHost())
+            if (NetworkManager.get().isHost()) {
                 startBtn.setVisible(true);
+                rigBtn.setVisible(true);
+            }
             lbl.setText("Waiting for host to start game");
             new Thread(sleeper2).start();
         });
@@ -148,10 +157,22 @@ public class View extends Pane {
         waitPopup.showAndWait();
     }
 
-    public void update() {
-        endTurn.setDisable(!LocalGameManager.get().isMyTurn());
+    public void enableTurnButtons(){
         storyDeck.setDisable(!LocalGameManager.get().isMyTurn());
-        advDeck.setDisable(!LocalGameManager.get().isMyTurn());
+        endTurn.setDisable(true);
+    }
+
+    public void enableEndTurnButton(){
+        endTurn.setDisable(!LocalGameManager.get().isMyTurn());
+    }
+
+    public void update() {
+        //if(!LocalGameManager.get().isMyTurn()) {
+            //endTurn.setDisable(!LocalGameManager.get().isMyTurn());
+
+            advDeck.setDisable(!LocalGameManager.get().isMyTurn());
+        //}
+
         if(LocalGameManager.get().isMyTurn())
             turnLabel.setText("It is your turn.");
         else
@@ -295,14 +316,33 @@ public class View extends Pane {
         getChildren().add(allyGroup);
 
         storyDeck = new Button("Draw story card");
-        storyDeck.relocate(720, 240);
+        storyDeck.relocate(700, 240);
         storyDeck.setPrefSize(100,140);
-        storyDeck.setOnAction(e -> LocalGameManager.get().drawStory());
+        storyDeck.setDisable(true);
+        storyDeck.setOnAction(e -> {
+            storyDeck.setDisable(true);
+            //endTurn.setDisable(false);
+            LocalGameManager.get().drawStory();
+
+        });
         getChildren().add(storyDeck);
 
+
+        Rectangle storyDiscardArea = new Rectangle(storyDeck.getLayoutX() + 105, storyDeck.getLayoutY() - 5, 110, 150);
+        storyDiscardArea.setFill(new Color(0.4f,0,0,0.3f));
+        storyDiscardArea.setStroke(Color.SADDLEBROWN);
+        storyDiscardArea.setArcWidth(30);
+        storyDiscardArea.setArcHeight(20);
+        getChildren().add(storyDiscardArea);
+
+        Label storyDiscardLabel = new Label("Story Discard Pile");
+        storyDiscardLabel.setLayoutX(storyDiscardArea.getX() + 5);
+        storyDiscardLabel.setLayoutY(storyDiscardArea.getY() - 20);
+        getChildren().add(storyDiscardLabel);
+
         storyDiscard = new ImageView();
-        storyDiscard.setX(storyDeck.getLayoutX() + 110);
-        storyDiscard.setY(storyDeck.getLayoutY());
+        storyDiscard.setX(storyDiscardArea.getX() + 5);
+        storyDiscard.setY(storyDiscardArea.getY() + 5);
         storyDiscard.setFitWidth(100);
         storyDiscard.setFitHeight(140);
         storyDiscard.setPreserveRatio(true);
@@ -310,9 +350,22 @@ public class View extends Pane {
         storyDiscard.setViewport(getStoryCard(0));
         getChildren().add(storyDiscard);
 
+
+        Rectangle advDiscardArea = new Rectangle(storyDeck.getLayoutX() + 220, storyDeck.getLayoutY() - 5, 110, 150);
+        advDiscardArea.setFill(new Color(0.4f,0,0,0.3f));
+        advDiscardArea.setStroke(Color.SADDLEBROWN);
+        advDiscardArea.setArcWidth(30);
+        advDiscardArea.setArcHeight(20);
+        getChildren().add(advDiscardArea);
+
+        Label advDiscardLabel = new Label("Adventure Discard Pile");
+        advDiscardLabel.setLayoutX(advDiscardArea.getX() - 3);
+        advDiscardLabel.setLayoutY(advDiscardArea.getY() - 20);
+        getChildren().add(advDiscardLabel);
+
         advDiscard = new ImageView();
-        advDiscard.setX(storyDeck.getLayoutX() + 220);
-        advDiscard.setY(storyDeck.getLayoutY());
+        advDiscard.setX(advDiscardArea.getX() + 5);
+        advDiscard.setY(advDiscardArea.getY() + 5);
         advDiscard.setFitWidth(100);
         advDiscard.setFitHeight(140);
         advDiscard.setPreserveRatio(true);
@@ -321,14 +374,15 @@ public class View extends Pane {
         getChildren().add(advDiscard);
 
         advDeck = new Button("Draw\nadventure card");
-        advDeck.relocate(storyDeck.getLayoutX() + 330, advDiscard.getY());
+        advDeck.relocate(storyDeck.getLayoutX() + 340, advDiscard.getY());
         advDeck.setPrefSize(100,140);
         advDeck.setTextAlignment(TextAlignment.CENTER);
         advDeck.setOnAction(e -> LocalGameManager.get().drawCard());
-        getChildren().add(advDeck);
+        //Disables drawing adventure cards
+        //getChildren().add(advDeck);
 
         endTurn = new Button("End Turn");
-        endTurn.relocate(storyDeck.getLayoutX() + 440, storyDeck.getLayoutY() + 110);
+        endTurn.relocate(storyDeck.getLayoutX() + 450, storyDeck.getLayoutY() + 110);
         endTurn.setPrefSize(100,30);
         endTurn.setDisable(true);
         endTurn.setOnAction(e -> {
@@ -355,6 +409,8 @@ public class View extends Pane {
         errorLabel.setTextFill(Color.RED);
         errorLabel.setVisible(false);
         getChildren().add(errorLabel);
+
+        enableTurnButtons();
     }
 
     public static Rectangle2D getAdvCard(int id) {
