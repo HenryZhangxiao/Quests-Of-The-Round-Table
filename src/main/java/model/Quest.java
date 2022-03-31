@@ -235,16 +235,24 @@ public class Quest {
                 //turn has gone around table and back to player
 
                 // message that will update shields for all local versions of that player
-                int shields = Game.get().getPlayerByID(turnPlayerID).getShields();
-                shields += numVictoryShields;
-                Game.get().getPlayerByID(turnPlayerID).setShields(shields);
-
-                ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(turnPlayerID,shields));
-                NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
+                //int shields = Game.get().getPlayerByID(turnPlayerID).getShields();
+                //shields += numVictoryShields;
+                //Game.get().getPlayerByID(turnPlayerID).setShields(shields);
+//
+                //ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(turnPlayerID,shields));
+                //NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
 
                 int[] winnerIDs = new int[inPIDs.size()];
-                for(int i = 0; i < winnerIDs.length; i++)
+
+                for(int i = 0; i < winnerIDs.length; i++){
                     winnerIDs[i] = inPIDs.get(i);
+                    int shields = Game.get().getPlayerByID( winnerIDs[i]).getShields();
+                    shields += numVictoryShields;
+                    Game.get().getPlayerByID(winnerIDs[i]).setShields(shields);
+
+                    NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(winnerIDs[i],shields)));
+                }
+
 
                 ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.QUEST_FINAL_RESULT,NetworkMessage.pack(winnerIDs, Card.getStageCardIDsFromMDArray(stageCards)));
                 NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
