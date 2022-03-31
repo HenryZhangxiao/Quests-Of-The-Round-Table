@@ -260,7 +260,7 @@ public class Game extends Thread implements ServerEventListener {
         //Start a quest/event/tournament here
         Card c = storyDeck.drawCard();
         //For Testing. CardIDs are in Card. Overrides demo rig
-        //Card c = Card.getCardByID(36);
+        //Card c = Card.getCardByID(52);
 
         ServerMessage msg = new ServerMessage(NetworkMsgType.STORY_CARD_DRAW,NetworkMessage.pack(plyID,c.id));
         NetworkServer.get().sendNetMessageToAllPlayers(msg);
@@ -455,6 +455,10 @@ public class Game extends Thread implements ServerEventListener {
         //next player is the one who drew the quest, meaning no one sponsored
         else if(quest.getNextPID(quest.getTurnPlayerID()) == quest.getQuestDrawerPID()){
             System.out.println("quest over because quest drawer is next: " + quest.getQuestDrawerPID());
+
+            ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.QUEST_FINAL_RESULT,NetworkMessage.pack(new int[0], new int[0][]));
+            NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
+
             quest = null;
         }
         else{

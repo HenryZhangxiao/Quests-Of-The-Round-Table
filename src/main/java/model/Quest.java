@@ -162,13 +162,7 @@ public class Quest {
 
                     //beat foe of last stage, get shields
                     if(currentStage+1 == questCard.getStages()){
-                        // message that will update shields for all local versions of that player
-                        int shields = Game.get().getPlayerByID(turnPlayerID).getShields();
-                        shields += numVictoryShields;
-                        Game.get().getPlayerByID(turnPlayerID).setShields(shields);
 
-                        ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(turnPlayerID,shields));
-                        NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
 
 
                         winnerID = turnPlayerID;
@@ -216,7 +210,6 @@ public class Quest {
         }
         else{
             //do the test
-            //TODO: Test class function call
             test = new Test((TestCard) stageCards[currentStage][0], turnPlayerID, numPlayers);
             test.drawn();
         }
@@ -240,6 +233,14 @@ public class Quest {
             }
             else{
                 //turn has gone around table and back to player
+
+                // message that will update shields for all local versions of that player
+                int shields = Game.get().getPlayerByID(turnPlayerID).getShields();
+                shields += numVictoryShields;
+                Game.get().getPlayerByID(turnPlayerID).setShields(shields);
+
+                ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(turnPlayerID,shields));
+                NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
 
                 int[] winnerIDs = new int[inPIDs.size()];
                 for(int i = 0; i < winnerIDs.length; i++)

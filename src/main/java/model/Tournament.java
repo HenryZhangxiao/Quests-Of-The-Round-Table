@@ -115,6 +115,9 @@ public class Tournament {
 
             ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(inPIDs.get(0),shields));
             NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
+
+            ServerMessage finalResultMsg = new ServerMessage(NetworkMsgType.TOURNAMENT_FINAL_RESULT,NetworkMessage.pack(new int[] {inPIDs.get(0)}));
+            NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
         }
         else{ // More than one participant so calculate winner
             int playerBP;
