@@ -56,7 +56,7 @@ public class TournamentParticipationView {
         selectionViews = new ArrayList<>();
 
         //Loads the image
-        advCards = new Image(new File("src/resources/advComposite.jpg").toURI().toString());
+        advCards = View.get().getAdvCards();
 
         //To prevent JavaFX from yelling about threads.
         Platform.runLater(this::setup);

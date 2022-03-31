@@ -63,8 +63,8 @@ public class EventStoryView {
         selectedCards = new ArrayList<>();
 
         //Loads the image
-        advCards = new Image(new File("src/resources/advComposite.jpg").toURI().toString());
-        storyCards = new Image(new File("src/resources/storyComposite.jpg").toURI().toString());
+        advCards = View.get().getAdvCards();
+        storyCards = View.get().getStoryCards();
 
          if(eventCard instanceof KingsCallToArmsEvent){
             discardCards = true;

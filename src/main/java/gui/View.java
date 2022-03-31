@@ -68,8 +68,10 @@ public class View extends Pane {
         setWidth(1280);
         setHeight(720);
 
-        advCards = new Image(new File("src/resources/advComposite.jpg").toURI().toString());
-        storyCards = new Image(new File("src/resources/storyComposite.jpg").toURI().toString());
+        //advCards = new Image(new File("src/main/resources/advComposite.jpg").toURI().toString());
+        //storyCards = new Image(new File("src/main/resources/storyComposite.jpg").toURI().toString());
+        advCards = new Image("/advComposite.jpg");
+        storyCards = new Image("/storyComposite.jpg");
     }
 
     public Button getStoryDeck() {
@@ -216,8 +218,8 @@ public class View extends Pane {
     }
 
     private void gameViewInit() {
-        Image advCards = new Image(new File("src/resources/advComposite.jpg").toURI().toString());
-        Image storyCards = new Image(new File("src/resources/storyComposite.jpg").toURI().toString());
+        //Image advCards = new Image(new File("src/resources/advComposite.jpg").toURI().toString());
+        //Image storyCards = new Image(new File("src/resources/storyComposite.jpg").toURI().toString());
 
         Group hand = new Group();
         Group allyGroup = new Group();
@@ -256,6 +258,9 @@ public class View extends Pane {
                         NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.UPDATE_ALLIES, NetworkMessage.pack(LocalGameManager.get().getLocalPlayer().getAllyCardIDs())));
                     }
                     else if(LocalGameManager.get().getLocalPlayer().hand.get(finalI) instanceof AmourCard){
+                        if(LocalGameManager.get().getLocalPlayer().getAmour() != null)
+                            return;
+
                         //Playing the amour card.
                         LocalGameManager.get().getLocalPlayer().setAmour((AmourCard) LocalGameManager.get().getLocalPlayer().hand.get(finalI));
                         LocalGameManager.get().getLocalPlayer().hand.remove(finalI);

@@ -68,7 +68,7 @@ public class TestBiddingView {
         bidViews = new ArrayList<>();
 
         //Loads the image
-        advCards = new Image(new File("src/resources/advComposite.jpg").toURI().toString());
+        advCards = View.get().getAdvCards();
 
         questCard = (QuestCard) Card.getCardByID(questCardID);
         TestCard testCard = (TestCard) Card.getCardByID(testCardID);

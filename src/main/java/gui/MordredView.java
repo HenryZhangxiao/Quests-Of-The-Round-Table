@@ -37,7 +37,7 @@ public class MordredView {
 
     public MordredView(int handIndex){
         //Loads the image
-        advCards = new Image(new File("src/resources/advComposite.jpg").toURI().toString());
+        advCards = advCards = View.get().getAdvCards();
 
         mainGroup = new Group();
 

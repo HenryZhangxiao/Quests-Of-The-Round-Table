@@ -29,7 +29,7 @@ public class PreviewStageView {
         this.stageCards = stageCards;
         this.questCard = questCard;
 
-        advCards = new Image(new File("src/resources/advComposite.jpg").toURI().toString());
+        advCards = View.get().getAdvCards();
 
 
         Platform.runLater(() -> setup());

@@ -67,7 +67,7 @@ public class QuestParticipationView {
         selectionViews = new ArrayList<>();
 
         //Loads the image
-        advCards = new Image(new File("src/resources/advComposite.jpg").toURI().toString());
+        advCards = View.get().getAdvCards();
 
         this.showDeclineButton = showDeclineButton;
         this.questCard = (QuestCard) Card.getCardByID(questID);
