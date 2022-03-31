@@ -38,6 +38,11 @@ public class Test {
         // Init current/highest bid to min-1 to allow min bid on first query (only bids higher than current bid are accepted locally)
         highestBid = testCard.getMinimumBid() - 1;
         currentBid = testCard.getMinimumBid() - 1;
+
+        for(int i = 0; i < _numPlayers; i++){
+            addInPID(i);
+        }
+        System.out.println("TEST DRAWER PID = " + _testDrawerPID);
     }
 
 
@@ -76,7 +81,7 @@ public class Test {
     //players choose if they want to join the quest
     //once it gets to the sponsor, then everyone has opted in or out, sponsor picks cards for quest
     public void bidding() {
-        System.out.println("in bidding TEST " + turnPlayerID);
+        System.out.println("in bidding TEST");
         //if(turnPlayerID != sponsorPID && !outPIDs.contains(turnPlayerID)) {
         ServerMessage bidQuery = new ServerMessage(NetworkMsgType.TEST_BID_QUERY, NetworkMessage.pack(testCard.id, Game.get().getQuest().getQuestCard().getID(), currentBid));
         NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(bidQuery);

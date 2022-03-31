@@ -543,7 +543,7 @@ public class Game extends Thread implements ServerEventListener {
             System.out.println(plyID + " declined test participation");
         }
         // If we still have to get bids from more players
-        if(quest.getTest().getInPIDs().size() > 1 || !quest.getTest().getBiddedOn()){
+        if(quest.getTest().getInPIDs().size() > 1 && !quest.getTest().getBiddedOn() && quest.getTest().getTestDrawerPID() != quest.getTest().getNextPID(plyID)){
             System.out.println("Still more eager bidders. Keep querying");
             quest.getTest().goToNextTurn();
             quest.getTest().bidding();   //previously participating
