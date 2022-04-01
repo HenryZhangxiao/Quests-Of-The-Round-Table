@@ -206,12 +206,24 @@ public class View extends Pane {
         }
 
         ArrayList<Card> advPile = LocalGameManager.get().getAdvPile();
-        if (!advPile.isEmpty())
-            advDiscard.setViewport(getAdvCard(advPile.get(advPile.size()-1).getID()));
+        if (!advPile.isEmpty()) {
+            advDiscard.setViewport(getAdvCard(advPile.get(advPile.size() - 1).getID()));
+            advDiscard.setVisible(true);
+        }
+        else {
+            advDiscard.setViewport(getAdvCard(0));
+            advDiscard.setVisible(false);
+        }
 
         ArrayList<Card> storyPile = LocalGameManager.get().getStoryPile();
-        if (!storyPile.isEmpty())
-            storyDiscard.setViewport(getStoryCard(storyPile.get(storyPile.size()-1).getID()));
+        if (!storyPile.isEmpty()) {
+            storyDiscard.setViewport(getStoryCard(storyPile.get(storyPile.size() - 1).getID()));
+            storyDiscard.setVisible(true);
+        }
+        else {
+            storyDiscard.setViewport(getStoryCard(0));
+            storyDiscard.setVisible(false);
+        }
 
         // Update shields
         String shieldsText = (LocalGameManager.get().getLocalPlayer().getPlayerNum()+1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName() + "\n Shields: " + LocalGameManager.get().getLocalPlayer().getShields();

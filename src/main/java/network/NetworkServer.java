@@ -178,6 +178,11 @@ public class NetworkServer extends Thread{
                     l.onMordredDiscard(c.getPlayerId(),(int)_objs.get(0),(int)_objs.get(1));
                 }
                 break;
+            case GAME_RESET:
+                for(ServerEventListener l: _listeners){
+                    l.onGameReset((boolean)_objs.get(0));
+                }
+                break;
             default:
                 System.out.println("SERVER: Unhandled Message Received.");
                 break;

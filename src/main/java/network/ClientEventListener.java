@@ -41,4 +41,5 @@ interface ClientEventListener {
 
     void onGameFinalResult(int[] winnerIDs);
 
+    void onGameReset(boolean playAgain);
 }

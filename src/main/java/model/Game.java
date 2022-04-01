@@ -90,6 +90,35 @@ public class Game extends Thread implements ServerEventListener {
 
     }
 
+    public void resetGame(){
+        deck.resetDeck();
+        storyDeck.resetDeck();
+
+        if(riggedGame){
+            deck.rigCards();
+            storyDeck.rigCards();
+        }
+        else{
+            deck.initializeCards();
+            storyDeck.initializeCards();
+        }
+
+        kingsRecognition = false;
+
+        turnPlayerID = 0;
+        NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.TURN_CHANGE,NetworkMessage.pack(turnPlayerID)));
+
+        for(Player p : _players){
+            p.resetPlayer();
+
+        }
+
+        NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.GAME_RESET,NetworkMessage.pack(true)));
+
+
+
+    }
+
     @Override
     public void onPlayerConnect(int plyID, String playerName) {
         Player p = new Player(plyID,playerName);
@@ -216,6 +245,7 @@ public class Game extends Thread implements ServerEventListener {
             cardIDs[i] = c.id;
         }
         ServerMessage msg = new ServerMessage(NetworkMsgType.CARD_DRAW_X,NetworkMessage.pack(plyID,cardIDs));
+        NetworkServer.get().sendNetMessageToAllPlayers(msg);
     }
 
     @Override
@@ -304,7 +334,6 @@ public class Game extends Thread implements ServerEventListener {
 
                 case "Pox":
                     //all players but drawer lose a shield
-                    // TODO: fix bug where drawer loses shields
                     for(Player p : _players) {
                         int shields = 0;
                         if(p.getPlayerNum() != plyID) {
@@ -372,29 +401,6 @@ public class Game extends Thread implements ServerEventListener {
                     return;
             }
 
-            //todo drawing card are here
-            /*
-
-            //The card drawing message should be sent to all players, regardless if they themselves are drawing a card. The one who
-            //is drawing a card is packed as the first argument in the obj array. eg plyID in the following messages.
-
-            //Drawing One Card. plyID is who is drawing/getting the card.
-            ServerMessage msg = new ServerMessage(NetworkMsgType.CARD_DRAW, NetworkMessage.pack(plyID, drawAdvCard().getID()));
-            NetworkServer.get().sendNetMessageToAllPlayers(msg);
-
-            //Drawing multiple cards. plyID is who is drawing/getting all the cards.
-            Card[] cards = deck.drawCardX(2);
-            ServerMessage msg2 = new ServerMessage(NetworkMsgType.CARD_DRAW_X, NetworkMessage.pack(plyID, Card.getCardIDsFromArray(cards)));
-            NetworkServer.get().sendNetMessageToAllPlayers(msg);
-
-            //Showing card to client. The select cards for Kings call to arms is already handled serverside
-            ServerMessage msg3 = new ServerMessage(NetworkMsgType.EVENT_BEGIN,NetworkMessage.pack(plyID,c.getID()));
-            NetworkServer.get().sendNetMessageToAllPlayers(msg3);
-
-
-             */
-
-
         }
 
         else if(c instanceof TournamentCard){
@@ -431,22 +437,6 @@ public class Game extends Thread implements ServerEventListener {
             ServerMessage msg = new ServerMessage(NetworkMsgType.CARD_DRAW_X, NetworkMessage.pack(plyID, Card.getCardIDsFromArray(cards)));
             NetworkServer.get().sendNetMessageToAllPlayers(msg);
 
-            //if sponsor card selection is valid, then go ahead, otherwise redo sponsoring
-            //Todo fix this. It validates clientside for now, but theres something up when sending cards over
-            //if(Quest.isValidSelection(stageCards, quest.getQuestCard())){
-            //    //invalid selection
-            //    System.out.println("SERVER: invalid selection from " + String.valueOf(plyID));
-            //    quest.sponsoring();
-            //}
-            //else{
-                //valid selection
-                //quest.setSponsorPID(plyID);
-                //quest.setStages(stageCards);
-
-
-            //quest.goToNextTurn();
-            //quest.battleOrTest();   //previously participating
-            //}
             System.out.println("valid selection, to next turn");
 
             quest.startQuest(plyID, stageCards);
@@ -560,6 +550,14 @@ public class Game extends Thread implements ServerEventListener {
             System.out.println("We have a bid winner.");
             quest.getTest().testResolution();
         }
+    }
+
+    @Override
+    public void onGameReset(boolean playAgain) {
+        if(playAgain)
+            resetGame();
+        else
+            NetworkServer.get().sendNetMessageToAllPlayers(new ServerMessage(NetworkMsgType.GAME_RESET,NetworkMessage.pack(false)));
     }
 
     public void checkForWinner(){

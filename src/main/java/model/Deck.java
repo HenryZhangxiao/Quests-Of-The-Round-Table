@@ -55,4 +55,9 @@ public abstract class Deck {
     protected abstract void initializeCards();
 
     protected abstract void rigCards();
+
+    public void resetDeck(){
+        discards.clear();
+        cards.clear();
+    }
 }

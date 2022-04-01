@@ -46,5 +46,7 @@ public enum NetworkMsgType {
     TEST_BID_QUERY, //To Client[testID, questID, currentBid] - To Server [declineBoolean, currentBid, cardIDs]
     TEST_FINAL_RESULT, //To Client[testID, winnerID, currentBid] - To Server UNHANDLED
 
-    GAME_FINAL_RESULT // To Client[winnerIDs] - To Server UNHANDLED
+    GAME_FINAL_RESULT, //To Client[winnerIDs] - To Server UNHANDLED
+
+    GAME_RESET //To Client [playAgainBoolean] - To Server [playAgainBoolean]
 }

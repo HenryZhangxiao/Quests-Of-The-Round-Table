@@ -2,10 +2,18 @@ package network;
 
 import gui.*;
 import javafx.application.Platform;
+import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import model.*;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class LocalGameManager implements ClientEventListener{
 
@@ -28,6 +36,8 @@ public class LocalGameManager implements ClientEventListener{
     private boolean usedMerlin = false;
 
     private boolean canDrawStory = true;
+
+    private Stage playAgainStage;
 
     private LocalGameManager(){
         _players = new ArrayList<>();
@@ -406,14 +416,22 @@ public class LocalGameManager implements ClientEventListener{
         }
 
         Platform.runLater(() -> {
-            Alert a = new Alert(Alert.AlertType.INFORMATION);
-            a.setTitle("Victory!!");
+            int width = 400;
+            int height = 300;
+
+            playAgainStage = new Stage();
+            Group mainGroup = new Group();
+            playAgainStage.setTitle("Victory!!");
+
+            Label winnerLabel = new Label();
+            winnerLabel.setLayoutY(10);
+            winnerLabel.setLayoutX(5);
+            mainGroup.getChildren().add(winnerLabel);
+
             if(winnerIDs.length == 1) {
-                a.setHeaderText("A victor has been decided!");
-                a.setContentText(getPlayerByID(winnerIDs[0]).getPlayerName() + " has won the game! Congratulations");
+                winnerLabel.setText(getPlayerByID(winnerIDs[0]).getPlayerName() + " has won the game! Congratulations!");
             }
             else{
-                a.setHeaderText( String.valueOf(winnerIDs.length) + " victors has been decided!");
                 String s = "";
                 for(int i = 0; i < winnerIDs.length;i++){
                     if(i == winnerIDs.length - 1)
@@ -425,9 +443,94 @@ public class LocalGameManager implements ClientEventListener{
                             s += getPlayerByID(winnerIDs[i]).getPlayerName() + ", ";
                     }
                 }
-                a.setContentText("Congratulations to " + s + " for winning the game!");
+                winnerLabel.setText("Congratulations to " + s + " for winning the game!");
             }
-            a.showAndWait();
+
+            Label playAgainLabel = new Label();
+            playAgainLabel.setLayoutY(height - 50);
+            playAgainLabel.setLayoutX(10);
+            mainGroup.getChildren().add(playAgainLabel);
+
+            if(NetworkManager.get().isHost()) {
+                playAgainLabel.setText("Would you like to play again?");
+
+                Button playAgainButton = new Button("Play Again?");
+                playAgainButton.setLayoutX(width/2 + 10);
+                playAgainButton.setLayoutY(height - 50);
+                playAgainButton.setMinWidth(width/2 - 20);
+                playAgainButton.setMinHeight(40);
+                playAgainButton.setOnAction(e -> {
+                    NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.GAME_RESET, NetworkMessage.pack(true)));
+                    playAgainStage.close();
+                });
+                mainGroup.getChildren().add(playAgainButton);
+
+                Button exitButton = new Button("Exit Game");
+                exitButton.setLayoutX(10);
+                exitButton.setLayoutY(height - 50);
+                exitButton.setMinWidth(width/2 - 20);
+                exitButton.setMinHeight(40);
+                exitButton.setOnAction(e -> {
+                    NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.GAME_RESET, NetworkMessage.pack(false)));
+                    playAgainStage.close();
+                });
+                mainGroup.getChildren().add(exitButton);
+
+            }
+            else{
+                playAgainLabel.setText("Waiting for host to exit or play again...");
+            }
+
+
+            //Puts everything together
+            Scene s1 = new Scene(mainGroup,width,height);
+
+            playAgainStage.setOnCloseRequest(e -> e.consume());
+            playAgainStage.setResizable(false);
+            playAgainStage.initModality(Modality.WINDOW_MODAL);
+            playAgainStage.initOwner(View.get().getScene().getWindow());
+
+            //Opens the window and waits.
+            playAgainStage.setScene(s1);
+            playAgainStage.showAndWait();
+
+
+        });
+    }
+
+    @Override
+    public void onGameReset(boolean playAgain) {
+        Platform.runLater(() -> {
+            if(playAgainStage != null)
+                playAgainStage.close();
+
+            if(!playAgain){
+                Alert a = new Alert(Alert.AlertType.INFORMATION);
+                a.setTitle("Closing the Game.");
+                a.setHeaderText("Ending the Game.");
+                a.setContentText("Host has decided not to play again. Goodbye!");
+                a.showAndWait().ifPresent(r -> {
+                    if(r == ButtonType.OK || r == ButtonType.CLOSE || r == ButtonType.APPLY){
+                        Platform.exit();
+                    }
+                });
+
+                return;
+            }
+
+
+        for(Player p: _players)
+            p.resetPlayer();
+
+        _adventurePile.clear();
+        _storyPile.clear();
+
+        canDrawStory = true;
+
+        NetworkManager.get().sendNetMessageToServer(new LocalClientMessage(NetworkMsgType.CARD_DRAW_X,NetworkMessage.pack(12)));
+
+        View.get().update();
+
         });
     }
 }

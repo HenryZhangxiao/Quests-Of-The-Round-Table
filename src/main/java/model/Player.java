@@ -1,5 +1,6 @@
 package model;
 
+import network.LocalGameManager;
 import network.NetworkServer;
 import network.ServerMessage;
 
@@ -62,6 +63,7 @@ public class Player{
     public void discardCardFromHand(int cardID){
         Card card = Card.getCardByID(cardID);
         hand.remove(card);
+        LocalGameManager.get().getAdvPile().add(card);
     }
 
     public void discardCardsFromHand(int[] cardIDs){
@@ -122,4 +124,11 @@ public class Player{
     }
 
     public String getPlayerName(){return playerName;}
+
+    public void resetPlayer(){
+        hand.clear();
+        allies.clear();
+        amourCard = null;
+        numShields = 0;
+    }
 }

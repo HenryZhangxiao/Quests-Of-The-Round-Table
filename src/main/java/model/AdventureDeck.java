@@ -27,6 +27,7 @@ public class AdventureDeck extends Deck{
     private static final int NUM_AMOURS = 8;
 
     protected void initializeCards(){
+        cards.clear();
 
         // Weapons
         for(int i = 0; i < NUM_EXCALIBUR; ++i){

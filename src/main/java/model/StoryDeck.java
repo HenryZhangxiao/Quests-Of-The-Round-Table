@@ -28,6 +28,8 @@ public class StoryDeck extends Deck{
     private static final int NUM_YORK = 1;
 
     protected void initializeCards() {
+        cards.clear();
+
         // Quests
         for(int i = 0; i < NUM_HOLY_GRAIL; ++i){
             cards.add(new HolyGrailQuest());

@@ -30,4 +30,6 @@ public interface ServerEventListener {
 
     void onTestBidQuery(int plyID, boolean declined, int currentBid, int[] cardIDs);
 
+    void onGameReset(boolean playAgain);
+
 }
