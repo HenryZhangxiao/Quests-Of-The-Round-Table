@@ -39,10 +39,6 @@ public class Test {
         highestBid = testCard.getMinimumBid() - 1;
         currentBid = testCard.getMinimumBid() - 1;
 
-        for(int i = 0; i < _numPlayers; i++){
-            addInPID(i);
-        }
-        
         System.out.println("TEST DRAWER PID = " + _testDrawerPID);
     }
 
