@@ -214,7 +214,12 @@ public class View extends Pane {
             storyDiscard.setViewport(getStoryCard(storyPile.get(storyPile.size()-1).getID()));
 
         // Update shields
-        localPly.setText((LocalGameManager.get().getLocalPlayer().getPlayerNum()+1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName() + "\n Shields: " + LocalGameManager.get().getLocalPlayer().getShields());
+        String shieldsText = (LocalGameManager.get().getLocalPlayer().getPlayerNum()+1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName() + "\n Shields: " + LocalGameManager.get().getLocalPlayer().getShields();
+        for(int i = 0; i < LocalGameManager.get().getPlayers().size(); i++){
+            if(LocalGameManager.get().getPlayers().get(i).getPlayerNum() != LocalGameManager.get().getLocalPlayer().getPlayerNum())
+                shieldsText += "\t" + LocalGameManager.get().getPlayers().get(i).getPlayerName() + ": " + LocalGameManager.get().getPlayers().get(i).getShields();
+        }
+        localPly.setText(shieldsText);
     }
 
     private void gameViewInit() {

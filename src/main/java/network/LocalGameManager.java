@@ -266,6 +266,16 @@ public class LocalGameManager implements ClientEventListener{
         if(!runForPlyID && plyID == getLocalPlayer().getPlayerNum())
             return;
 
+        if(cardIDs == null){
+            System.out.println("CLIENT: CardDiscardX cardids null");
+            return;
+        }
+
+        if(cardIDs.length == 0){
+            System.out.println("CLIENT: CardDiscardX cardids empty");
+            return;
+        }
+
         getPlayerByID(plyID).discardCardsFromHand(cardIDs);
         Platform.runLater(() -> View.get().update());
     }

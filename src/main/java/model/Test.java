@@ -95,7 +95,8 @@ public class Test {
 
         // The winner needs to discard cards
         ServerMessage discardMsg = new ServerMessage(NetworkMsgType.CARD_DISCARD_X,NetworkMessage.pack(inPIDs.get(0), playerCards[inPIDs.get(0)],true));
-        NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(discardMsg);
+        //NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(discardMsg);
+        NetworkServer.get().sendNetMessageToAllPlayers(discardMsg);
 
 
         // Tell everyone that the quest has been won by inPIDs.get(0)
