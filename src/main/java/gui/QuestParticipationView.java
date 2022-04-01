@@ -257,7 +257,7 @@ public class QuestParticipationView {
         selectionGroup.getChildren().add(selectArea);
 
         //Error label to notify that two cards of the same type cant be added. Set to invisible by default
-        errorLabel = new Label("You cannot add two cards of the same type or play any foe cards!");
+        errorLabel = new Label("You cannot add two cards of the same type or play any non-weapon cards!");
         errorLabel.setFont(largeFont);
         errorLabel.setLayoutX(selectArea.getX());
         errorLabel.setLayoutY(selectArea.getY() + selectArea.getHeight() + 10);
@@ -372,7 +372,7 @@ public class QuestParticipationView {
 
     public boolean validateCardSelection(Card c){
         //Simply checks to see if card is already in selection or is a foe card.
-        if(c instanceof FoeCard)
+        if(!(c instanceof WeaponCard))
             return false;
 
         for (Card x: selectedCards) {
