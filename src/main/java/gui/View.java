@@ -68,10 +68,10 @@ public class View extends Pane {
         setWidth(1280);
         setHeight(720);
 
-        //advCards = new Image(new File("src/main/resources/advComposite.jpg").toURI().toString());
-        //storyCards = new Image(new File("src/main/resources/storyComposite.jpg").toURI().toString());
-        advCards = new Image("/advComposite.jpg");
-        storyCards = new Image("/storyComposite.jpg");
+        advCards = new Image(new File("src/main/resources/advComposite.jpg").toURI().toString());
+        storyCards = new Image(new File("src/main/resources/storyComposite.jpg").toURI().toString());
+        //advCards = new Image("/advComposite.jpg");
+        //storyCards = new Image("/storyComposite.jpg");
     }
 
     public Button getStoryDeck() {

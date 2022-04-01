@@ -165,7 +165,8 @@ public class Tournament {
                 // The current hand to check is lower than the current highest so add to outPIDs
                 else{
                     System.out.println(playerBP + " is lower than " + highestPlayerBP);
-                    addOutPID(currentPIDToCheck);
+                    //addOutPID(currentPIDToCheck);
+                    outPIDs.add(currentPIDToCheck);
                 }
             }
 
@@ -247,16 +248,21 @@ public class Tournament {
         // Move all participants who lost to outPIDs so only winners move on the next round
         for (Integer pid : inPIDs) {
             if (!topBidderPIDs.contains(pid))
-                addOutPID(pid);
+                //addOutPID(pid);
+                outPIDs.add(pid);
         }
         inPIDs.clear();
         topBidderPIDs.clear();
 
+        goToNextTurn();
+
         if(!outPIDs.contains(turnPlayerID)) {
+            System.out.println("restart: participation query");
             ServerMessage participationQuery = new ServerMessage(NetworkMsgType.TOURNAMENT_PARTICIPATION_QUERY, NetworkMessage.pack(tournamentCard.id));
             NetworkServer.get().getPlayerByID(turnPlayerID).sendNetMsg(participationQuery);
         }
         else{
+            System.out.println("restart: skip turn, participating()");
             goToNextTurn();
             participating();
         }
