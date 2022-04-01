@@ -42,6 +42,7 @@ public class Test {
         for(int i = 0; i < _numPlayers; i++){
             addInPID(i);
         }
+        
         System.out.println("TEST DRAWER PID = " + _testDrawerPID);
     }
 
