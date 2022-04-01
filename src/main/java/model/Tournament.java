@@ -17,6 +17,7 @@ public class Tournament {
     protected ArrayList<Integer> outPIDs;  //those who have opted out or have been eliminated
     protected ArrayList<Integer> inPIDs;   //those who did not opt out and have not been eliminated
     protected ArrayList<Integer> topBidderPIDs;
+    private boolean drawerBidded;
 
     private Card[][] playerCards;
 
@@ -33,6 +34,7 @@ public class Tournament {
         outPIDs = new ArrayList<>();
         inPIDs = new ArrayList<>();
         topBidderPIDs = new ArrayList<>();
+        drawerBidded = false;
 
         round = 0;
 
@@ -239,8 +241,6 @@ public class Tournament {
                     NetworkServer.get().sendNetMessageToAllPlayers(finalResultMsg);
                 }
             }
-
-
         }
     }
 
@@ -253,8 +253,9 @@ public class Tournament {
         }
         inPIDs.clear();
         topBidderPIDs.clear();
+        drawerBidded = false;
 
-        goToNextTurn();
+        //goToNextTurn();
 
         if(!outPIDs.contains(turnPlayerID)) {
             System.out.println("restart: participation query");
@@ -296,8 +297,16 @@ public class Tournament {
         return turnPlayerID;
     }
 
+    public boolean getDrawerBidded() {
+        return drawerBidded;
+    }
+
     public int getNumParticipants() {
         return numParticipants;
+    }
+
+    public void setDrawerBidded(boolean bid){
+        drawerBidded = bid;
     }
 
     public void setNumParticipants(int _numParticipants){

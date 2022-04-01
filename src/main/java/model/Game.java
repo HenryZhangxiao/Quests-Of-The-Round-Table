@@ -495,8 +495,13 @@ public class Game extends Thread implements ServerEventListener {
     public void onTournamentParticipationQuery(int plyID, boolean declined, int[] cardIDs) {
         System.out.println("Player " + plyID + " asked to participate in tournament");
         System.out.println("Tournament's player id is " + tournament.getTurnPlayerID());
+
+        if(tournament.getTournamentDrawerPID() == plyID){
+            tournament.setDrawerBidded(true);
+        }
         // Player chose to enter the tournament with a provided hand cardIDs
         if(!declined){
+
             tournament.addInPID(plyID);
             Card[] participantHand = new Card[cardIDs.length];
             for(int i = 0; i < cardIDs.length; i++){
@@ -514,7 +519,7 @@ public class Game extends Thread implements ServerEventListener {
             tournament.addOutPID(plyID);
             System.out.println("Declined participation");
             // If the next person to query is the drawer, we have gone full circle, and it's time to start the tournament
-            if(tournament.getNextPID(tournament.getTurnPlayerID()) == tournament.getTournamentDrawerPID()){
+            if(tournament.getNextPID(tournament.getTurnPlayerID()) == tournament.getTournamentDrawerPID() && tournament.getDrawerBidded()){
                 System.out.println("We are done querying for tournament participation. Onto the tournament.");
                 tournament.battling();
             }
