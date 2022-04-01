@@ -516,11 +516,13 @@ public class Game extends Thread implements ServerEventListener {
 
         }
         else{ // Player declined to enter the tournament
-            tournament.addOutPID(plyID);
+            //tournament.addOutPID(plyID);
+            tournament.outPIDs.add(plyID);
             System.out.println("Declined participation");
             // If the next person to query is the drawer, we have gone full circle, and it's time to start the tournament
             if(tournament.getNextPID(tournament.getTurnPlayerID()) == tournament.getTournamentDrawerPID() && tournament.getDrawerBidded()){
                 System.out.println("We are done querying for tournament participation. Onto the tournament.");
+                tournament.goToNextTurn();
                 tournament.battling();
             }
             else{ // We still need to query the remaining players for participation
