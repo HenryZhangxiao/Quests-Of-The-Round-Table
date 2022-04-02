@@ -54,6 +54,9 @@ public class View extends Pane {
     private Label localPly;
     private Label errorLabel;
     private Label turnLabel;
+    private Label bonusBPBidsLabel;
+    private Label amourLabel;
+    private ImageView amourCard;
     private Font errorFont;
 
 
@@ -205,6 +208,21 @@ public class View extends Pane {
             allies.get(index).setViewport(viewport);
         }
 
+        //Drawing Amour Card if set.
+        if(LocalGameManager.get().getLocalPlayer().getAmour() != null){
+            amourCard.setViewport(getAdvCard(LocalGameManager.get().getLocalPlayer().getAmour().getID()));
+            amourCard.setVisible(true);
+            amourLabel.setVisible(false);
+        }
+        else {
+            amourLabel.setVisible(true);
+            amourCard.setVisible(false);
+        }
+
+        int bonusBP = AllyCard.getBPForAllies(LocalGameManager.get().getLocalPlayer().getAllies(),null,LocalGameManager.get().getLocalPlayer().getAmour());
+        int bonusBids = AllyCard.getBidsForAllies(LocalGameManager.get().getLocalPlayer().getAllies(),null,LocalGameManager.get().getLocalPlayer().getAmour());
+        bonusBPBidsLabel.setText("Bonus BP: " + String.valueOf(bonusBP) + " | Bonus Bids: " + String.valueOf(bonusBids));
+
         ArrayList<Card> advPile = LocalGameManager.get().getAdvPile();
         if (!advPile.isEmpty()) {
             advDiscard.setViewport(getAdvCard(advPile.get(advPile.size() - 1).getID()));
@@ -336,6 +354,45 @@ public class View extends Pane {
         }
 
         getChildren().add(allyGroup);
+
+        //Amour Card Area
+        Rectangle amourArea = new Rectangle(allyArea.getX() + allyArea.getWidth() + 10, allyArea.getY(),120,160);
+        amourArea.setFill(Color.YELLOW);
+        amourArea.setStroke(Color.SADDLEBROWN);
+        amourArea.setArcWidth(30);
+        amourArea.setArcHeight(20);
+        getChildren().add(amourArea);
+
+        Label amourInfo = new Label("Amour in play: ");
+        amourInfo.setLayoutX(amourArea.getX());
+        amourInfo.setLayoutY(amourArea.getY() - 20);
+        getChildren().add(amourInfo);
+
+        Font largeFont = new Font("Arial", 16);
+
+        amourLabel = new Label("No Amour\n Selected");
+        amourLabel.setLayoutX(amourArea.getX() + 25);
+        amourLabel.setLayoutY(amourArea.getY() + 45);
+        amourLabel.setFont(largeFont);
+        getChildren().add(amourLabel);
+
+        amourCard = new ImageView();
+        amourCard.setFitWidth(100);
+        amourCard.setFitHeight(140);
+        amourCard.setPreserveRatio(true);
+        amourCard.setX(amourArea.getX() + 10);
+        amourCard.setY(amourArea.getY() + 10);
+        amourCard.setImage(advCards);
+        amourCard.setVisible(false);
+        getChildren().add(amourCard);
+
+
+        bonusBPBidsLabel = new Label("Bonus BP: 0 | Bonus Bids: 0");
+        bonusBPBidsLabel.setLayoutX(getWidth() / 2 - 20);
+        bonusBPBidsLabel.setLayoutY(10);
+        bonusBPBidsLabel.setTextAlignment(TextAlignment.JUSTIFY);
+        getChildren().add(bonusBPBidsLabel);
+
 
         storyDeck = new Button("Draw story card");
         storyDeck.relocate(700, 240);
