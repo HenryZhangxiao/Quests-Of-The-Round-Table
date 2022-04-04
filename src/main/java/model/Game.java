@@ -36,6 +36,7 @@ public class Game extends Thread implements ServerEventListener {
 
     //Only for demo
     public boolean riggedGame = false;
+    int cID = 43;
 
     private Game(){
         _players = new ArrayList<Player>();
@@ -290,7 +291,7 @@ public class Game extends Thread implements ServerEventListener {
         //Start a quest/event/tournament here
         Card c = storyDeck.drawCard();
         //For Testing. CardIDs are in Card. Overrides demo rig
-        //Card c = Card.getCardByID(52);
+        //Card c = Card.getCardByID(cID++);
 
         ServerMessage msg = new ServerMessage(NetworkMsgType.STORY_CARD_DRAW,NetworkMessage.pack(plyID,c.id));
         NetworkServer.get().sendNetMessageToAllPlayers(msg);
@@ -342,10 +343,10 @@ public class Game extends Thread implements ServerEventListener {
                                 shields--;
                             }
                             getPlayerByID(p.getPlayerNum()).setShields(shields);
-                        }
 
-                        ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(p.getPlayerNum(),shields));
-                        NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
+                            ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(p.getPlayerNum(),shields));
+                            NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
+                        }
                     }
                     return;
 
