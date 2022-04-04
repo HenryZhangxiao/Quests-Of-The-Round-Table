@@ -301,7 +301,7 @@ public class LocalGameManager implements ClientEventListener{
     @Override
     public void onQuestBegin(int plyID, int questCardID) {
         //Called when a quest card has been played.
-
+        View.get().logMsg(getPlayerByID(plyID).getPlayerName() + " drew a Quest card!");
 
     }
 
@@ -325,10 +325,14 @@ public class LocalGameManager implements ClientEventListener{
     public void onQuestStageResult(int questCardID, boolean wonStage, int[] stageCardsIDs, int[] playerCardsIDs) {
         //TODO Show result of stage.
         // wonStage will be true if they won the stage
-        if(wonStage)
+        if(wonStage) {
             System.out.println("CLIENT: You won the stage.");
-        else
+            View.get().logMsg("You won the stage.");
+        }
+        else {
             System.out.println("CLIENT: You lost the stage.");
+            View.get().logMsg("You lost the stage.");
+        }
 
         Platform.runLater(() -> View.get().update());
     }
@@ -338,7 +342,15 @@ public class LocalGameManager implements ClientEventListener{
         //Called when the quest is over and shows the winning results. sponsorCards is separated by stage. eg: sponsorCards[0] will get stage 1's cards.
         System.out.println("CLIENT: The Quest has ended.");
 
-        QuestResultView q = new QuestResultView(winnerIDs);
+        if (winnerIDs.length != 0) {
+            StringBuilder ss = new StringBuilder(getPlayerByID(winnerIDs[0]).getPlayerName());
+            for (int i = 1; i < winnerIDs.length; i++) {
+                ss.append(", ").append(getPlayerByID(winnerIDs[i]).getPlayerName());
+            }
+            View.get().logMsg("The winners of the Quest are: " + ss);
+        } else {
+            View.get().logMsg("No one completed the Quest.");
+        }
         usedMerlin = false;
         View.get().enableEndTurnButton();
     }
@@ -364,6 +376,7 @@ public class LocalGameManager implements ClientEventListener{
     @Override
     public void onTournamentBegin(int drawerID, int tournamentCardID) {
         System.out.println("CLIENT: Tournament begins");
+        View.get().logMsg(getPlayerByID(drawerID).getPlayerName() + " drew a Tournament card!");
 
     }
 
@@ -378,7 +391,7 @@ public class LocalGameManager implements ClientEventListener{
 
     @Override
     public void onTournamentTie(int tournamentCardID) {
-
+        View.get().logMsg("This Tournament ended in a tie! A new tie-breaking tournament will be played by the winners.");
     }
 
     @Override
@@ -386,6 +399,13 @@ public class LocalGameManager implements ClientEventListener{
         //Called when the tournament is over and shows the winning results (winnerID is [-1] for no winner)
         System.out.println("CLIENT: The Tournament has ended. winner ids are: " + winnerIDs);
         // TODO: GUI for results of tournament (maybe show shields won?)
+        if (winnerIDs[0] != -1) {
+            StringBuilder ss = new StringBuilder(getPlayerByID(winnerIDs[0]).getPlayerName());
+            for (int i = 1; i < winnerIDs.length; i++) {
+                ss.append(", ").append(getPlayerByID(winnerIDs[i]).getPlayerName());
+            }
+            View.get().logMsg("The winners of this Tournament are: " + ss);
+        }
 
         View.get().enableEndTurnButton();
     }
@@ -402,7 +422,7 @@ public class LocalGameManager implements ClientEventListener{
 
     @Override
     public void onTestFinalResult(int testID, int winnerID, int currentBid) {
-
+        View.get().logMsg(getPlayerByID(winnerID).getPlayerName() + " bid " + currentBid + " cards and won this stage.");
     }
 
     @Override

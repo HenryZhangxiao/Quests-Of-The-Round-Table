@@ -100,7 +100,7 @@ public class Test {
 
 
         // Tell everyone that the quest has been won by inPIDs.get(0)
-        ServerMessage testOverMsg = new ServerMessage(NetworkMsgType.TEST_FINAL_RESULT,NetworkMessage.pack(testCard.getID(),inPIDs.get(0), highestBid));
+        ServerMessage testOverMsg = new ServerMessage(NetworkMsgType.TEST_FINAL_RESULT,NetworkMessage.pack(testCard.getID(),inPIDs.get(0), currentBid));
         NetworkServer.get().sendNetMessageToAllPlayers(testOverMsg);
 
         // syncs outPIDs with Quest

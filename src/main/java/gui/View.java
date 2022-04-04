@@ -7,6 +7,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -58,6 +59,9 @@ public class View extends Pane {
     private Label amourLabel;
     private ImageView amourCard;
     private Font errorFont;
+
+    // Scrolling text area for logging messages from the server
+    private TextArea log;
 
 
     public static View get() {
@@ -252,6 +256,12 @@ public class View extends Pane {
         localPly.setText(shieldsText);
     }
 
+    // Adds a message to the log TextArea
+    public void logMsg(String msg) {
+        log.appendText("-> " + msg + "\n");
+        log.setScrollTop(Double.MAX_VALUE);
+    }
+
     private void gameViewInit() {
         //Image advCards = new Image(new File("src/resources/advComposite.jpg").toURI().toString());
         //Image storyCards = new Image(new File("src/resources/storyComposite.jpg").toURI().toString());
@@ -279,7 +289,6 @@ public class View extends Pane {
             cards.add(card);
             hand.getChildren().add(card);
 
-            //add event handling for discarding
             int finalI = i;
             card.setOnMouseClicked(mouseEvent -> {
                 if (mouseEvent.getButton() == MouseButton.SECONDARY) {
@@ -490,6 +499,14 @@ public class View extends Pane {
         getChildren().add(errorLabel);
 
         enableTurnButtons();
+
+        // Message log
+        log = new TextArea();
+        log.setWrapText(true);
+        log.relocate(20, handArea.getY());
+        log.setPrefSize(handArea.getX() - 40, 150);
+        log.setEditable(false);
+        getChildren().add(log);
     }
 
     public static Rectangle2D getAdvCard(int id) {
