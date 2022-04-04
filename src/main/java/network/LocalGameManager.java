@@ -552,5 +552,7 @@ public class LocalGameManager implements ClientEventListener{
         View.get().update();
 
         });
+
+        View.get().clearLog();
     }
 }

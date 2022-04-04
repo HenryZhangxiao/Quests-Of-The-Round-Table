@@ -262,6 +262,11 @@ public class View extends Pane {
         log.setScrollTop(Double.MAX_VALUE);
     }
 
+    // Clears message log
+    public void clearLog() {
+        log.setText("");
+    }
+
     private void gameViewInit() {
         //Image advCards = new Image(new File("src/resources/advComposite.jpg").toURI().toString());
         //Image storyCards = new Image(new File("src/resources/storyComposite.jpg").toURI().toString());
