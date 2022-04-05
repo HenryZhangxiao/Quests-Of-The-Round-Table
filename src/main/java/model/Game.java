@@ -323,11 +323,13 @@ public class Game extends Thread implements ServerEventListener {
                     //gives 3 shields to each player who ties for lowest number of shields
                     for(Player p : _players) {
                         int shields = getPlayerByID(p.getPlayerNum()).getShields();
-                        shields += 3;
-                        getPlayerByID(p.getPlayerNum()).setShields(shields);
+                        if(minShields == shields) {
+                            shields += 3;
+                            getPlayerByID(p.getPlayerNum()).setShields(shields);
 
-                        ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS,NetworkMessage.pack(p.getPlayerNum(),shields));
-                        NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
+                            ServerMessage shieldMsg = new ServerMessage(NetworkMsgType.UPDATE_SHIELDS, NetworkMessage.pack(p.getPlayerNum(), shields));
+                            NetworkServer.get().sendNetMessageToAllPlayers(shieldMsg);
+                        }
                     }
 
                     checkForWinner();
