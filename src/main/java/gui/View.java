@@ -43,21 +43,29 @@ public class View extends Pane {
     private final static int HAND_COLS = 8;
     private final static int HAND_ROWS = 2;
 
+    // Images used to retrieve card textures
     private Image advCards;
     private Image storyCards;
+
+    // ImageViews for cards in hand, allies, amour, and discard piles
     private ImageView storyDiscard;
     private ImageView advDiscard;
     private ArrayList<ImageView> cards;
     private ArrayList<ImageView> allies;
+    private ImageView amourCard;
+
+    // Buttons for drawing cards and ending turn
     private Button storyDeck;
-    private Button advDeck;
+    private Button advDeck;     // Only enabled in demo TODO: enable in demo or rig hands
     private Button endTurn;
+
+    // Various info labels
     private Label localPly;
     private Label errorLabel;
     private Label turnLabel;
     private Label bonusBPBidsLabel;
     private Label amourLabel;
-    private ImageView amourCard;
+
     private Font errorFont;
 
     // Scrolling text area for logging messages from the server
@@ -77,12 +85,6 @@ public class View extends Pane {
 
         advCards = new Image(new File("src/main/resources/advComposite.jpg").toURI().toString());
         storyCards = new Image(new File("src/main/resources/storyComposite.jpg").toURI().toString());
-        //advCards = new Image("/advComposite.jpg");
-        //storyCards = new Image("/storyComposite.jpg");
-    }
-
-    public Button getStoryDeck() {
-        return storyDeck;
     }
 
     public Image getAdvCards() {
@@ -176,11 +178,8 @@ public class View extends Pane {
     }
 
     public void update() {
-        //if(!LocalGameManager.get().isMyTurn()) {
-            //endTurn.setDisable(!LocalGameManager.get().isMyTurn());
 
-            advDeck.setDisable(!LocalGameManager.get().isMyTurn());
-        //}
+        //advDeck.setDisable(!LocalGameManager.get().isMyTurn());
 
         if(LocalGameManager.get().isMyTurn())
             turnLabel.setText("It is your turn.");
@@ -274,6 +273,7 @@ public class View extends Pane {
         Group hand = new Group();
         Group allyGroup = new Group();
 
+        // Area for cards in hand
         Rectangle handArea = new Rectangle(getWidth()-900, getHeight()-320, 890, 310);
         handArea.setFill(Color.DARKGRAY);
         handArea.setStroke(Color.SADDLEBROWN);
@@ -281,9 +281,8 @@ public class View extends Pane {
         handArea.setArcHeight(20);
         hand.getChildren().add(handArea);
 
+        // Initialize ImageViews for cards in hand
         cards = new ArrayList<>();
-        allies = new ArrayList<>();
-
         for (int i = 0; i < 16; ++i) {
             ImageView card = new ImageView();
             card.setFitWidth(100);
@@ -301,6 +300,7 @@ public class View extends Pane {
                     LocalGameManager.get().discardCard(finalI);
                 } else if(mouseEvent.getButton() == MouseButton.PRIMARY) {
                     if(LocalGameManager.get().getLocalPlayer().hand.get(finalI) instanceof AllyCard){
+                        // Playing ally card
                         LocalGameManager.get().getLocalPlayer().addAlly((AllyCard) LocalGameManager.get().getLocalPlayer().hand.get(finalI));
                         LocalGameManager.get().getLocalPlayer().hand.remove(finalI);
 
@@ -342,6 +342,8 @@ public class View extends Pane {
         allyLabel.setLayoutY(allyArea.getY() - 20);
         allyGroup.getChildren().add(allyLabel);
 
+        // Initialize ImageViews for played allies
+        allies = new ArrayList<>();
         for(int i = 0; i < 10; i++){
             ImageView card = new ImageView();
             card.setFitWidth(100);
@@ -407,7 +409,7 @@ public class View extends Pane {
         bonusBPBidsLabel.setTextAlignment(TextAlignment.JUSTIFY);
         getChildren().add(bonusBPBidsLabel);
 
-
+        // Draw story card button
         storyDeck = new Button("Draw story card");
         storyDeck.relocate(700, 240);
         storyDeck.setPrefSize(100,140);
@@ -420,7 +422,7 @@ public class View extends Pane {
         });
         getChildren().add(storyDeck);
 
-
+        // Story discard area, label, and imageview
         Rectangle storyDiscardArea = new Rectangle(storyDeck.getLayoutX() + 105, storyDeck.getLayoutY() - 5, 110, 150);
         storyDiscardArea.setFill(new Color(0.4f,0,0,0.3f));
         storyDiscardArea.setStroke(Color.SADDLEBROWN);
@@ -444,6 +446,7 @@ public class View extends Pane {
         getChildren().add(storyDiscard);
 
 
+        // Adventure card discard area, label, and imageview
         Rectangle advDiscardArea = new Rectangle(storyDeck.getLayoutX() + 220, storyDeck.getLayoutY() - 5, 110, 150);
         advDiscardArea.setFill(new Color(0.4f,0,0,0.3f));
         advDiscardArea.setStroke(Color.SADDLEBROWN);
@@ -466,6 +469,8 @@ public class View extends Pane {
         advDiscard.setViewport(getAdvCard(0));
         getChildren().add(advDiscard);
 
+
+        // Draw adventure card button
         advDeck = new Button("Draw\nadventure card");
         advDeck.relocate(storyDeck.getLayoutX() + 340, advDiscard.getY());
         advDeck.setPrefSize(100,140);
@@ -474,6 +479,8 @@ public class View extends Pane {
         //Disables drawing adventure cards
         //getChildren().add(advDeck);
 
+
+        // End turn button
         endTurn = new Button("End Turn");
         endTurn.relocate(storyDeck.getLayoutX() + 450, storyDeck.getLayoutY() + 110);
         endTurn.setPrefSize(100,30);
@@ -489,6 +496,7 @@ public class View extends Pane {
         });
         getChildren().add(endTurn);
 
+        // Various game state labels
         localPly = new Label((LocalGameManager.get().getLocalPlayer().getPlayerNum()+1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName() + "\n Shields: " + LocalGameManager.get().getLocalPlayer().getShields());
         localPly.relocate(20, getHeight()-50);
         getChildren().add(localPly);
