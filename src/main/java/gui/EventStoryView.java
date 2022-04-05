@@ -302,7 +302,7 @@ public class EventStoryView {
 
         //Opens the window and waits.
         stage.setScene(s1);
-        stage.setTitle(String.valueOf(LocalGameManager.get().getLocalPlayer().getPlayerNum()) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName());
+        stage.setTitle("(" + String.valueOf(LocalGameManager.get().getLocalPlayer().getPlayerNum() + 1) + " " + LocalGameManager.get().getLocalPlayer().getPlayerName() + ") An event has begun!");
 
         stage.setOnCloseRequest(e -> e.consume());
         stage.setResizable(false);
