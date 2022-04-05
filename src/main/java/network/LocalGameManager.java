@@ -364,13 +364,15 @@ public class LocalGameManager implements ClientEventListener{
     @Override
     public void onMordredDiscard(int cardUserID, int removedCardPlayerID, int allyCardID) {
         //Simple popup to notify players that Mordred has been used.
-        Platform.runLater(() -> {
-            Alert a = new Alert(Alert.AlertType.INFORMATION);
-            a.setTitle("Mordred Attacks!");
-            a.setHeaderText("Mordred has removed an Ally from play!");
-            a.setContentText(getPlayerByID(cardUserID).getPlayerName() + " used Mordred to remove " + getPlayerByID(removedCardPlayerID).getPlayerName() + "'s " + Card.getCardByID(allyCardID).getName() + " from play!");
-            a.showAndWait();
-        });
+//        Platform.runLater(() -> {
+//            Alert a = new Alert(Alert.AlertType.INFORMATION);
+//            a.setTitle("Mordred Attacks!");
+//            a.setHeaderText("Mordred has removed an Ally from play!");
+//            a.setContentText(getPlayerByID(cardUserID).getPlayerName() + " used Mordred to remove " + getPlayerByID(removedCardPlayerID).getPlayerName() + "'s " + Card.getCardByID(allyCardID).getName() + " from play!");
+//            a.showAndWait();
+//        });
+
+        View.get().logMsg(getPlayerByID(cardUserID).getPlayerName() + " used Mordred to remove " + getPlayerByID(removedCardPlayerID).getPlayerName() + "'s " + Card.getCardByID(allyCardID).getName() + " from play!");
     }
 
     @Override
@@ -435,6 +437,7 @@ public class LocalGameManager implements ClientEventListener{
             System.out.println(winnerIDs[i]);
         }
 
+        // TODO: move to a FinalResultView class
         Platform.runLater(() -> {
             int width = 400;
             int height = 300;
