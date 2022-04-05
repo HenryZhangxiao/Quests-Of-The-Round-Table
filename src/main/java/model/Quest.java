@@ -148,7 +148,7 @@ public class Quest {
                     foeBP += ((WeaponCard)stageCards[currentStage][i]).getBP();
                 }
 
-                if(playerBP > foeBP){
+                if(playerBP >= foeBP){
                     // player wins, draws an Adventure card for winning
                     ServerMessage drawCardMsg = new ServerMessage(NetworkMsgType.CARD_DRAW,NetworkMessage.pack(turnPlayerID, Game.get().drawAdvCard().id));
                     NetworkServer.get().sendNetMessageToAllPlayers(drawCardMsg);
