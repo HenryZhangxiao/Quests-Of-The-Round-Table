@@ -17,8 +17,20 @@ Players begin the game as squires with a lowly battle strength of five and, by e
 
 A copy of the rules can be [found here](https://www.fgbradleys.com/rules/rules4/Quests%20of%20the%20Round%20Table%20-%20rules.pdf)
 
+#### Table of Contents
+- [Softwares used](#softwares)
+- [1st iteration](#first)
+- [2nd iteration](#second)
+- [3rd iteration](#third)
+- [4th iteration](#fourth)
+- [Final iteration](#final)
+- [Tweaks and Features](#tweaks)
+- [Team Roles](#roles)
+- [Copyright](#copyright)
+
+
 <br></br>
-## Softwares used
+## Softwares used <a name="softwares"></a>
 
 - Windows
 - Trello
@@ -31,7 +43,7 @@ A copy of the rules can be [found here](https://www.fgbradleys.com/rules/rules4/
 
 
 <br></br>
-## 1st iteration of the game (March 4): [Demo](https://www.youtube.com/watch?v=cYr4cSpDKhM)
+## 1st iteration of the game (March 4): [Demo](https://www.youtube.com/watch?v=cYr4cSpDKhM) <a name="first"></a>
 - 2 to 4 players can join the game and take turns discarding cards and taking new ones
 - The UI also allows each player to:
 	- See their current cards and select some for discarding
@@ -42,7 +54,7 @@ A copy of the rules can be [found here](https://www.fgbradleys.com/rules/rules4/
 
 
 <br></br>
-## 2nd iteration of the game (March 13): [Demo](https://www.youtube.com/watch?v=NdfmuBfkgcY)
+## 2nd iteration of the game (March 13): [Demo](https://www.youtube.com/watch?v=NdfmuBfkgcY) <a name="second"></a>
 - The game consists only of quests, with NO tests, no amours and no allies
 - Mordred is merely a normal foe
 
@@ -50,21 +62,21 @@ A copy of the rules can be [found here](https://www.fgbradleys.com/rules/rules4/
 
 
 <br></br>
-## 3rd iteration of the game (March 20): [Demo](https://www.youtube.com/watch?v=B8WLqqNAn3M)
+## 3rd iteration of the game (March 20): [Demo](https://www.youtube.com/watch?v=B8WLqqNAn3M) <a name="third"></a>
 - The game is augmented with all events
 
 ![image](https://user-images.githubusercontent.com/44578113/166127666-082ef67d-b096-43a4-9483-a7b4a59440ac.png)
 
 
 <br></br>
-## 4th iteration of the game (March 31): [Demo](https://www.youtube.com/watch?v=jxndgWbg8mg)
+## 4th iteration of the game (March 31): [Demo](https://www.youtube.com/watch?v=jxndgWbg8mg) <a name="fourth"></a>
 - The game is augmented with tournaments and tests in quests
 
 ![image](https://user-images.githubusercontent.com/44578113/166127714-7af75fca-8c17-4870-bd24-c8152d96d168.png)
 
 
 <br></br>
-## Final iteration of the game (April 8): [Demo](https://www.youtube.com/watch?v=jWEatQwQw0E)
+## Final iteration of the game (April 8): [Demo](https://www.youtube.com/watch?v=jWEatQwQw0E) <a name="final"></a>
 - The game is augmented with amours and allies
 - Mordred as able to kill an ally
 
@@ -72,7 +84,7 @@ A copy of the rules can be [found here](https://www.fgbradleys.com/rules/rules4/
 
 
 <br></br>
-## Tweaks and Features
+## Tweaks and Features <a name="tweaks"></a>
 - The game is multiplayer and able to be played across different machines with port-forwarding
 - The game features a game log to easily track game activity
 - The entirety of the game logic has been programmed in with some limitations for simplicity
@@ -80,7 +92,7 @@ A copy of the rules can be [found here](https://www.fgbradleys.com/rules/rules4/
 
 
 <br></br>
-## Team Roles
+## Team Roles <a name="roles"></a>
 - Walker Mercer - Networking 
 - Philip Wanczycki - UI 
 - Henry Zhangxiao - Game Logic
@@ -88,7 +100,7 @@ A copy of the rules can be [found here](https://www.fgbradleys.com/rules/rules4/
 
 
 <br></br>
-### Copyright
+### Copyright <a name="copyright"></a>
 "Quests of the Round Table" by GAMEWRIGHT INC.
 
 This project was created privately and internally for academic and educational purposes only with no intent to distribute.
