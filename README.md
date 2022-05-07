@@ -25,6 +25,7 @@ A copy of the rules can be [found here](https://www.fgbradleys.com/rules/rules4/
 - [4th iteration](#fourth)
 - [Final iteration](#final)
 - [Tweaks and Features](#tweaks)
+- [How to Run](#run)
 - [Team Roles](#roles)
 - [Copyright](#copyright)
 
@@ -89,6 +90,12 @@ A copy of the rules can be [found here](https://www.fgbradleys.com/rules/rules4/
 - The game features a game log to easily track game activity
 - The entirety of the game logic has been programmed in with some limitations for simplicity
 	- A winner is crowned when a player reaches the Knight rank
+
+
+<br></br>
+## How to Run <a name="run"></a>
+- Download and build the project, then run at least 2 instances of App.java (for hosting and joining)
+- Alternatively, you can open multiple terminals in the project folder and run “mvn clean javafx:run” in each to start multiple instances of the game without using an IDE
 
 
 <br></br>
