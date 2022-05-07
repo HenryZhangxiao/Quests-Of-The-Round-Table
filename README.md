@@ -94,7 +94,7 @@ A copy of the rules can be [found here](https://www.fgbradleys.com/rules/rules4/
 
 <br></br>
 ## How to Run <a name="run"></a>
-- Download and build the project, then run at least 2 instances of App.java (for hosting and joining)
+- Download and build the project in IntelliJ, then run at least 2 instances of App.java (for hosting and joining)
 - Alternatively, you can open multiple terminals in the project folder and run “mvn clean javafx:run” in each to start multiple instances of the game without using an IDE
 
 
