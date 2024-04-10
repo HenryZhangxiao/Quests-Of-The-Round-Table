@@ -79,7 +79,7 @@ A copy of the rules can be [found here](https://www.fgbradleys.com/rules/rules4/
 <br></br>
 ## Final iteration of the game (April 8): [Demo](https://www.youtube.com/watch?v=jWEatQwQw0E) <a name="final"></a>
 - The game is augmented with amours and allies
-- Mordred as able to kill an ally
+- Mordred is able to kill an ally
 
 ![image](https://user-images.githubusercontent.com/44578113/166127746-38f472b6-d395-4ec0-8e5f-c9e08a2b43a7.png)
 
